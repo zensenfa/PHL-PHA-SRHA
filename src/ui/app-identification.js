@@ -54,6 +54,7 @@ async function startRun() {
   const pre = await A.checkProvider();
   if (!pre.ok) { A.toast(`KI-Anbieter nicht erreichbar: ${pre.error || pre.message || ''}`, 'err'); return; }
   const abort = new AbortController();
+  if (!A.aiAllowed()) return;
   const runState = A.runState();
   A.state.run = { abort, runState };
   const prog = A.el('run-progress'), log = A.el('run-log');

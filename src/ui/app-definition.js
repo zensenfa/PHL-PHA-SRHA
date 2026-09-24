@@ -170,6 +170,7 @@ ${p.assumptions.length ? `<p><b>Annahmen der KI:</b> ${p.assumptions.map(A.esc).
 async function decompose() {
   const btn = A.el('btn-decompose');
   if (!A.state.sd.description.trim()) { A.toast('Bitte zuerst eine Systembeschreibung eintragen', 'err'); return; }
+  if (!A.aiAllowed()) return;
   btn.disabled = true; btn.textContent = 'KI arbeitet…';
   try {
     const r = await E.runDecomposition({ ctx: A.ctx(), ...A.provider(), runState: A.runState() });

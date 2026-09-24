@@ -3,7 +3,7 @@
 // themselves on window.RHAS_APP.stages and are rendered through refresh().
 // No native dialogs anywhere; every confirmation is an inline arm-then-confirm.
 (function () {
-const M = window.RHAS_MODEL, DB = window.RHAS_DB, PIPE = window.RHAS_LLM_PIPELINE, DATA = window.RHAS_DATA;
+const M = window.RHAS_MODEL, DB = window.RHAS_DB, PIPE = window.RHAS_LLM_PIPELINE, DATA = window.RHAS_DATA, PROFILE = window.RHAS_PROFILE;
 const A = window.RHAS_APP = {
   stages: {},
   state: {
@@ -57,7 +57,9 @@ A.tabs = (containerId) => {
 const SETTINGS_KEY = 'rhas_settings';
 A.loadSettings = () => { try { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300 }; } };
 A.saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(A.settings));
-A.provider = () => ({ provider: A.settings.provider, settings: A.settings });
+A.provider = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider); return { provider: A.settings.provider, settings: { ...A.settings, blockedReason: g.ok ? '' : g.reason } }; };
+/** WP2: confidential projects may only use a local model; call before starting any AI action. */
+A.aiAllowed = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider); if (!g.ok) A.toast(g.reason, 'err'); return g.ok; };
 A.runState = () => PIPE.createRunState({ softCapCalls: Number(A.settings.softCapCalls) || 80, hardCapCalls: Number(A.settings.hardCapCalls) || 300 });
 
 A.checkProvider = async () => {
@@ -84,7 +86,7 @@ function bindSettings() {
 }
 
 // ------------------------------------------------------------- persistence ----
-A.ctx = () => ({ sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, documents: A.state.sd.documents || [], calibration: A.calibration() });
+A.ctx = () => ({ profile: A.state.projectProfile, sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, documents: A.state.sd.documents || [], calibration: A.calibration() });
 A.calibration = () => A.state.calibration || DATA.calibration;
 
 A.saveMeta = async (key, value) => { A.state[key === 'systemDefinition' ? 'sd' : key] = value; await DB.setMeta(A.state.pdb, key, value); await DB.touchProject(A.state.project.projectId); };
@@ -126,6 +128,7 @@ A.openProject = async (projectId) => {
   s.proposals = { analysis: {}, measures: {}, requirements: {}, decomposition: null, ...(await DB.getMeta(pdb, 'proposals', {})) };
   s.docControl = { docId: '', revision: 'A', date: A.today(), author: '', verifier: '', validator: '', dutyHolder: '', supplier: '', purpose: '', ...(await DB.getMeta(pdb, 'docControl', {})) };
   s.calibration = await DB.getMeta(pdb, 'calibration', null);
+  s.projectProfile = PROFILE.migrateProfile(await DB.getMeta(pdb, 'projectProfile', null));
   s.identConfig = { depth: 'standard', overrides: {}, sources: null, ...(await DB.getMeta(pdb, 'identConfig', {})) };
   localStorage.setItem('rhas_last_project', projectId);
   A.el('doc-id').value = s.docControl.docId; A.el('doc-rev').value = s.docControl.revision; if (!A.el('doc-author').value) A.el('doc-author').value = s.docControl.author || localStorage.getItem('rhas_author') || '';
@@ -133,7 +136,7 @@ A.openProject = async (projectId) => {
   A.refresh();
 };
 
-A.createProject = async (name, description) => { const p = await DB.createProject({ name, description }); await A.loadProjects(); await A.openProject(p.projectId); return p; };
+A.createProject = async (name, description) => { const p = await DB.createProject({ name, description }); const npdb = await DB.openProject(p.projectId); await DB.setMeta(npdb, 'projectProfile', PROFILE.makeProjectProfile()); npdb.close(); await A.loadProjects(); await A.openProject(p.projectId); A.show('profile'); return p; };
 
 A.importSnapshotFile = async (file) => { const text = await file.text(); const snap = JSON.parse(text); const p = await DB.importSnapshot(snap); await A.loadProjects(); await A.openProject(p.projectId); A.toast(`Projekt „${p.name}“ importiert`); };
 
@@ -173,9 +176,14 @@ A.refresh = () => {
   const has = !!A.state.project;
   A.el('empty-state').classList.toggle('hidden', has);
   document.querySelectorAll('.stage').forEach((s) => s.classList.toggle('hidden', !has || s.id !== `stage-${A.state.stage}`));
-  if (!has) { A.el('rail-stats').innerHTML = ''; ['definition', 'identification', 'analysis', 'requirements', 'reports'].forEach((k) => { A.el(`pct-${k}`).textContent = ''; }); return; }
+  if (!has) { A.el('rail-stats').innerHTML = ''; A.el('pct-profile').textContent = ''; A.el('profile-banner').classList.add('hidden'); ['definition', 'identification', 'analysis', 'requirements', 'reports'].forEach((k) => { A.el(`pct-${k}`).textContent = ''; }); return; }
   const st = M.projectStats({ hazards: A.state.hazards, requirements: A.state.requirements, functions: A.state.functions, sd: A.state.sd });
   A.state.stats = st;
+  const prof = A.state.projectProfile || {};
+  A.el('pct-profile').textContent = prof.confirmedAt ? '✓' : 'offen';
+  const banner = A.el('profile-banner');
+  banner.classList.toggle('hidden', !!prof.confirmedAt);
+  banner.innerHTML = prof.confirmedAt ? '' : `Projektprofil ${prof.origin === 'migrated' ? 'aus einem älteren Projektstand übernommen' : 'noch nicht bestätigt'} – bitte prüfen und bestätigen. <button class="btn link" type="button" onclick="window.RHAS_APP.show('profile')">zum Projektprofil</button>`;
   A.el('pct-definition').textContent = `${st.stageProgress.definition} %`; A.el('pct-identification').textContent = `${st.stageProgress.identification} %`; A.el('pct-analysis').textContent = `${st.stageProgress.analysis} %`; A.el('pct-requirements').textContent = `${st.stageProgress.requirements} %`; A.el('pct-reports').textContent = '';
   A.el('rail-stats').innerHTML = `<span>Funktionen</span><b>${st.functions.total}</b><span>Gefährdungen offen</span><b>${st.hazards.pending}</b><span>übernommen</span><b>${st.hazards.accepted}</b><span>bewertet</span><b>${st.hazards.evaluated}</b><span>Anforderungen</span><b>${st.requirements.total}</b><span>SRAC</span><b>${st.requirements.byCategory.srac || 0}</b>`;
   const mod = A.stages[A.state.stage];

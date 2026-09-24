@@ -159,6 +159,7 @@ function bindProposalButtons(h) {
 async function runBatch(list, kind) {
   if (A.state.run) { A.toast('Es läuft bereits ein KI-Lauf', 'err'); return; }
   const pre = await A.checkProvider(); if (!pre.ok) { A.toast(`KI-Anbieter nicht erreichbar: ${pre.error || pre.message || ''}`, 'err'); return; }
+  if (!A.aiAllowed()) return;
   const abort = new AbortController(); const runState = A.runState(); runState.tracker.start(Date.now());
   A.state.run = { abort, runState };
   const prog = A.el('an-progress'); prog.classList.remove('hidden'); A.el('btn-an-cancel').classList.remove('hidden');

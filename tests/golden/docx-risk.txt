@@ -45,7 +45,71 @@ Inhaltsverzeichnis
 1 Zweck und Geltungsbereich
 Ursachen, Unfallszenarien, Häufigkeit und Schadensausmaß, Risikoklasse, Entscheidung „weitgehend akzeptabel“, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und Restrisiko je Gefährdung (EN 50126-1:2017 6.3, 7.4.2.1, 7.4.3 a); EN 50126-2:2017 8.2–8.4).
 Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.
+Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: Demonstrationsprojekt; die Security-Betrachtung nach CLC/TS 50701 folgt mit der Security-Erweiterung des Werkzeugs.
 System: Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) (Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation). Zweck des Systems: Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.
+Projektprofil
+Merkmal
+ | Festlegung
+ | Bezug
+ | Rolle im Projekt
+ | Produktlieferant
+ | EN 50126-1 5.3.2; EN 50126-2 5.6
+ | Domäne
+ | Zugsteuerung, Zugsicherung und Signaltechnik (inkl. Warnsysteme)
+ | EN 50126-1 5.3.3
+ | Betrachtungsebene
+ | System (übergeordnet: Baustellensicherung Gleiserneuerung Reiden Süd (Infrastrukturbetreiberin, fiktiv))
+ | EN 50126-1 6.5.2
+ | Art des Sicherheitsnachweises
+ | Spezifische Anwendung
+ | EN 50129 7.3
+ | Art des Vorhabens
+ | Neuentwicklung
+ | EN 50126-1 6.5.3, 6.5.4
+ | Lebenszyklusumfang
+ | Phase 1 Konzept; Phase 2 Systemdefinition; Phase 3 Risikoanalyse und -bewertung; Phase 4 Systemanforderungen
+ | EN 50126-1 6.5.2
+ | RAMS-Umfang
+ | Sicherheit (S)
+ | EN 50126-1 7.4.2.1
+ | Zulässige Risikoakzeptanzprinzipien
+ | Anerkannte Regeln der Technik (CoP); Referenzsystem; Explizite Risikoabschätzung
+ | EN 50126-1 7.4.2.1; EN 50126-2 8.3
+ | Kalibrierung
+ | en50126-1-annex-c-default
+ | EN 50126-1 Anhang C.1
+ | Herkunft tolerierbarer Gefährdungsraten
+ | Vom Betreiber vorgegeben
+ | EN 50126-2 8.3, 10.2
+ | SIL-Anwendbarkeit
+ | Elektronische sicherheitsrelevante Funktionen (SIL anwendbar)
+ | EN 50126-2 10.2.1, 10.3
+ | Land
+ | Schweiz; Infrastrukturbetreiber: Infrastrukturbetreiberin (fiktiv)
+ | EN 50126-1 7.2.2 e)
+ | CSM-RA (VO (EU) 402/2013)
+ | Noch zu klären
+ | EN 50126-1 7.2.2 e)
+ | Security-Tiefe
+ | Stufe 0 – nicht betrachtet (Begründung erforderlich) – Begründung: Demonstrationsprojekt; die Security-Betrachtung nach CLC/TS 50701 folgt mit der Security-Erweiterung des Werkzeugs.
+ | EN 50126-1 5.5, 7.4.2.1 d); EN 50129 6.4
+ | Datenklassifizierung
+ | Öffentlich / fiktiv
+ |
+ | Bestätigt
+ | 24.09.2026 durch Demo
+ |
+ |
+Änderungen des Projektprofils
+Datum
+ | Bearbeiter
+ | Begründung
+ | Änderungen
+ | 24.09.2026
+ | Demo
+ | Erstbestätigung
+ |
+ |
 2 Normative Referenzen und Abkürzungen
 Referenzen
 Dokument

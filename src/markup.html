@@ -33,10 +33,11 @@
   <aside class="rail">
     <div class="rail-title">Arbeitsablauf</div>
     <nav id="rail-nav">
+      <button class="rail-btn" data-stage="profile"><span class="n">0</span><span class="t">Projektprofil<small>Einrichtung · EN 50126-1 6.5</small></span><span class="pct" id="pct-profile"></span></button>
       <button class="rail-btn" data-stage="definition"><span class="n">1</span><span class="t">Systemdefinition<small>EN 50126-1 7.3</small></span><span class="pct" id="pct-definition"></span></button>
       <button class="rail-btn" data-stage="identification"><span class="n">2</span><span class="t">Gefährdungsidentifikation<small>EN 50126-1 7.4.2.1</small></span><span class="pct" id="pct-identification"></span></button>
       <button class="rail-btn" data-stage="analysis"><span class="n">3</span><span class="t">Risikoanalyse &amp; -bewertung<small>EN 50126-1 7.4, EN 50126-2 8</small></span><span class="pct" id="pct-analysis"></span></button>
-      <button class="rail-btn" data-stage="requirements"><span class="n">4</span><span class="t">Sicherheitsanforderungen<small>SRS · 7.5, EN 50129 5.3.7</small></span><span class="pct" id="pct-requirements"></span></button>
+      <button class="rail-btn" data-stage="requirements"><span class="n">4</span><span class="t">Sicherheitsanforderungen<small>EN 50126-1 7.5, EN 50129 5.3.7</small></span><span class="pct" id="pct-requirements"></span></button>
       <button class="rail-btn" data-stage="reports"><span class="n">5</span><span class="t">Berichte &amp; Export<small>DOCX · XLSX · PDF</small></span><span class="pct" id="pct-reports"></span></button>
     </nav>
     <div class="rail-stats" id="rail-stats"></div>
@@ -49,12 +50,26 @@
   <main id="main">
     <div id="empty-state" class="empty hidden">
       <h2>Kein Projekt ausgewählt</h2>
-      <p>Legen Sie ein Projekt an, importieren Sie ein Projekt (JSON) oder laden Sie das Beispielprojekt (Bahnübergangssicherungsanlage), um alle fünf Stufen mit Daten zu sehen.</p>
+      <p>Legen Sie ein Projekt an, importieren Sie ein Projekt (JSON) oder laden Sie das Beispielprojekt (automatisches Warnsystem Minimel Lynx), um alle fünf Stufen mit Daten zu sehen.</p>
       <div class="row"><button id="empty-new" class="btn primary" type="button">Neues Projekt</button><button id="empty-demo" class="btn" type="button">Beispielprojekt laden</button></div>
     </div>
 
+    <!-- Stage 0 -->
+    <section id="stage-profile" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Projektprofil</h2><span class="sub">Rolle, Domäne, Art des Sicherheitsnachweises, Risikoakzeptanz, Rahmen, Security-Tiefe und Datenklassifizierung — einmal zu Projektbeginn festgelegt, danach nur mit Begründung geändert.</span></div>
+        <div class="toolbar"><span id="profile-status" class="badge"></span></div>
+      </div>
+      <div id="profile-findings"></div>
+      <form id="profile-form" class="form-grid" onsubmit="return false"></form>
+      <div id="profile-actions" class="panel"></div>
+      <h3>Änderungsverlauf</h3>
+      <table class="grid" id="tbl-profile-log"><thead><tr><th>Datum</th><th>Bearbeiter</th><th>Begründung</th><th>Änderungen</th></tr></thead><tbody></tbody></table>
+    </section>
+
     <!-- Stage 1 -->
     <section id="stage-definition" class="stage hidden">
+      <div id="profile-banner" class="warn hidden"></div>
       <div class="stage-head">
         <div><h2>Systemdefinition</h2><span class="sub">System, Grenze, Betrieb, Funktionen und Schnittstellen — Grundlage jeder Gefährdungsidentifikation (EN 50126-1 7.3.2.1).</span></div>
         <div class="toolbar">

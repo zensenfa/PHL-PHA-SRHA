@@ -212,6 +212,54 @@
    "depth": "standard",
    "overrides": {},
    "sources": null
+  },
+  "projectProfile": {
+   "schema": "rhas-profile/1",
+   "role": "supplier",
+   "domain": "ccs",
+   "systemLevel": "system",
+   "superiorSystem": "Baustellensicherung Gleiserneuerung Reiden Süd (Infrastrukturbetreiberin, fiktiv)",
+   "safetyCaseType": "specificApplication",
+   "changeType": "new",
+   "lifecyclePhases": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "ramsScope": "safety",
+   "calibrationId": "en50126-1-annex-c-default",
+   "permittedRaps": [
+    "cop",
+    "reference",
+    "ere"
+   ],
+   "thrSource": "dutyHolder",
+   "silApplicability": "yes",
+   "country": "CH",
+   "infrastructureManager": "Infrastrukturbetreiberin (fiktiv)",
+   "csmRa": "unclear",
+   "security": {
+    "level": 0,
+    "standard": "ts50701-2023",
+    "justification": "Demonstrationsprojekt; die Security-Betrachtung nach CLC/TS 50701 folgt mit der Security-Erweiterung des Werkzeugs."
+   },
+   "report": {
+    "language": "de",
+    "template": "standard"
+   },
+   "dataClassification": "public",
+   "confirmedAt": "2026-09-24T08:00:00.000Z",
+   "confirmedBy": "Demo",
+   "origin": "wizard",
+   "changeLog": [
+    {
+     "at": "2026-09-24T08:00:00.000Z",
+     "by": "Demo",
+     "reason": "Erstbestätigung",
+     "changes": []
+    }
+   ]
   }
  },
  "functions": [

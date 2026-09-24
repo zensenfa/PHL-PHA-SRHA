@@ -7,6 +7,7 @@
   ],
   "modules": [
     "src/model.js",
+    "src/profile.js",
     "src/schemas.js",
     "src/prompts.js",
     "src/ollama.js",
@@ -20,6 +21,7 @@
     "src/db.js",
     "src/reports.js",
     "src/ui/app-core.js",
+    "src/ui/app-profile.js",
     "src/ui/app-definition.js",
     "src/ui/app-identification.js",
     "src/ui/app-analysis.js",

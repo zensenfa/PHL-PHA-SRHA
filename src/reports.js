@@ -7,6 +7,7 @@
 (function () {
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const DOCX = typeof require !== 'undefined' ? require('./docx.js') : window.RHAS_DOCX;
+const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
 
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
@@ -35,6 +36,18 @@ const DELIVERABLES = {
 };
 const KIND_ALIASES = { phl: 'hazid', pha: 'risk' };
 const resolveKind = (kind) => KIND_ALIASES[kind] || kind;
+/** WP2: security depth from the project profile (level 0 needs a justification). */
+function securityNote(b) {
+  const sec = (b.profile && b.profile.security) || { level: 0 };
+  if (Number(sec.level) === 0) return `Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: ${sec.justification || '(fehlt)'}`;
+  return `Security: ${PROFILE.label('security.level', sec.level)}.`;
+}
+function specProfile(b) {
+  return { key: 'profile', title: 'Projektprofil', columns: [{ header: 'Merkmal', width: 0.28 }, { header: 'Festlegung', width: 0.52 }, { header: 'Bezug', width: 0.2 }], rows: PROFILE.summaryRows(b.profile).concat([['Bestätigt', b.profile.confirmedAt ? `${dateDe(b.profile.confirmedAt)}${b.profile.confirmedBy ? ` durch ${b.profile.confirmedBy}` : ''}` : 'nicht bestätigt', '']]) };
+}
+function specProfileLog(b) {
+  return { key: 'profileLog', title: 'Änderungen des Projektprofils', columns: [{ header: 'Datum', width: 0.14 }, { header: 'Bearbeiter', width: 0.16 }, { header: 'Begründung', width: 0.3 }, { header: 'Änderungen', width: 0.4 }], rows: (b.profile.changeLog || []).map((e) => [dateDe(e.at), nz(e.by), nz(e.reason), join((e.changes || []).map((c) => `${c.field}: ${c.from || '–'} → ${c.to || '–'}`))]) };
+}
 const SCOPE_NOTE = 'Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.';
 
 // ------------------------------------------------------------ table specs ----
@@ -185,7 +198,7 @@ function sections(kind, b) {
   const d = DELIVERABLES[kind];
   const st = b.stats;
   const common = [
-    { heading: '1 Zweck und Geltungsbereich', paragraphs: [d.purpose, SCOPE_NOTE, `System: ${b.sd.name || '(ohne Namen)'} (${b.sd.type || ''}). Zweck des Systems: ${b.sd.purpose || '–'}`, b.docControl.purpose || ''] },
+    { heading: '1 Zweck und Geltungsbereich', paragraphs: [d.purpose, SCOPE_NOTE, securityNote(b), `System: ${b.sd.name || '(ohne Namen)'} (${b.sd.type || ''}). Zweck des Systems: ${b.sd.purpose || '–'}`, b.docControl.purpose || ''], specs: [specProfile(b), specProfileLog(b)] },
     { heading: '2 Normative Referenzen und Abkürzungen', specs: [{ key: 'refs', title: 'Referenzen', columns: [{ header: 'Dokument', width: 0.22 }, { header: 'Titel', width: 0.78 }], rows: REFERENCES }, { key: 'acr', title: 'Abkürzungen', columns: [{ header: 'Abkürzung', width: 0.15 }, { header: 'Bedeutung', width: 0.85 }], rows: ACRONYMS }] },
     { heading: '3 Systemdefinition (EN 50126-1 7.3.2.1, Anhang D)', paragraphs: [b.sdValidation.ok ? 'Das normative Minimum der Systemdefinition (7.3.2.1 a) bis e)) ist dokumentiert.' : `Hinweis: ${b.sdValidation.findings.filter((f) => f.level === 'error').length} normative Angaben der Systemdefinition fehlen (siehe Tabelle, mit (N) markierte Felder).`], specs: [specSystemDefinition(b), specFunctions(b), specInterfaces(b), { key: 'subs', title: 'Teilsysteme', columns: [{ header: 'Teilsystem', width: 0.3 }, { header: 'Beschreibung', width: 0.7 }], rows: (b.subsystems || []).map((s) => [s.name, s.description]) }, specDocuments(b)] },
   ];
@@ -269,6 +282,7 @@ function buildXlsx(b) {
   const wb = X.utils.book_new();
   const add = (name, spec) => { const aoa = [spec.columns.map((c) => c.header), ...spec.rows.map((r) => r.map(cellText))]; const ws = X.utils.aoa_to_sheet(aoa); ws['!cols'] = spec.columns.map((c, i) => ({ wch: Math.min(80, Math.max(10, ...aoa.map((r) => String(r[i] || '').length / 1.6))) })); ws['!freeze'] = { xSplit: 0, ySplit: 1 }; X.utils.book_append_sheet(wb, ws, name.slice(0, 31)); };
   add('Dokument', { columns: [{ header: 'Feld' }, { header: 'Wert' }], rows: docControlRows(b, DELIVERABLES.full) });
+  add('Projektprofil', specProfile(b));
   add('Systemdefinition', specSystemDefinition(b));
   add('Funktionen', specFunctions(b));
   add('Schnittstellen', specInterfaces(b));
@@ -325,13 +339,13 @@ ${body}
 }
 
 // ---------------------------------------------------------------- bundle ----
-function makeBundle({ project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
+function makeBundle({ profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
   const exportedAt = new Date().toISOString();
   const stats = M.projectStats({ hazards, requirements, functions, sd });
   const coverage = M.coverage({ hazards, functions, interfaces, sources: data.sources, guidewords: data.guidewords, modes: data.modes.filter((m) => (sd.modes || []).includes(m.id)), runs });
   const trace = M.traceability({ hazards, requirements, functions });
   const sdValidation = M.validateSystemDefinition(sd, functions);
-  return { project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
+  return { profile: PROFILE.migrateProfile(profile), project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
 }
 
 const api = { DELIVERABLES, KIND_ALIASES, resolveKind, makeBundle, sections, buildDocx, buildXlsx, buildPrintHtml };

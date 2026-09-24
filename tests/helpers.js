@@ -24,7 +24,7 @@ function loadProject(name) {
 function bundleFrom(snap) {
   const meta = snap.meta || {};
   const b = R.makeBundle({
-    project: snap.project, docControl: meta.docControl || {}, sd: meta.systemDefinition,
+    profile: meta.projectProfile, project: snap.project, docControl: meta.docControl || {}, sd: meta.systemDefinition,
     functions: snap.functions || [], interfaces: meta.interfaces || [], subsystems: meta.subsystems || [],
     hazards: snap.hazards || [], requirements: snap.requirements || [], ccas: snap.ccas || [], runs: meta.runs || [],
     calibration: meta.calibration || M.data().calibration, data: M.data(), version: 'test',

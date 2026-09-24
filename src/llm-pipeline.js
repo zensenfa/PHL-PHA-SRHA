@@ -108,6 +108,7 @@ function createRunState(capOverrides) {
 
 /** One seam for both providers — everything downstream (runPass, the identification orchestration in engine.js) is provider-agnostic. */
 async function callLlm({ provider, settings, systemPrompt, userPrompt, schema, signal, onToken }) {
+  if (settings && settings.blockedReason) throw new Error(settings.blockedReason); // WP2: data classification
   if (provider === 'mistral-api') {
     return MISTRAL.callMistral({ systemPrompt, userPrompt, apiKey: settings.mistralApiKey, model: settings.mistralModel, signal, schema, onToken });
   }

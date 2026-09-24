@@ -5,6 +5,7 @@
 // is German. Nothing here asks the model for a risk class, a THR or a SIL.
 (function () {
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
+const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
 
 const ROLE = 'Du bist ein erfahrener Sicherheitsingenieur für Bahnsysteme (EN 50126-1/-2:2017, EN 50129:2018) und arbeitest präzise, konkret und systemspezifisch. Du schreibst ausschließlich Deutsch (Feldnamen bleiben Englisch). Du erfindest keine Fakten über das System; wo Informationen fehlen, formulierst du die Annahme ausdrücklich.';
 
@@ -25,10 +26,12 @@ function fmtList(items, fmt) {
 }
 
 /** Full system context block. sd = system definition, fns/ifs = records, docs = retrieved excerpts (string). */
-function contextBlock({ sd, functions, interfaces, modes, docs, calibration }) {
+function contextBlock(ctx) {
+  const { sd, functions, interfaces, modes, docs } = ctx;
   const s = sd || {};
   const modeList = (modes || []).filter((m) => (s.modes || []).includes(m.id)).map((m) => `${m.id} = ${m.label}`).join(', ');
-  return `SYSTEM: ${s.name || '(ohne Namen)'} — ${s.type || ''}
+  const prof = PROFILE && ctx.profile ? PROFILE.promptLine(ctx.profile) : '';
+  return `${prof ? prof + '\n' : ''}SYSTEM: ${s.name || '(ohne Namen)'} — ${s.type || ''}
 ZWECK: ${s.purpose || '-'}
 MISSIONSPROFIL: ${s.missionProfile || '-'}
 BESCHREIBUNG: ${s.description || '-'}

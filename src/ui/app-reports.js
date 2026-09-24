@@ -16,7 +16,7 @@ function renderDocControl() {
   A.el('btn-cal-approve').onclick = async () => { const c = { ...cal, approvedBy: A.el('cal-approved').value.trim(), approvedAt: M.nowIso() }; A.state.calibration = c; await DB.setMeta(A.state.pdb, 'calibration', c); renderDocControl(); A.toast('Kalibrierungsfreigabe gespeichert'); };
 }
 
-function bundle() { return R.makeBundle({ project: A.state.project, docControl: A.state.docControl, sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, subsystems: A.state.subsystems, hazards: A.state.hazards, requirements: A.state.requirements, ccas: A.state.ccas, runs: A.state.runs, calibration: A.calibration(), data: DATA, version: window.RHAS_VERSION }); }
+function bundle() { return R.makeBundle({ profile: A.state.projectProfile, project: A.state.project, docControl: A.state.docControl, sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, subsystems: A.state.subsystems, hazards: A.state.hazards, requirements: A.state.requirements, ccas: A.state.ccas, runs: A.state.runs, calibration: A.calibration(), data: DATA, version: window.RHAS_VERSION }); }
 function fileBase(code) { const dc = A.state.docControl; return `${A.slug(dc.docId || code)}_Rev${A.slug(dc.revision || 'A')}_${A.slug(A.state.sd.name || A.state.project.name)}`; }
 
 function renderExports() {

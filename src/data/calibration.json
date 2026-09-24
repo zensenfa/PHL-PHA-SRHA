@@ -1,0 +1,162 @@
+{
+  "id": "en50126-1-annex-c-default",
+  "version": 1,
+  "title": "Standardkalibrierung nach EN 50126-1:2017 Anhang C (informativ)",
+  "source": "EN 50126-1:2017, Tabellen C.1 (Häufigkeit), C.4 (Schadensausmaß), C.8 (Risikoakzeptanzkategorien), C.9 (Risikomatrix). Anhang C ist informativ; nach C.1 legt der Eisenbahnbetreiber Anzahl und Skalierung der Kategorien fest.",
+  "approvedBy": "",
+  "approvedAt": "",
+  "note": "Die Matrix wird auf die Häufigkeit und das Schadensausmaß des UNFALLS (nicht der Gefährdung) angewendet. Häufigkeiten beziehen sich auf eine einzelne Instanz des Systems/der Funktion.",
+  "frequencies": [
+    {
+      "id": "frequent",
+      "label": "Häufig",
+      "definition": "Tritt voraussichtlich häufig auf; wird regelmäßig erlebt.",
+      "range": "mehr als einmal in ca. 6 Wochen (bei 24 h/Tag Betrieb)",
+      "perHour": {
+        "min": 0.001,
+        "max": null
+      }
+    },
+    {
+      "id": "probable",
+      "label": "Wahrscheinlich",
+      "definition": "Tritt mehrmals auf; ist oft zu erwarten.",
+      "range": "ca. einmal in 6 Wochen bis einmal pro Jahr",
+      "perHour": {
+        "min": 0.0001,
+        "max": 0.001
+      }
+    },
+    {
+      "id": "occasional",
+      "label": "Gelegentlich",
+      "definition": "Tritt voraussichtlich mehrmals in der Lebensdauer auf.",
+      "range": "ca. einmal pro Jahr bis einmal in 10 Jahren",
+      "perHour": {
+        "min": 1e-05,
+        "max": 0.0001
+      }
+    },
+    {
+      "id": "rare",
+      "label": "Selten",
+      "definition": "Tritt voraussichtlich irgendwann in der Systemlebensdauer auf; ist vernünftigerweise zu erwarten.",
+      "range": "ca. einmal in 10 Jahren bis einmal in 1 000 Jahren",
+      "perHour": {
+        "min": 1e-07,
+        "max": 1e-05
+      }
+    },
+    {
+      "id": "improbable",
+      "label": "Unwahrscheinlich",
+      "definition": "Unwahrscheinlich, aber möglich; kann ausnahmsweise auftreten.",
+      "range": "ca. einmal in 1 000 Jahren bis einmal in 100 000 Jahren",
+      "perHour": {
+        "min": 1e-09,
+        "max": 1e-07
+      }
+    },
+    {
+      "id": "highlyImprobable",
+      "label": "Höchst unwahrscheinlich",
+      "definition": "Äußerst unwahrscheinlich; es wird angenommen, dass es nicht auftritt.",
+      "range": "einmal in ca. 100 000 Jahren oder seltener",
+      "perHour": {
+        "min": null,
+        "max": 1e-09
+      }
+    }
+  ],
+  "severities": [
+    {
+      "id": "catastrophic",
+      "label": "Katastrophal",
+      "persons": "Betrifft eine große Anzahl von Personen und führt zu mehreren Todesfällen und/oder extremem Umweltschaden.",
+      "service": "Jede der nachfolgenden Folgen, sofern Personen oder Umwelt betroffen sind."
+    },
+    {
+      "id": "critical",
+      "label": "Kritisch",
+      "persons": "Betrifft eine sehr kleine Anzahl von Personen und führt zu mindestens einem Todesfall und/oder großem Umweltschaden.",
+      "service": "Verlust eines Hauptsystems."
+    },
+    {
+      "id": "marginal",
+      "label": "Marginal",
+      "persons": "Kein Todesfall möglich; schwere oder leichte Verletzungen und/oder geringer Umweltschaden.",
+      "service": "Schwerer Schaden an System(en)."
+    },
+    {
+      "id": "insignificant",
+      "label": "Unbedeutend",
+      "persons": "Möglicherweise leichte Verletzung.",
+      "service": "Geringer Systemschaden."
+    }
+  ],
+  "riskClasses": [
+    {
+      "id": "Intolerable",
+      "label": "Untragbar",
+      "action": "Das Risiko muss beseitigt werden.",
+      "rank": 4
+    },
+    {
+      "id": "Undesirable",
+      "label": "Unerwünscht",
+      "action": "Nur akzeptabel, wenn eine Risikoreduktion nicht praktikabel ist, und mit Zustimmung der Betreiber bzw. der zuständigen Sicherheitsbehörde.",
+      "rank": 3
+    },
+    {
+      "id": "Tolerable",
+      "label": "Tragbar",
+      "action": "Tolerierbar und akzeptabel mit angemessener Kontrolle (z. B. Instandhaltungsverfahren oder Regeln) und mit Zustimmung der zuständigen Betreiber.",
+      "rank": 2
+    },
+    {
+      "id": "Negligible",
+      "label": "Vernachlässigbar",
+      "action": "Akzeptabel ohne Zustimmung der Betreiber.",
+      "rank": 1
+    }
+  ],
+  "matrix": {
+    "frequent": {
+      "catastrophic": "Intolerable",
+      "critical": "Intolerable",
+      "marginal": "Intolerable",
+      "insignificant": "Undesirable"
+    },
+    "probable": {
+      "catastrophic": "Intolerable",
+      "critical": "Intolerable",
+      "marginal": "Undesirable",
+      "insignificant": "Tolerable"
+    },
+    "occasional": {
+      "catastrophic": "Intolerable",
+      "critical": "Undesirable",
+      "marginal": "Undesirable",
+      "insignificant": "Tolerable"
+    },
+    "rare": {
+      "catastrophic": "Undesirable",
+      "critical": "Undesirable",
+      "marginal": "Tolerable",
+      "insignificant": "Negligible"
+    },
+    "improbable": {
+      "catastrophic": "Undesirable",
+      "critical": "Tolerable",
+      "marginal": "Negligible",
+      "insignificant": "Negligible"
+    },
+    "highlyImprobable": {
+      "catastrophic": "Tolerable",
+      "critical": "Negligible",
+      "marginal": "Negligible",
+      "insignificant": "Negligible"
+    }
+  },
+  "equivalentFatality": "Beispielgewichtung nach C.1: 1 Todesfall ≈ 10 schwere Verletzungen ≈ 100 leichte Verletzungen (mit dem Betreiber zu vereinbaren)."
+}

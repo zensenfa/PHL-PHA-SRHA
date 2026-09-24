@@ -1,0 +1,515 @@
+{
+ "schemaVersion": "rhas-project/1.0",
+ "exportedAt": "2026-09-22T08:00:00.000Z",
+ "project": {
+  "name": "Demo Schweizer Electronic – Minimel Lynx ATWS, Gleiserneuerung Reiden Süd (Stufe 1)",
+  "description": "Vorläufige Gefährdungs- und Risikoanalyse für den temporären Einsatz des Minimel Lynx ATWS (fiktives Projekt, Demonstration)."
+ },
+ "meta": {
+  "systemDefinition": {
+   "name": "Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600)",
+   "type": "Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation",
+   "purpose": "Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.",
+   "missionProfile": "Gleiserneuerung Gleis 2 auf 1,6 km während 8 Wochen (fiktiv KW 42–49), überwiegend Nachtschichten 22:00–06:00 sowie einzelne Wochenendschichten am Tag. Zwei Warnsektoren à 800 m (Sektor 1 km 58,000–58,800, Sektor 2 km 58,800–59,600). Das Nachbargleis 1 bleibt im Gleiswechselbetrieb in beiden Richtungen befahren: Reisezüge bis 140 km/h (tagsüber ca. 6 Züge/h je Richtung), Güterzüge bis 100 km/h (nachts ca. 2–3 Züge/h). Einsatz von Zweiwegebaggern, Stopfmaschine, Schotterbettreinigung und Thermit-Schweissarbeiten; bis zu 45 Personen gleichzeitig im Baustellenbereich.",
+   "description": "Die Zugerkennung erfolgt an zwei Einschaltstellen auf Gleis 1: Einschaltstelle Süd (für Fahrten Richtung Süd) bei km 57,050 mit zwei mechanischen Schienenkontakten RSK89 und Einschaltstelle Nord (für Fahrten Richtung Nord) bei km 60,550 mit einem RSK89 und einem induktiven Schienenkontakt RSR123. Die Schienenkontakte sind an Funksender HSF-L angeschlossen, die die Zugannäherung per Funk an die Zentrale EZE-L (km 58,800, feldseitig) übertragen; wegen Funkabschattung durch Kurve und Lärmschutzwand ist bei km 59,250 ein HSF-L als Repeater eingesetzt. Die EZE-L löst die Warnung in beiden Sektoren aus: in Sektor 1 über 8 kabelgebundene Warneinheiten AW126-L (Brückenbereich), in Sektor 2 über 10 funkbasierte Warneinheiten EWK-L. Alle Starktonhörner passen die Lautstärke mit ALADIN über das eingebaute Mikrofon automatisch zwischen 96 und 126 dB an den Umgebungslärm an. Zusätzlich warnen 12 Personenwarngeräte EPW und Maschinenwarnkombinationen MWK an Stopfmaschine und Zweiwegebagger; die MWK wechselt über die Automatische Sektorumschaltung (ASU) den Warnsektor ohne Zutun des Maschinenführers. Das Ende der Zugfahrt wird an den Ausschaltstellen (km 59,650 für Fahrten Richtung Süd, km 57,950 für Fahrten Richtung Nord, je HSF-L mit RSK89) automatisch erkannt oder vom Sicherheitschef nach Sichtkontrolle an der EZE-L quittiert. Kabelgebundene Geräte werden über die Lynx Power Box (230 V Baustrom) versorgt, funkbasierte Geräte über wiederaufladbare Akkus für eine Arbeitsschicht.",
+   "includedFunctions": "Zugfahrt an der Einschaltstelle erkennen; Einschaltmeldung per Funk (inkl. Repeater) an die Zentrale übertragen; Warnung in der Zentrale EZE-L auslösen und verwalten (Zugzählung, Zugfolge, Zugkreuzung, Sektoren); akustische und optische Warnung an den Warneinheiten ausgeben; Warnlautstärke automatisch an den Umgebungslärm anpassen (ALADIN); Warnung an Personenwarngeräten EPW und Maschinenwarnkombinationen MWK ausgeben; Warnsektor der Maschinen automatisch umschalten (ASU); Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden; Warnung manuell auslösen und quittieren; Funkstrecken und Geräte überwachen und Störung melden; Anlage mit Energie versorgen; Anlage projektieren, aufbauen, prüfen und abbauen.",
+   "excludedFunctions": "Sperrung und Sicherung des Arbeitsgleises 2 (Aufgabe der Infrastrukturbetreiberin/Stellwerk); Zugbeeinflussung und Geschwindigkeitsbeschränkungen auf Gleis 1; Warnung vor Fahrten auf dem gesperrten Arbeitsgleis 2 (Baufahrzeuge, Arbeitszüge – separat über die Bauleitung geregelt); feste Abschrankungen zum Nachbargleis; Arbeitsverfahren und Führung der Baumaschinen; Erste Hilfe und Rettungskonzept.",
+   "lifetime": "Gerätelebensdauer der Komponenten ca. 10 Jahre bei periodischer Wartung; Einsatzdauer in diesem Projekt 8 Wochen.",
+   "boundary": "Innerhalb: Schienenkontakte RSK89/RSR123 inkl. Befestigung, Funksender HSF-L (Ein-, Ausschaltstellen, Repeater), Zentrale EZE-L mit Parametrierung, Warneinheiten AW126-L und EWK-L mit ALADIN, Personenwarngeräte EPW, MWK mit ASU, Lynx Power Box, Akkus und Ladegeräte, Kabel der AW126-L. Ausserhalb (Schnittstellen): Nachbargleis 1 und die darauf verkehrenden Züge; Stellwerk und Fahrdienstleitung der Infrastrukturbetreiberin (Sperrung Gleis 2, Sicherung Spurwechsel W 12/13, Meldung von Sonder- und Langsamfahrten); Gleisfreimeldeanlagen/Achszähler; Funkumgebung (Abschattung, Fremdstörer, weitere Lynx-Anlagen); Sicherheitschef und Sicherungspersonal; Baupersonal und Maschinenführer; Baumaschinen (Lärm, EMV, mechanische Einwirkung); Baustromversorgung; Fahrleitung 15 kV/16,7 Hz; Umgebung (Witterung, Anwohner); Aufbau- und Instandhaltungspersonal (M2S).",
+   "location": "Freie Strecke südlich Reiden (fiktive Kilometrierung), Doppelspur, Gleisabstand 4,0 m. Baustelle km 58,000–59,600: gerade bis km 59,050, danach Kurve R = 900 m mit eingeschränkter Sicht; Brücke über die Wigger bei km 58,440–58,500 ohne seitlichen Sicherheitsraum auf der Gleis-1-Seite; Lärmschutzwand km 59,100–59,600 feldseitig (Funk- und Schallreflexion). Spurwechsel W 12/13 bei km 60,150 zwischen Baustellenende und Einschaltstelle Nord. Zentrale EZE-L bei km 58,800 an der Sektorgrenze; Repeater bei km 59,250. Nachbarn: Wohnbebauung in ca. 150 m Entfernung (Lärmemission in der Nacht).",
+   "physicalEnvironment": "Aussenaufstellung im Herbst/Winter: −15 °C bis +30 °C, Regen, Nebel, Schnee und Vereisung, Laub auf den Schienen. Baumaschinenlärm bis 105 dB(A) an Stopfmaschine, Schotterreinigung und Trennschleifer, kurze Lärmspitzen durch Schlagschrauber direkt am Arbeitsplatz. Vibration und Stoss an den Schienenkontakten (Überfahrten bis 140 km/h, Stopfarbeiten). Funkumgebung mit Abschattung durch Kurve, Lärmschutzwand, Brückenträger und abgestellte Fahrzeuge; Beeinflussung durch Fahrleitung 15 kV/16,7 Hz, Rückstrom, Schweissgeräte; Blitzgefährdung; Akkukapazität sinkt bei Kälte.",
+   "infrastructureConstraints": "Keine feste Stromversorgung – Baustromverteiler bei km 58,800; funkbasierte Geräte nur mit Akkus. Einschaltstellen müssen im Betriebsgleis 1 montiert werden (Montage nur in Zugpausen unter Sicherung). Die Brücke über die Wigger erlaubt keine Aufstellung von Warneinheiten auf der Gleis-1-Seite. Achszähler und Gleisfreimeldung dürfen durch die Schienenkontakte nicht beeinflusst werden. Der Spurwechsel W 12/13 liegt innerhalb der Einschaltdistanz Nord. Funkverbindung von der Einschaltstelle Nord zur EZE-L nur über Repeater zuverlässig.",
+   "assumptions": "A1: Höchstgeschwindigkeit auf Gleis 1 im Baustellenbereich 140 km/h; keine Langsamfahrstelle. A2: Erforderliche Mindestwarnzeit 20 s (Räumzeit 12 s + Reaktionszeit 3 s + Sicherheitszuschlag 5 s), maximale Warnzeit 60 s (Projektvorgabe der Infrastrukturbetreiberin). A3: Der Spurwechsel W 12/13 wird während der Arbeiten im Stellwerk gegen Umstellen gesichert; Nordfahrten wechseln bereits im Bahnhof Süd (km 61,800) auf Gleis 1. A4: Die Akkus der Funkgeräte reichen für eine Schicht von 8 h bei Temperaturen bis −15 °C (Projektannahme, Nachweis ausstehend). A5: Die Schienenkontakte beeinflussen Achszähler und Gleisfreimeldung nicht. A6: ALADIN stellt an jedem Arbeitsplatz einen Warnpegel mindestens 3 dB(A) über dem Umgebungspegel ein; bei kurzen Lärmspitzen direkt am Arbeitsplatz ausserhalb der Mikrofonreichweite ist dies nicht separat nachgewiesen. A7: Keine weitere Lynx-Anlage arbeitet im Funkbereich auf derselben Frequenz ohne Abstimmung.",
+   "operatingStrategy": "Aufbau und Inbetriebnahme durch geschultes M2S-Personal vor dem ersten Einsatz inklusive Funkausleuchtung; vor jeder Schicht Funktionsprüfung mit Probewarnung in beiden Sektoren, Kontrolle der Hörbarkeit, der EPW und der MWK durch den Sicherheitschef; Betrieb im Automatikmodus während der gesamten Schicht. Bei Störung sofortiges Verlassen des Gefahrenbereichs und Wechsel auf die Rückfallebene (Vorwärter mit HSF-L-Handauslösung) oder Einstellung der Arbeiten im Gefahrenbereich von Gleis 1. Umstellen von Warneinheiten bei Baufortschritt nur durch berechtigtes Personal mit anschliessender Teilprüfung.",
+   "operatingConditions": "Bedienung der EZE-L nur durch den ausgebildeten Sicherheitschef mit Lynx-Bedienerschulung (Lynx Operator). Aufbau, Umbau und Parametrierung nur durch M2S-Personal. Alle Personen im Gleisbereich sind unterwiesen, tragen Warnkleidung und Gehörschutz mit Signalhörbarkeit; Personal mit Einzelarbeitsplätzen (Schweisser, Vermessung) trägt ein EPW. Bei jeder Warnung wird die Arbeit sofort unterbrochen und der Sicherheitsraum feldseitig aufgesucht. Arbeiten im Gefahrenbereich von Gleis 1 nur bei funktionsfähiger Warnanlage. Schichtübergabe mit dokumentierter Übergabe des Anlagen- und Akkuzustands.",
+   "personnel": "Gefährdet sind das Baupersonal (bis 45 Personen), Maschinenführer, der Sicherheitschef und Sicherungsposten sowie M2S-Personal beim Auf- und Umbau im Gleisbereich; bei einer Kollision mit einer Maschine im Lichtraum zusätzlich Lokpersonal und Reisende auf Gleis 1. Die Öffentlichkeit ist durch die Lärmemission der Warnsignale betroffen (durch ALADIN reduziert).",
+   "humanActivitiesExcludedReason": "Nicht zutreffend – menschliche Tätigkeiten (Bedienung, Aufbau, Prüfung, Akkuwechsel, Reaktion auf die Warnung) werden vollständig betrachtet.",
+   "maintenanceStrategy": "Tägliche Sicht- und Funktionsprüfung (Schienenkontakte, HSF-L, Warneinheiten, EPW, MWK, Akkuzustand) vor Schichtbeginn gemäss Prüfliste; Akkuwechsel bzw. Laden zwischen den Schichten; wöchentliche Kontrolle der Befestigung der Schienenkontakte; Austausch defekter Komponenten nur durch M2S-Personal mit anschliessender Teilprüfung; gesetzlich vorgeschriebene periodische Wartung der Geräte durch Schweizer Electronic; keine Änderung der Parametrierung vor Ort ohne Freigabe.",
+   "logistics": "Anlieferung der Geräte aus dem Lager Reiden; Ersatzgeräte (2 EWK-L, 1 HSF-L, 2 RSK89, 3 EPW, 10 Wechselakkus) und Ladestation im Baustellencontainer; 24/7-Hotline M2S für Störungen.",
+   "pastExperience": "Branchenerfahrung: Unfälle im Gleisbereich entstehen überwiegend durch fehlende, zu späte oder nicht wahrgenommene Warnungen, durch Arbeiten bei abgeschalteter oder gestörter Warnanlage und durch Fehlverhalten nach der Warnung. Störungsauswertung vergleichbarer Lynx-Einsätze (Referenzdokument LYNX-BE-04): Funkabschattungen in Kurven und an Lärmschutzwänden, Akkuprobleme bei Kälte und verlängerten Schichten, gelockerte Schienenkontakte nach Stopfarbeiten, Fehlwarnungen durch Bauzüge, vergessene EPW-Ladung, verzögerte Sektorumschaltung von Maschinen.",
+   "existingSafetyMeasures": "Sicherheitsgerichtete Auslegung (Überwachung der Funkstrecken mit Störungsmeldung, fehlende Lebenszeichen führen zur Störungswarnung); diversitäre Schienenkontakte an der Einschaltstelle Nord (RSK89 mechanisch + RSR123 induktiv); Repeater für die abgeschattete Funkstrecke; Einschaltdistanz für 140 km/h mit Zuschlag projektiert; ALADIN-Lautstärkeanpassung; tägliche Funktionsprüfung mit Probewarnung; manuelle Auslösung als Rückfallebene; betriebliche Sicherung des Spurwechsels W 12/13 (Annahme, Bestätigung der Infrastrukturbetreiberin ausstehend). Annahme für den Umfang: Das Arbeitsgleis 2 ist gesperrt; Gefährdungen aus Fahrten auf Gleis 2 werden nicht betrachtet.",
+   "applicableStandards": "EN 50126-1:2017, EN 50126-2:2017, EN 50129:2018, EN 50716:2023 (Software), EN 50159 (sicherheitsrelevante Kommunikation in offenen Übertragungssystemen – Funk), EN 16704-1 (Sicherheitsmassnahmen bei Arbeiten im Gleisbereich), EN 16704-2-1 (Anforderungen an Warnsysteme), EN 50121-4 (EMV), ETSI EN 300 220 (Funk), EN 60529, Regelwerk der Infrastrukturbetreiberin für Arbeiten im Gleisbereich (z. B. R RTE 20100).",
+   "referenceSystems": "Minimel Lynx ATWS in Standardkonfiguration mit Freigabe durch Infrastrukturbetreiber (u. a. in der Liste freigegebener automatischer Warnsysteme der DB Netz AG geführt); vergleichbare Gleiserneuerungsprojekte mit Lynx und ASU auf Doppelspurstrecken.",
+   "legalFramework": "Eisenbahngesetz (EBG) und Eisenbahnverordnung (EBV); Bauarbeitenverordnung (BauAV); Verordnung über die Unfallverhütung (VUV) und SUVA-Regeln für Arbeiten im Gleisbereich; Fernmeldegesetz / Funkkonzessionen (BAKOM); Fahrdienstvorschriften (FDV); Regelwerk der Infrastrukturbetreiberin.",
+   "deviationsFromReference": "Gegenüber dem Standardeinsatz (gerade Strecke, ein Warnsektor, keine Weichen) weicht dieses Projekt ab durch: zwei Sektoren mit ASU; Spurwechsel W 12/13 innerhalb der Einschaltdistanz Nord; Repeater wegen Funkabschattung; Brücke ohne Sicherheitsraum auf der Gleis-1-Seite; Kurve mit Sichteinschränkung; Gleiswechselbetrieb in beiden Richtungen; überwiegender Nachtbetrieb bei Kälte (Akkulaufzeit).",
+   "modes": [
+    "normal",
+    "degraded",
+    "transition",
+    "maintenance",
+    "emergency",
+    "commissioning",
+    "decommissioning"
+   ],
+   "documents": [
+    {
+     "name": "LYNX-SB-01_Systembeschreibung_Minimel_Lynx_ATWS.docx",
+     "text": "Systembeschreibung Minimel Lynx ATWS\nProjekt Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600)\n\nDokument-Nr.\nLYNX-SB-01\nRevision\nA (Entwurf für Gefährdungsanalyse)\nStand\nSeptember 2026\nErsteller\nProjektierung M2S (fiktiv)\nStatus\nFiktives Demonstrationsdokument\n\nFiktives Demonstrationsdokument – erstellt für die Vorführung der Railway Hazard Analysis Suite. Projektdaten (Ort, Kilometrierung, Zugzahlen, Personen) sind erfunden; technische Angaben stützen sich auf öffentlich verfügbare Produktinformationen und sind teilweise angenommen. Keine offizielle Dokumentation der Schweizer Electronic AG.\n\n1 Zweck und Geltungsbereich\n\nDieses Dokument beschreibt das automatische Funkwarnsystem Minimel Lynx ATWS in der Konfiguration für das Projekt «Gleiserneuerung Gleis 2, Abschnitt Reiden Süd» (km 58,000–59,600). Es dient als Eingangsdokument für die vorläufige Gefährdungsanalyse (PHL/PHA) nach EN 50126-1/-2 und für die Ableitung von Sicherheitsanforderungen und Anwendungsbedingungen.\n\nGleis 2 ist zwischen km 57,800 und km 60,000 für die Bauarbeiten gesperrt. Gleis 1 (Nachbargleis) bleibt im Gleiswechselbetrieb in beiden Richtungen befahren. Das Warnsystem warnt ausschliesslich vor Zugfahrten auf Gleis 1.\n\n2 Funktionsprinzip\n\nIm Automatikbetrieb (ATWS) werden Zugfahrten an Einschaltstellen durch Schienenkontakte erkannt, die an einen Funksender HSF-L angeschlossen sind. Der HSF-L überträgt die Zugannäherung per Funk an die Zentrale EZE-L, welche die akustische und optische Warnung auslöst. Das Verlassen der Baustelle durch den Zug wird automatisch an einer Ausschaltstelle erkannt oder vom Sicherheitschef an der EZE-L nach Sichtkontrolle quittiert.\n\nDie Baustelle ist in zwei Warnsektoren à 800 m aufgeteilt. Die Automatische Sektorumschaltung (ASU) ordnet Maschinen mit MWK beim Überfahren der Sektorgrenze ohne Zutun des Maschinenführers dem neuen Sektor zu. Mehrere Anlagen können auf einer Funkfrequenz betrieben werden; bis zu 4 Ankündigungseinheiten werden getrennt erfasst.\n\nDie Warnzeit ergibt sich aus Einschaltdistanz und Zuggeschwindigkeit. Vorgegeben sind eine Mindestwarnzeit von 20 s bei 140 km/h und eine maximale Warnzeit von 60 s. Die Einschaltdistanz beträgt 950 m je Richtung (Berechnung in LYNX-PR-03).\n\n3 Systemkomponenten\n\nKomponente\nAufgabe\nAnzahl\nStandort / Bemerkung\n\nZentrale EZE-L\nAuswertung der Warnzustände, Warnlogik beider Sektoren, Überwachung der Funkteilnehmer, Bedienung und Anzeige\n1\nkm 58,800 feldseitig an der Sektorgrenze\n\nFunksender HSF-L\nFunkübertragung der Zugmeldungen von Ein-/Ausschaltstellen; Hand-Funksender für manuelle Auslösung; Repeater\n6\nEinschaltstellen km 57,050 / 60,550, Ausschaltstellen km 57,950 / 59,650, Repeater km 59,250, 1 Handgerät Sicherheitschef\n\nSchienenkontakt RSK89 (mechanisch)\nErkennung der Radüberfahrt, Fahrtrichtung aus Kontaktreihenfolge; Erfassung bis 220 km/h\n5\nEinschaltstelle Süd (2), Einschaltstelle Nord (1), Ausschaltstellen (je 1)\n\nSchienenkontakt RSR123 (induktiv)\nDiversitäre zweite Erkennung an der Einschaltstelle Nord\n1\nkm 60,550\n\nWarneinheit AW126-L (kabelgebunden)\nStarktonhorn mit ALADIN (96–126 dB) und Blitzleuchte\n8\nSektor 1, u. a. beidseits der Brücke km 58,440–58,500\n\nWarneinheit EWK-L (funkbasiert)\nStarktonhorn mit ALADIN und Blitzleuchte, Akkubetrieb\n10\nSektor 2, Kurve und Lärmschutzwand\n\nPersonenwarngerät EPW\nWarnung am Körper (Ton, Vibration, Licht) für Einzelarbeitsplätze\n12\nSchweisser, Vermessung, Sicherungsposten\n\nMaschinenwarnkombination MWK\nWarnung im Führerstand, Automatische Sektorumschaltung ASU\n2\nStopfmaschine, Zweiwegebagger\n\nLynx Power Box\nVersorgung der kabelgebundenen Geräte aus 230 V, Ein-/Ausschalter der Anlage\n1\nbei der EZE-L\n\nAkkus und Ladestation\nAutarker Betrieb der Funkgeräte für eine Schicht\nca. 40\nLadestation im Baustellencontainer\n\n4 Zugerkennung an Einschalt- und Ausschaltstellen\n\nFunktion «Zugfahrt an der Einschaltstelle erkennen»: An der Einschaltstelle Süd (km 57,050) sind zwei RSK89 im Abstand von ca. 3 m am Schienenfuss von Gleis 1 befestigt; die Kontaktreihenfolge bestimmt die Fahrtrichtung. An der Einschaltstelle Nord (km 60,550) sind ein RSK89 und ein induktiver RSR123 kombiniert (diversitäre Erkennung, da die Stelle in der Kurve schwer zugänglich ist). Nur Fahrten in Richtung Baustelle lösen eine Warnung aus.\n\nFunktion «Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden»: Die Ausschaltstellen liegen ca. 50 m hinter dem Baustellenende (km 59,650 für Fahrten Richtung Süd, km 57,950 für Fahrten Richtung Nord). Die Ausschaltung wirkt richtungsabhängig: Ein Zug, der die Ausschaltstelle in Richtung Baustelle befährt, darf die Warnung nicht beenden.\n\nFehlerzustände und Einflüsse: Lockerung der Befestigung durch Vibration und Stopfarbeiten, Verschleiss, Beschädigung durch Schotterpflug oder Stopfaggregat, Vereisung und Schnee, Fehlbetätigung durch Bauzüge, fehlende Betätigung bei kleinen Raddurchmessern, Beeinflussung der Achszähler der Infrastrukturbetreiberin.\n\n5 Funkübertragung und Warnlogik\n\nFunktion «Einschaltmeldung per Funk an die Zentrale übertragen»: Der HSF-L sendet die Zugmeldung gesichert an die EZE-L. Die Funkteilnehmer senden zyklisch Lebenszeichen; fehlt ein Lebenszeichen länger als die projektierte Überwachungszeit, löst die EZE-L eine Störungswarnung aus. Die Funkstrecke von der Einschaltstelle Nord zur EZE-L ist wegen Kurve und Lärmschutzwand abgeschattet und wird über den Repeater bei km 59,250 geführt. Die Funkausleuchtung wird bei der Inbetriebnahme mit Feldstärkemessung nachgewiesen.\n\nFunktion «Warnung in der Zentrale auslösen und verwalten»: Die EZE-L zählt die eingeschalteten Züge je Richtung. Die Warnung beginnt mit der ersten Einschaltung und endet erst, wenn alle eingeschalteten Züge ausgeschaltet sind (Zugfolge, Zugkreuzung). Bleibt eine Ausschaltung aus, bleibt die Warnung bestehen, bis der Sicherheitschef quittiert. Wahlweise ist halbautomatischer Betrieb mit manueller Zugzählung möglich (in diesem Projekt nicht vorgesehen).\n\nKonfigurationsparameter: Zuordnung der Einschaltstellen zu Richtung und Sektor, Richtungsauswertung der Ausschaltstellen, Überwachungszeiten der Lebenszeichen, Funkkanal und Anlagenadresse, Sektorgrenze für die ASU, ALADIN-Grenzen. Fehlerhafte oder nicht validierte Parameter sind eine systematische Ursache fehlender oder vorzeitig beendeter Warnungen und werden bei der Inbetriebnahme mit simulierten Kontaktauslösungen geprüft.\n\n6 Akustische und optische Warnung, ALADIN\n\nFunktion «Akustische und optische Warnung an den Warneinheiten ausgeben»: In Sektor 1 warnen 8 kabelgebundene AW126-L (im Brückenbereich wegen der hohen Anforderungen an Verfügbarkeit), in Sektor 2 10 funkbasierte EWK-L. Jede Warneinheit hat ein Starktonhorn und eine Blitzleuchte. Die Warneinheiten stehen feldseitig im Abstand von höchstens 90 m.\n\nFunktion «Warnlautstärke automatisch an den Umgebungslärm anpassen»: Jedes Starktonhorn misst mit dem eingebauten Mikrofon den Umgebungslärm und regelt den Warnpegel mit ALADIN (Automated Level Adaption Due to Identified Noise) zwischen 96 dB und 126 dB. So wird so laut wie nötig gewarnt und die Lärmbelastung der Anwohner reduziert. Grenze: Kurze, lokal begrenzte Lärmspitzen direkt am Arbeitsplatz (z. B. Schlagschrauber), die das Mikrofon der nächsten Warneinheit nicht erfasst, werden nicht ausgeregelt; die Hörbarkeit an solchen Arbeitsplätzen ist nicht separat nachgewiesen.\n\nMenschliche Faktoren: Häufige oder sehr lange Warnungen (Langsamfahrten, Warnzeiten über 60 s) führen zu Gewöhnung. Fehlwarnungen durch Bauzüge untergraben das Vertrauen in die Anlage. Personen mit Gehörschutz sind auf ausreichenden Pegel und das EPW angewiesen.\n\n7 Personenwarngeräte, Maschinenwarnung und ASU\n\nFunktion «Warnung an Personenwarngeräten und Maschinen ausgeben»: 12 EPW warnen Einzelarbeitende durch Ton, Vibration und Licht. Die MWK auf Stopfmaschine und Zweiwegebagger gibt die Warnung im Führerstand wieder. Verbindungsverlust wird am Gerät und an der EZE-L angezeigt. Das EPW wird täglich geladen; der Ladezustand ist am Gerät ablesbar.\n\nFunktion «Warnsektor der Maschinen automatisch umschalten»: Wechselt eine Maschine über die Sektorgrenze bei km 58,800, ordnet die ASU die MWK automatisch dem neuen Sektor zu. Die Arbeit kann ohne Unterbrechung fortgesetzt werden. Bei unklarer Zuordnung erhält die MWK die Warnungen beider Sektoren. Fehlerbilder: verzögerte Umschaltung genau während einer Zugannäherung, Maschine steht längere Zeit auf der Sektorgrenze, falsche Sektorgrenze parametriert.\n\n8 Bedienung, manuelle Auslösung und Quittierung\n\nFunktion «Warnung manuell auslösen und quittieren»: Der Sicherheitschef bedient die EZE-L (Automatik/Hand, Probewarnung, Quittierung) und führt einen Hand-Funksender HSF-L. Bei Störung der automatischen Zugerkennung dienen Vorwärter mit HSF-L als Rückfallebene (Betrieb als LOWS). Eine Quittierung ist nur zulässig, wenn kein Zug mehr die Baustelle befährt oder sich ihr nähert.\n\nVorhersehbarer Fehlgebrauch: Quittieren einer laufenden Warnung, um Arbeiten fortzusetzen; Abdecken oder Umdrehen von Warneinheiten; EPW nicht getragen oder nicht geladen; Akkus nicht gewechselt; Umstellen von EWK-L ohne Teilprüfung; Betrieb einer zweiten Anlage auf gleicher Frequenz ohne Abstimmung.\n\n9 Selbstüberwachung und Störungsverhalten\n\nFunktion «Funkstrecken und Geräte überwachen und Störung melden»: Die EZE-L überwacht die Lebenszeichen aller HSF-L, EWK-L, EPW und MWK, die Kabel der AW126-L sowie die Akkuzustände, soweit diese übertragen werden. Eine erkannte Störung wird als Störungswarnung mit eigenem Signalton ausgegeben. Das Personal verlässt den Gefahrenbereich; die Arbeiten werden erst nach Behebung und Teilprüfung oder mit Rückfallebene fortgesetzt.\n\nGrenzen der Überwachung: Nicht erkannt werden ein mechanisch blockierter, aber elektrisch intakter Schienenkontakt, eine verdrehte oder verdeckte Warneinheit, ein nicht getragenes EPW und eine falsche Zuordnung der Fahrtrichtung. Diese Fehler werden durch die tägliche Funktionsprüfung aufgedeckt.\n\n10 Energieversorgung\n\nFunktion «Anlage mit Energie versorgen»: Die kabelgebundenen Geräte (EZE-L, AW126-L) werden über die Lynx Power Box aus dem Baustrom (230 V) oder einer Notstromgruppe versorgt; die Power Box dient zugleich als Ein-/Ausschalter der Anlage. Die Funkgeräte (HSF-L, EWK-L, EPW) haben wiederaufladbare Akkus für eine Arbeitsschicht. Bei Kälte sinkt die Kapazität; bei ungeplanter Schichtverlängerung ohne Akkuwechsel kann die Laufzeit überschritten werden. Der Ladezustand ist am Gerät ablesbar; die Meldung an die EZE-L ist nicht für alle Gerätetypen verfügbar (Projektannahme, zu klären).\n\n11 Betriebsarten\n\nBetriebsart\nBeschreibung im Projekt\n\nNormalbetrieb\nAutomatikmodus in beiden Sektoren mit ASU; Quittierung nur in Ausnahmefällen.\n\nDegradierter Betrieb\nAusfall einzelner Warneinheiten, Funklücke oder Ausfall einer Einschaltstelle: Störungswarnung, Rückfallebene mit Vorwärtern (HSF-L), eingeschränkter Arbeitsbereich.\n\nBetriebsartwechsel / Übergänge\nAutomatik/Hand, Schichtwechsel mit Akkuwechsel, Wiederanlauf nach Störung, Sektorwechsel der Maschinen, Umstellen von Warneinheiten bei Baufortschritt.\n\nInstandhaltung\nTägliche Prüfung, Akkuwechsel, Austausch von Komponenten, Kontrolle der Schienenkontakte im Betriebsgleis 1 in Zugpausen unter Sicherung.\n\nNotbetrieb / Notfall\nUnfall oder Verletzung im Gleisbereich, Evakuierung, Sperrung Gleis 1 über Fahrdienstleitung.\n\nErrichtung / Inbetriebnahme\nMontage der Einschaltstellen unter Sicherung, Funkausleuchtung, Parametrierung, Inbetriebnahmeprüfung, Hörbarkeitsprüfung und Freigabe.\n\nRückbau / Entsorgung\nAbbau erst nach Verlassen des Gleisbereichs; Entfernen der Einschaltstellen unter Sicherung; Rückgabe defekter Akkus.\n\n12 Umgebungsbedingungen\n\nMechanische Umgebung: Vibration und Stoss durch Überfahrten und Stopfarbeiten, Verschleiss, Umstossen von Warneinheiten und Kabelbeschädigung durch Baumaschinen, Fremdkörper im Bereich der Schienenkontakte.\n\nElektrische Umgebung: Fahrleitung 15 kV/16,7 Hz, elektromagnetische Beeinflussung durch Schweissgeräte und Baumaschinen, Funkabschattung und Fremdstörer, Netzausfall des Baustroms, Überspannung und Blitzschlag.\n\nNatürliche Umgebung: −15 °C bis +30 °C (Akkukapazität bei Kälte), Regen, Nebel, Schnee, Eis und Laub, Sturm (Umkippen von Warneinheiten), Hochwasser der Wigger, Vegetation und Nagetiere.\n\n13 Projektspezifische Besonderheiten\n\nSpurwechsel W 12/13 (km 60,150): Der Spurwechsel liegt zwischen Baustellenende (km 59,600) und Einschaltstelle Nord (km 60,550). Ein Zug, der über W 12/13 von Gleis 2 auf Gleis 1 wechselt, befährt die Einschaltstelle Nord nicht und löst keine Warnung aus. Planungsgrundlage ist, dass Nordfahrten bereits im Bahnhof Süd (km 61,800) auf Gleis 1 wechseln und W 12/13 im Stellwerk gegen Umstellen gesichert wird. Die Bestätigung der Infrastrukturbetreiberin steht aus.\n\nFunkabschattung in der Kurve (ab km 59,050) und an der Lärmschutzwand: Direktverbindung Einschaltstelle Nord → EZE-L nicht zuverlässig, daher Repeater bei km 59,250. Fällt der Repeater aus, fehlen die Lebenszeichen der Einschaltstelle Nord und die Störungswarnung wird ausgelöst.\n\nBrücke über die Wigger (km 58,440–58,500): kein Sicherheitsraum auf der Gleis-1-Seite, erhöhte Räumzeit; kabelgebundene AW126-L an beiden Brückenenden.\n\nNachtarbeit bei Kälte: Akkulaufzeit der Funkgeräte kritisch bei Schichtverlängerungen; Akkuwechsel ist Teil der Schichtübergabe.\n\nLangsamfahrten: Bei 40 km/h beträgt die Warnzeit über 80 s und überschreitet die maximale Warnzeit von 60 s. Die Fahrdienstleitung muss Langsamfahrten dem Sicherheitschef melden.\n\n14 Offene Punkte\n\nBestätigung der Sicherung von W 12/13 durch die Infrastrukturbetreiberin.\nNachweis der Akkulaufzeit bei −15 °C für eine 8-h-Schicht.\nHörbarkeit bei lokalen Lärmspitzen (Messpunkt MP5 nicht bestanden) – Nachweis mit EPW ausstehend.\nRäumzeit auf der Brücke mit Begehung verifizieren.\nVerfahren bei Langsamfahrten (Warnzeit > 60 s) mit der Fahrdienstleitung vereinbaren.\n",
+     "note": "",
+     "addedAt": "2026-09-22T08:00:00.000Z"
+    },
+    {
+     "name": "LYNX-SH-02_Sicherheitshinweise_Anwendungsbedingungen.pdf",
+     "text": "--- Seite 1 ---\nSicherheitshinweise und\nAnwendungsbedingungen Minimel Lynx ATWS\nAuszug für den Baustelleneinsatz – Projekt Gleiserneuerung Gleis 2, Reiden Süd\nDokument-Nr. LYNX-SH-02 · Revision A · September 2026\nFiktives Demonstrationsdokument – erstellt für die Vorführung der Railway Hazard Analysis Suite. Projektdaten\n(Ort, Kilometrierung, Zugzahlen, Personen) sind erfunden; technische Angaben stützen sich auf öffentlich\nverfügbare Produktinformationen und sind teilweise angenommen. Keine offizielle Dokumentation der Schweizer\nElectronic AG.\n\n1 Zweck\nDieses Dokument fasst die sicherheitsbezogenen Anwendungsbedingungen (AB) zusammen, die\nbeim Einsatz des Minimel Lynx ATWS durch Infrastrukturbetreiberin, Bauunternehmung,\nSicherheitschef und Instandhaltung einzuhalten sind. Die Sicherheit der Warnung ist nur\ngewährleistet, wenn alle Anwendungsbedingungen erfüllt sind.\n\n2 Rollen und Qualifikation\nRolle\n\nAufgabe\n\nQualifikation\n\nSicherheitschef (SC)\n\nBedienung der EZE-L, Probewarnung, Quittierung,\nSchichtübergabe inkl. Akkuzustand, Anordnung der\nRückfallebene\n\nAusbildung gemäss Regelwerk der\nInfrastrukturbetreiberin,\nLynx-Bedienerschulung\n\nM2S-Monteur\n\nAufbau, Umbau, Abbau, Funkausleuchtung,\nAustausch von Komponenten, Teilprüfungen\n\nLynx-Monteurschulung,\nBerechtigung für Arbeiten im\nGleisbereich\n\nProjekteur\n\nEinschaltdistanzen, Standorte, Sektoren,\nFunkplanung, Parametrierung,\nInbetriebnahmeprüfung\n\nProjekteurschulung Warnsysteme\n\nBaupersonal\n\nReaktion auf Warnung und Störungswarnung, Tragen\nund Laden des EPW\n\nUnterweisung vor Arbeitsbeginn,\ndokumentiert\n\nFahrdienstleitung (IB)\n\nSperrung Gleis 2, Sicherung W 12/13, Meldung von\nSonder- und Langsamfahrten\n\ngemäss Regelwerk der\nInfrastrukturbetreiberin\n\n3 Anwendungsbedingungen\nNr.\n\nBereich\n\nAnwendungsbedingung\n\nAB-01\n\nProjektierung\n\nDie Einschaltdistanz ist für die höchste auf Gleis 1 zulässige Geschwindigkeit zu\nberechnen (Mindestwarnzeit + Systemreaktionszeit inkl. Funkübertragung + Zuschlag).\nJede Geschwindigkeitsänderung erfordert eine neue Berechnung.\n\nAB-02\n\nProjektierung\n\nAlle Weichen und Spurwechsel zwischen Einschaltstelle und Baustelle sind zu erfassen.\nJeder Fahrweg zur Baustelle muss über eine Einschaltstelle führen oder durch die\nInfrastrukturbetreiberin betrieblich ausgeschlossen sein.\n\nAB-03\n\nProjektierung\n\nDie Projektierung ist vor Inbetriebnahme durch eine zweite, qualifizierte Person gegen\nden aktuellen Gleisplan zu prüfen (Vier-Augen-Prinzip).\n\nAB-04\n\nFunk\n\nVor Inbetriebnahme ist eine Funkausleuchtung aller Strecken HSF-L → EZE-L →\nWarneinheiten mit Feldstärkemessung durchzuführen. Abgeschattete Strecken sind\nüber Repeater zu führen. Nach dem Abstellen grosser Fahrzeuge oder Materialdepots in\nFunkstrecken ist die Verbindung zu prüfen.\n\nAB-05\n\nFunk\n\nDer Betrieb weiterer Anlagen auf derselben Frequenz im Funkbereich ist mit M2S\nabzustimmen (Anlagenadressen, Sektoren).\n\nAB-06\n\nAufbau\n\nSchienenkontakte sind nach Herstellervorgabe zu befestigen; Mindestabstände zu\nAchszählern sind einzuhalten. Nach Stopf- oder Schotterarbeiten in der Nähe ist die\nBefestigung zu kontrollieren.\n\nAB-07\n\nInbetriebnah\nme\n\nDie Inbetriebnahmeprüfung umfasst jede Ein- und Ausschaltstelle in beiden Richtungen,\nZugfolge und Zugkreuzung, Sektorumschaltung der MWK, Störungswarnung bei Ausfall\neines Funkteilnehmers sowie eine Hörbarkeitsprüfung bei laufenden Maschinen.\n\n\n\n--- Seite 2 ---\nNr.\n\nBereich\n\nAnwendungsbedingung\n\nAB-08\n\nHörbarkeit\n\nDas Warnsignal muss an jedem Arbeitsplatz mindestens 3 dB(A) über dem\nUmgebungspegel liegen. ALADIN regelt nur den am Horn gemessenen Pegel;\nArbeitsplätze mit lokalen Lärmspitzen (z. B. Schlagschrauber) sind mit EPW auszurüsten.\n\nAB-09\n\nAkkus\n\nAkkus der Funkgeräte sind vor jeder Schicht vollständig geladen. Bei Temperaturen\nunter 0 °C oder bei Schichtverlängerung sind die Akkus spätestens nach 6 h zu\nwechseln. Der Akkuwechsel ist Teil der Schichtübergabe und wird protokolliert.\n\nAB-10\n\nTäglicher\nBetrieb\n\nVor jeder Schicht führt der Sicherheitschef eine Funktionsprüfung mit Probewarnung in\nbeiden Sektoren durch und kontrolliert Hörbarkeit, EPW und MWK. Ergebnis im\nPrüfprotokoll eintragen.\n\nAB-11\n\nTäglicher\nBetrieb\n\nDer Sicherheitschef lässt sich vor jeder Schicht von der Fahrdienstleitung die Sperrung\nvon Gleis 2 und die Sicherung von W 12/13 bestätigen.\n\nAB-12\n\nReaktion\n\nBei jeder Warnung ist die Arbeit sofort einzustellen und der Sicherheitsraum feldseitig\naufzusuchen. Werkzeuge und Material dürfen nicht im Lichtraum von Gleis 1 verbleiben.\n\nAB-13\n\nStörung\n\nBei Störungswarnung verlässt das gesamte Personal den Gefahrenbereich von Gleis 1.\nFortsetzung erst nach Behebung und Teilprüfung oder mit Rückfallebene (Vorwärter mit\nHSF-L).\n\nAB-14\n\nQuittierung\n\nEine laufende Warnung darf nur quittiert werden, wenn kein Zug mehr die Baustelle\nbefährt oder sich nähert. Quittieren, um Arbeiten fortzusetzen, ist verboten.\n\nAB-15\n\nLangsamfahrt\nen\n\nDie Fahrdienstleitung meldet Langsam- und Sonderfahrten dem Sicherheitschef.\nWarnzeiten über 60 s sind zu vermeiden.\n\nAB-16\n\nMaschinen\n\nDie MWK ist vor jeder Schicht auf Funktion und Sektorzuordnung zu prüfen. Maschinen\nsollen nicht längere Zeit auf der Sektorgrenze abgestellt werden.\n\nAB-17\n\nUmbau\n\nUmstellen von Warneinheiten nur durch M2S-Personal; danach Teilprüfung mit\nProbewarnung und Funkkontrolle.\n\nAB-18\n\nFehlgebrauch\n\nVerboten sind: Abdecken, Verdrehen oder Entfernen von Warneinheiten, Überbrücken\nvon Schienenkontakten, Weitergabe der Bedienberechtigung, Betrieb ohne EPW an\nEinzelarbeitsplätzen.\n\nAB-19\n\nRückbau\n\nDie Anlage bleibt in Betrieb, bis das gesamte Personal den Gleisbereich verlassen hat.\nEinschaltstellen werden zuletzt und nur unter Sicherung entfernt.\n\nAB-20\n\nEntsorgung\n\nDefekte Akkus und Elektronik werden an Schweizer Electronic zurückgegeben und\nfachgerecht entsorgt.\n\n4 Tägliche Prüfliste (Auszug)\n• Sichtkontrolle aller Schienenkontakte (Befestigung, Beschädigung, Eis, Fremdkörper).\n• Anzeige an der EZE-L: alle Funkteilnehmer mit Lebenszeichen, keine Störung, Akkuzustände.\n• Probewarnung in Sektor 1 und Sektor 2; Hörbarkeit an allen Arbeitsstellen; EPW und MWK\nreagieren.\n• Sektorzuordnung der MWK kontrollieren.\n• Bestätigung Sperrung Gleis 2 und Sicherung W 12/13 durch die Fahrdienstleitung.\n• Unterweisung neuer Personen, Ausgabe der EPW; Eintrag im Prüfprotokoll.\n\n5 Verhalten im Notfall\nBei einem Unfall im Gleisbereich veranlasst der Sicherheitschef über die Fahrdienstleitung die\nSperrung von Gleis 1. Die Warnanlage bleibt bis zum Verlassen des Gleisbereichs in Betrieb. Nach\neinem Ereignis ist die Anlage vor Wiederaufnahme der Arbeiten durch M2S zu prüfen.\n\n",
+     "note": "",
+     "addedAt": "2026-09-22T08:00:00.000Z"
+    },
+    {
+     "name": "LYNX-PR-03_Projektierung_Einschaltdistanzen.xlsx",
+     "text": "--- Parameter ---\nParameter,Wert,Einheit,Quelle / Bemerkung\nHöchstgeschwindigkeit Gleis 1 (Reisezüge),140,km/h,\"Streckendaten IB (fiktiv), Annahme A1\"\nHöchstgeschwindigkeit Güterzüge,100,km/h,Streckendaten IB (fiktiv)\nRäumzeit (Verlassen des Gefahrenbereichs),12,s,Begehung; Brücke separat zu prüfen\nReaktionszeit Personal,3,s,Projektvorgabe IB\nSicherheitszuschlag,5,s,Projektvorgabe IB\nSystemreaktionszeit inkl. Funkübertragung und Repeater,2,s,Herstellerangabe (Annahme)\nZuschlag auf Einschaltdistanz,0.1,-,10 % Projektierungszuschlag\nMaximale Warnzeit,60,s,Projektvorgabe IB (Gewöhnungseffekt)\nBaustellenanfang (Nord),58,km,\nBaustellenende (Süd),59.6,km,\nSektorgrenze,58.8,km,\"ASU-Sektorgrenze, Standort EZE-L\"\nRundung Einschaltdistanz auf,50,m,nach oben gerundet\n,,,\n,,,\nLegende: blaue Werte auf gelbem Grund sind Eingaben; alle übrigen Werte werden berechnet.,,,\n\n\n--- Einschaltdistanz ---\nGrösse,Wert,Einheit,Formel / Bemerkung\nErforderliche Mindestwarnzeit t_min,20,s,Räumzeit + Reaktionszeit + Zuschlag\nGeschwindigkeit v_max,38.889,m/s,\"v / 3,6\"\nRechnerische Einschaltdistanz,941.111,m,v × (t_min + t_sys) × (1 + Zuschlag)\nGewählte Einschaltdistanz,950,m,aufgerundet\nEinschaltstelle Süd (für Fahrten Richtung Süd),57.05,km,Baustellenanfang − Einschaltdistanz\nEinschaltstelle Nord (für Fahrten Richtung Nord),60.55,km,Baustellenende + Einschaltdistanz\nAusschaltstelle für Fahrten Richtung Süd,59.65,km,50 m hinter Baustellenende\nAusschaltstelle für Fahrten Richtung Nord,57.95,km,50 m vor Baustellenanfang\nSpurwechsel W 12/13,60.15,km,Gleisplan IB (fiktiv)\nW 12/13 liegt innerhalb der Einschaltdistanz Nord?,JA – Fahrweg ohne Einschaltung möglich (AB-02),,\n\n\n--- Warnzeiten ---\nGeschwindigkeit [km/h],Warnzeit am Baustellenanfang [s],Status,Bemerkung\n140,22.429,OK,Auslegungsfall Reisezüge\n120,26.5,OK,\n100,32.2,OK,Güterzüge\n80,40.75,OK,\n60,55,OK,\n40,83.5,ZU LANG – Gewöhnungsgefahr (AB-15),Langsamfahrt z. B. bei Störung\n30,112,ZU LANG – Gewöhnungsgefahr (AB-15),\n\n\n--- Geräteplan ---\nGerät,Typ,km,Gleis / Seite,Sektor,Versorgung,Bemerkung\nEinschaltstelle Süd,2 × RSK89 + HSF-L,57.05,Gleis 1,–,Akku,Montage unter Sicherung\nEinschaltstelle Nord,RSK89 + RSR123 + HSF-L,60.55,\"Gleis 1, Kurve\",–,Akku,diversitäre Erkennung\nAusschaltstelle Richtung Süd,RSK89 + HSF-L,59.65,Gleis 1,–,Akku,richtungsabhängig\nAusschaltstelle Richtung Nord,RSK89 + HSF-L,57.95,Gleis 1,–,Akku,richtungsabhängig\nRepeater,HSF-L,59.25,\"feldseitig, Mast 4 m\",–,Akku + Solarpaneel,Funkabschattung Kurve/Lärmschutzwand\nZentrale,EZE-L,58.8,feldseitig,1+2,Lynx Power Box,Bedienung Sicherheitschef\nHand-Funksender,HSF-L,mobil,–,1+2,Akku,Sicherheitschef / Vorwärter\nWarneinheit S1-1,AW126-L,58,feldseitig,1,Kabel / Power Box,\nWarneinheit S1-2,AW126-L,58.09,feldseitig,1,Kabel / Power Box,\nWarneinheit S1-3,AW126-L,58.18,feldseitig,1,Kabel / Power Box,\nWarneinheit S1-4,AW126-L,58.27,feldseitig,1,Kabel / Power Box,\nWarneinheit S1-5,AW126-L,58.36,feldseitig,1,Kabel / Power Box,\nWarneinheit S1-6,AW126-L,58.43,feldseitig,1,Kabel / Power Box,Brückenende\nWarneinheit S1-7,AW126-L,58.51,feldseitig,1,Kabel / Power Box,Brückenende\nWarneinheit S1-8,AW126-L,58.6,feldseitig,1,Kabel / Power Box,\nWarneinheit S2-1,EWK-L,58.8,feldseitig,2,Akku,\nWarneinheit S2-2,EWK-L,58.89,feldseitig,2,Akku,\nWarneinheit S2-3,EWK-L,58.98,feldseitig,2,Akku,\nWarneinheit S2-4,EWK-L,59.07,feldseitig,2,Akku,\nWarneinheit S2-5,EWK-L,59.16,feldseitig,2,Akku,Lärmschutzwand\nWarneinheit S2-6,EWK-L,59.25,feldseitig,2,Akku,Lärmschutzwand\nWarneinheit S2-7,EWK-L,59.34,feldseitig,2,Akku,Lärmschutzwand\nWarneinheit S2-8,EWK-L,59.43,feldseitig,2,Akku,Lärmschutzwand\nWarneinheit S2-9,EWK-L,59.52,feldseitig,2,Akku,Lärmschutzwand\nWarneinheit S2-10,EWK-L,59.6,feldseitig,2,Akku,Lärmschutzwand\nPersonenwarngeräte,12 × EPW,mobil,–,1+2,Akku,tägliche Ladung\nMaschinenwarnung,2 × MWK mit ASU,mobil,\"Stopfmaschine, Zweiwegebagger\",ASU,Bordnetz,\n\n\n--- Hörbarkeit ---\nMesspunkt,Ort / Tätigkeit,Umgebungspegel [dB(A)],Warnpegel am Arbeitsplatz [dB(A)],Abstand [dB],Status (≥ 3 dB),Massnahme\nMP1,\"km 58,150 Gleisarbeiten allgemein\",78,96,18,OK,\nMP2,\"km 58,470 Brücke, Schotterreinigung\",101,108,7,OK,\nMP3,\"km 58,700 Stopfmaschine aussen\",103,109,6,OK,\nMP4,Führerstand Stopfmaschine (ohne MWK),96,93,-3,NICHT OK,MWK im Führerstand (vorhanden)\nMP5,\"km 59,200 Schlagschrauber direkt am Arbeitsplatz\",108,104,-4,NICHT OK,EPW für Personal mit Schlagschrauber (AB-08)\nMP6,\"km 59,450 Thermit-Schweissen\",85,99,14,OK,\nMP7,\"km 59,550 Kurve, Lärmschutzwand\",80,97,17,OK,\nMP8,Sicherheitsraum Brücke feldseitig,90,100,10,OK,\n\n\n--- Funkausleuchtung ---\nFunkstrecke,Gemessene Feldstärke [dBm],Empfindlichkeit [dBm],Reserve [dB],Status (Reserve ≥ 10 dB),Bemerkung\nEinschaltstelle Süd → EZE-L,-78,-105,27,OK,\nEinschaltstelle Nord → EZE-L direkt,-101,-105,4,NICHT OK,Abschattung Kurve/Lärmschutzwand\n\"Einschaltstelle Nord → Repeater km 59,250\",-74,-105,31,OK,\nRepeater → EZE-L,-80,-105,25,OK,\nAusschaltstelle Süd → EZE-L,-88,-105,17,OK,\nAusschaltstelle Nord → EZE-L,-76,-105,29,OK,\n\"EZE-L → EWK-L S2-10 (km 59,600)\",-89,-105,16,OK,bei abgestelltem Bauzug −97 dBm\n\"EZE-L → MWK Stopfmaschine km 59,5\",-86,-105,19,OK,\n\n\n--- Offene Punkte ---\nNr.,Offener Punkt,Verantwortlich,Termin\nOP-1,Bestätigung Sicherung W 12/13 im Stellwerk,Infrastrukturbetreiberin,vor Inbetriebnahme\nOP-2,Akkulaufzeit bei −15 °C über 8 h nachweisen,Schweizer Electronic,vor Inbetriebnahme\nOP-3,MP5: Hörbarkeit bei Schlagschrauber – EPW-Nachweis,Bauunternehmung / SC,erste Schicht\nOP-4,Räumzeit Brücke durch Begehung verifizieren,SC,erste Schicht\nOP-5,Verfahren Langsamfahrten (Warnzeit > 60 s),Infrastrukturbetreiberin,vor Inbetriebnahme\nOP-6,Funkstrecke EZE-L → S2-10 bei abgestelltem Bauzug (Reserve < 10 dB),M2S,vor Inbetriebnahme\n",
+     "note": "",
+     "addedAt": "2026-09-22T08:00:00.000Z"
+    },
+    {
+     "name": "LYNX-BE-04_Betriebserfahrung_Stoerungen_2022-2025.csv",
+     "text": "Nr;Datum;Einsatz (fiktiv);Komponente;Ereignis;Ursache;Auswirkung;Sicherheitsrelevant;Massnahme\n1;2022-03-14;Gleiserneuerung A, Doppelspur 120 km/h;HSF-L Einschaltstelle;Störungswarnung während der Nachtschicht;Akku erschöpft nach Schichtverlängerung um 2 h bei -6 °C;Arbeiten 25 min unterbrochen, Rückfallebene mit Vorwärtern;ja (sicherer Zustand erreicht);Akkuwechsel nach 6 h in Schichtübergabe aufgenommen\n2;2022-05-02;Weichenerneuerung B;EWK-L;Warneinheit ohne Lebenszeichen;Warneinheit durch Zweiwegebagger umgestossen, Antenne beschädigt;Störungswarnung, Austausch nach 40 min;ja (erkannt);Aufstellorte ausserhalb Schwenkbereich festlegen\n3;2022-06-21;Gleiserneuerung A;RSK89 Einschaltstelle;Keine Einschaltung bei Probefahrt;Befestigung nach Stopfarbeiten gelockert, Kontakt verschoben;bei täglicher Prüfung erkannt;ja (latent);Kontrolle der Befestigung nach jeder Stopfarbeit\n4;2022-08-09;Brückensanierung C;Funkstrecke HSF-L → EZE-L;Sporadische Störungswarnungen;Funkabschattung durch Stahlträger der Brücke;Verfügbarkeitsverlust, 6 Unterbrechungen je Schicht;nein (sicherer Zustand);Repeater ergänzt, Funkausleuchtung vor Inbetriebnahme verbindlich\n5;2022-09-30;Gleiserneuerung D;Warnlogik EZE-L;Warnung endete, obwohl zweiter Zug in Gegenrichtung eingeschaltet;Ausschaltstelle bei Projektierung falscher Richtung zugeordnet;bei Inbetriebnahmeprüfung (Zugkreuzung) erkannt, kein Einsatz;ja (systematisch);Prüfschritt Zugkreuzung in Inbetriebnahmeprüfung ergänzt\n6;2022-11-15;Gleiserneuerung D;EPW;Arbeiter meldet keine Vibration am EPW;EPW nicht geladen, Ladestation defekt;Arbeiter durch Warneinheit gewarnt;ja;Ladezustand bei Ausgabe prüfen, Ersatzladestation\n7;2023-01-18;Schotterreinigung E;EWK-L;Pegel subjektiv zu leise bei Lärmspitze;Schlagschrauber direkt am Arbeitsplatz, Mikrofon der Warneinheit 60 m entfernt;Arbeiter reagierte verzögert (ca. 8 s);ja (Beinahe-Ereignis);EPW für Arbeitsplätze mit Schlagschrauber\n8;2023-02-07;Schotterreinigung E;Einschaltstelle;Fehlwarnung ohne Zugfahrt auf Nachbargleis;Bauzug befuhr Schienenkontakt beim Umsetzen;Unterbrechung 3 min;nein, aber Vertrauensverlust;Bauzugfahrten dem SC ankündigen, Erfassung Fehlwarnungen\n9;2023-03-22;Gleiserneuerung F;Fahrdienstleitung (IB);Zug über nicht gesicherte Weiche zwischen Einschaltstelle und Baustelle;Weiche bei Projektierung nicht berücksichtigt, Umleitung durch Fahrdienstleiter;Warnzeit ca. 9 s statt 22 s, Personal konnte räumen;ja (Beinahe-Ereignis, meldepflichtig);Vier-Augen-Prüfung Gleisplan (AB-02, AB-03), Bestätigung Weichensicherung je Schicht\n10;2023-04-11;Gleiserneuerung F;Sicherheitschef;Warnung quittiert, um Arbeiten fortzusetzen;Zeitdruck, Ausschaltstelle defekt;Güterzug passierte 90 s später mit Warnung durch Vorwärter;ja (Fehlgebrauch);Schulung, Quittierverbot in AB-14, Ersatz Ausschaltstelle\n11;2023-05-30;Weichenerneuerung G;MWK;Stopfmaschine erhielt Warnung des falschen Sektors;Maschine längere Zeit auf Sektorgrenze abgestellt;Maschinenführer durch Warneinheit gewarnt;ja;Maschinen nicht auf Sektorgrenze abstellen (AB-16)\n12;2023-06-19;Gleiserneuerung H;Lynx Power Box;Ausfall der kabelgebundenen Warneinheiten;Baustromverteiler durch Bauablauf abgeschaltet;Störungswarnung, 15 min Unterbrechung;ja (erkannt);Baustromverteiler kennzeichnen, Notstromgruppe bereit\n13;2023-08-03;Gleiserneuerung H;AW126-L Kabel;Kabelbruch;Kabel durch Schotterablage gequetscht;Störungswarnung;ja (erkannt);Kabelschutz im Materialablagebereich\n14;2023-09-12;Brückensanierung I;RSR123;Keine Erkennung eines Messfahrzeugs;kleine Raddurchmesser, Erfassungsgrenze;Messfahrzeug langsam, Vorwärter aktiv;ja;Sonderfahrzeuge vorab melden, Fahrzeugliste prüfen\n15;2023-10-25;Gleiserneuerung J;Anlage;Zweite Lynx-Anlage auf gleicher Frequenz 2 km entfernt;fehlende Abstimmung zwischen zwei Bauunternehmungen;sporadische Störungswarnungen;nein (sicherer Zustand);Frequenzkoordination über M2S (AB-05)\n16;2023-12-04;Gleiserneuerung J;HSF-L;Vereisung des Gehäuses, Taster schwergängig;Eisregen;manuelle Auslösung verzögert;ja;Schutzhaube, Prüfung bei Frost\n17;2024-01-16;Gleiserneuerung K;Warneinheiten;Warneinheit verdreht, Horn zeigt vom Arbeitsbereich weg;Kontakt mit Material beim Abladen;bei Probewarnung erkannt;ja (latent);Sichtkontrolle Ausrichtung in täglicher Prüfliste\n18;2024-02-28;Gleiserneuerung K;Langsamfahrt;Warnzeit 95 s bei Langsamfahrt 35 km/h;Langsamfahrstelle wegen Oberbaufehler nicht gemeldet;Personal kehrte vor Zugvorbeifahrt in den Gefahrenbereich zurück;ja (Beinahe-Ereignis);Meldung von Langsamfahrten durch Fahrdienstleitung (AB-15)\n19;2024-04-09;Weichenerneuerung L;EZE-L;Parameter nach Umbau nicht zurückgesetzt;Testmodus nach Teilprüfung aktiv geblieben;beim Schichtbeginn erkannt;ja (latent, systematisch);Checkliste Abschluss Teilprüfung\n20;2024-05-21;Gleiserneuerung M;EWK-L Akku;EWK-L fällt nach 7 h aus;Akku gealtert;Störungswarnung;ja (erkannt);Akkutausch nach Ladezyklen, Kapazitätsprüfung\n21;2024-07-02;Gleiserneuerung M;Fahrleitung;Störungen während Schweissarbeiten;EMV Schweissgerät nahe HSF-L;sporadische Störungswarnungen;nein;Mindestabstand Schweissgerät zu Funkgeräten\n22;2024-08-27;Gleiserneuerung N;ASU;Verzögerte Sektorumschaltung (ca. 10 s);Maschine wechselte Sektor während laufender Zugannäherung;Maschinenführer durch Warneinheit gewarnt;ja;Analyse Umschaltzeit, Warnung beider Sektoren bei Unklarheit\n23;2024-10-08;Gleiserneuerung O;RSK89;Doppelte Einschaltung durch einen Zug;Prellen des Kontakts bei Vereisung;Warnung länger als erforderlich;nein;Wartung, Enteisung\n24;2024-11-19;Gleiserneuerung O;Personal;Arbeiter trägt EPW unter der Jacke, Vibration nicht wahrgenommen;Kälte, Kleidung;Warnung über Warneinheit wahrgenommen;ja;Tragevorschrift EPW\n25;2025-01-13;Gleiserneuerung P;Repeater;Repeater durch Sturm umgekippt;unzureichende Verankerung;Störungswarnung der Einschaltstelle;ja (erkannt);Mastverankerung, Prüfung nach Sturm\n26;2025-03-05;Gleiserneuerung P;Rückbau;Einschaltstelle vor Ende der Arbeiten abgebaut;Kommunikationsfehler bei Schichtende;Restarbeiten ohne Warnung, kein Zug;ja (Beinahe-Ereignis);Rückbaureihenfolge (AB-19)\n27;2025-06-17;Weichenerneuerung Q;Hörbarkeit;Anwohnerbeschwerden, Forderung Pegelreduktion;Nachtarbeit;ALADIN reduzierte Pegel bei Ruhe auf 96 dB;nein;ALADIN beibehalten, keine manuelle Absenkung\n28;2025-09-09;Gleiserneuerung R;Einschaltstelle;Keine Warnung bei Probewarnung Sektor 2;Sektorzuordnung der EWK-L nach Umbau falsch;bei Probewarnung erkannt;ja (latent, systematisch);Probewarnung je Sektor nach jedem Umbau\n",
+     "note": "",
+     "addedAt": "2026-09-22T08:00:00.000Z"
+    },
+    {
+     "name": "IB-LH-05_Anforderungen_Infrastrukturbetreiberin_Warnsysteme.md",
+     "text": "# Anforderungen der Infrastrukturbetreiberin an automatische Warnsysteme – Projektauszug\n\n**Dokument:** IB-LH-05 · **Revision:** B · **Projekt:** Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (fiktiv)\n**Herausgeber:** Infrastrukturbetreiberin (fiktiv), Fachstelle Arbeitssicherheit\n\n> Fiktives Demonstrationsdokument für die Vorführung der Railway Hazard Analysis Suite. Keine realen Vorgaben einer Infrastrukturbetreiberin.\n\n## 1 Geltungsbereich\n\nDiese Anforderungen gelten für automatische Warnsysteme (ATWS), die zur Warnung von Personal im Gleisbereich vor Zugfahrten auf einem befahrenen Nachbargleis eingesetzt werden. Sie ergänzen das Regelwerk der Infrastrukturbetreiberin für Arbeiten im Gleisbereich und die Anforderungen der EN 16704.\n\n## 2 Sicherheitsanforderungen\n\n- **IB-01 Warnzeit:** Die Warnung muss am Baustellenanfang mindestens 20 s vor Eintreffen eines Zuges mit Höchstgeschwindigkeit beginnen. Die Warnzeit soll 60 s nicht überschreiten.\n- **IB-02 Tolerierbare Gefährdungsrate:** Für die Gefährdung «Personal im Gefahrenbereich erhält keine Warnung trotz Zugannäherung» wird eine tolerierbare Gefährdungsrate (THR) von **≤ 5 · 10⁻⁸ je Stunde und Anlage** vorgegeben. Die Aufteilung auf die Funktionen Zugerkennung, Übertragung, Warnlogik und Warnausgabe ist vom Lieferanten nachzuweisen.\n- **IB-03 Sicherheitsintegrität:** Die sicherheitsrelevanten Funktionen der Warnkette müssen mindestens SIL 3 erfüllen (EN 50129). Sicherheitsrelevante Funkübertragung nach EN 50159.\n- **IB-04 Fail-safe:** Jeder erkannte Fehler muss zu einer Störungswarnung führen, die sich eindeutig von der Zugwarnung unterscheidet.\n- **IB-05 Hörbarkeit:** Das Warnsignal muss an jedem Arbeitsplatz mindestens 3 dB(A) über dem Umgebungspegel liegen. Der Nachweis ist bei laufenden Maschinen zu erbringen.\n- **IB-06 Lärmschutz:** Die Lärmemission ist auf das notwendige Mass zu begrenzen; eine automatische Pegelanpassung ist zulässig, eine manuelle Absenkung ohne Hörbarkeitsnachweis nicht.\n- **IB-07 Fahrwege:** Jeder Fahrweg, über den ein Zug die Baustelle erreichen kann, muss eine Einschaltung bewirken oder durch die Infrastrukturbetreiberin gesperrt werden. Weichen innerhalb der Einschaltdistanz sind im Sicherheitsplan auszuweisen.\n- **IB-08 Maschinen:** Maschinenführer lärmintensiver Maschinen sind im Führerstand zu warnen.\n\n## 3 Betriebliche Anforderungen\n\n- **IB-10** Bedienung nur durch Sicherheitschefs mit gültiger Ausbildung und Geräteeinweisung.\n- **IB-11** Tägliche Funktionsprüfung mit Probewarnung vor Arbeitsbeginn, dokumentiert.\n- **IB-12** Die Fahrdienstleitung bestätigt dem Sicherheitschef vor jeder Schicht Sperrungen und Weichensicherungen und meldet Langsam-, Sonder- und Messfahrten.\n- **IB-13** Ereignisse (Fehlwarnungen, ausgebliebene oder verspätete Warnungen, Beinahe-Ereignisse) sind innert 24 h der Fachstelle Arbeitssicherheit zu melden.\n\n## 4 Nachweisdokumente\n\nVor Einsatzbeginn sind einzureichen: Sicherheitsnachweis bzw. Zulassung des Warnsystems, projektbezogene Gefährdungsanalyse mit Anwendungsbedingungen, Projektierungsplan mit Einschaltdistanzen, Funkausleuchtung, Hörbarkeitsprotokoll, Inbetriebnahmeprotokoll und Nachweis der Qualifikation des Personals.\n",
+     "note": "",
+     "addedAt": "2026-09-22T08:00:00.000Z"
+    }
+   ]
+  },
+  "interfaces": [
+   {
+    "id": "IF-0001",
+    "name": "Schienenkontakte zu Rad und Schiene Gleis 1",
+    "type": "physical",
+    "partner": "Züge und Oberbau Gleis 1",
+    "description": "Betätigung der RSK89/RSR123 durch Radsätze bis 140 km/h; Befestigung am Schienenfuss; Einwirkung durch Vibration und Stopfarbeiten."
+   },
+   {
+    "id": "IF-0002",
+    "name": "Schienenkontakte zu Gleisfreimeldung",
+    "type": "externalSystem",
+    "partner": "Achszähler / Gleisfreimeldung der Infrastrukturbetreiberin",
+    "description": "Rückwirkungsfreiheit: Schienenkontakte dürfen Achszähler und Gleisstromkreise nicht beeinflussen."
+   },
+   {
+    "id": "IF-0003",
+    "name": "Funkstrecken zu Funkumgebung",
+    "type": "physical",
+    "partner": "Funkumgebung (Topografie, Fahrzeuge, Fremdstörer, weitere Lynx-Anlagen)",
+    "description": "Abschattung durch Kurve, Lärmschutzwand, Brücke und abgestellte Fahrzeuge; Störungen durch Fahrleitung und Schweissgeräte; Frequenzkoordination mit weiteren Anlagen."
+   },
+   {
+    "id": "IF-0004",
+    "name": "Zentrale zu Sicherheitschef",
+    "type": "human",
+    "partner": "Sicherheitschef (SC)",
+    "description": "Bedienung (Automatik/Hand, Probewarnung, Quittierung), Anzeige von Warnung, Störung, Sektor- und Akkuzustand; Schichtübergabe."
+   },
+   {
+    "id": "IF-0005",
+    "name": "Warnmittel zu Baupersonal",
+    "type": "human",
+    "partner": "Baupersonal im Gleisbereich",
+    "description": "Wahrnehmung der Warnung bei Lärm bis 105 dB(A) und Gehörschutz; Reaktion: Arbeit einstellen, Sicherheitsraum aufsuchen; Tragen und Laden der EPW."
+   },
+   {
+    "id": "IF-0006",
+    "name": "MWK zu Baumaschinen und Maschinenführern",
+    "type": "externalSystem",
+    "partner": "Stopfmaschine, Zweiwegebagger",
+    "description": "Warnung im Führerstand, Sektorwechsel über ASU, Montage und Energieversorgung an der Maschine."
+   },
+   {
+    "id": "IF-0007",
+    "name": "Energieversorgung zu Baustrom",
+    "type": "physical",
+    "partner": "Baustromverteiler km 58,800",
+    "description": "230-V-Einspeisung der Lynx Power Box; Unterbrechungen durch Bauablauf."
+   },
+   {
+    "id": "IF-0008",
+    "name": "Anlage zu Fahrdienstleitung und Stellwerk",
+    "type": "organisation",
+    "partner": "Fahrdienstleitung der Infrastrukturbetreiberin",
+    "description": "Sperrung Gleis 2, Sicherung Spurwechsel W 12/13, Meldung von Sonderfahrten, Langsamfahrten, Umleitungen und Störungen."
+   },
+   {
+    "id": "IF-0009",
+    "name": "Kabel und Geräte zu Baumaschinen",
+    "type": "physical",
+    "partner": "Baumaschinen, Materialtransport",
+    "description": "Beschädigung der AW126-L-Kabel und Umstossen von Warneinheiten durch Zweiwegebagger und Materialablage."
+   },
+   {
+    "id": "IF-0010",
+    "name": "Anlage zu Fahrleitung und Rückstrom",
+    "type": "physical",
+    "partner": "Fahrleitung 15 kV/16,7 Hz",
+    "description": "Elektromagnetische Beeinflussung, Berührungsspannung bei Arbeiten an Schienenkontakten."
+   },
+   {
+    "id": "IF-0011",
+    "name": "Warnsignale zu Anwohnern",
+    "type": "organisation",
+    "partner": "Anwohner, Gemeinde",
+    "description": "Lärmemission in der Nacht; Forderung nach Pegelreduktion."
+   },
+   {
+    "id": "IF-0012",
+    "name": "Anlage zu Aufbau- und Instandhaltungspersonal",
+    "type": "human",
+    "partner": "M2S-Personal",
+    "description": "Aufbau, Umbau, Akkuwechsel, Instandsetzung und Parametrierung im Gleisbereich; Prüfprotokolle."
+   }
+  ],
+  "subsystems": [
+   {
+    "name": "Zugerkennung",
+    "description": "Einschalt- und Ausschaltstellen mit Schienenkontakten RSK89/RSR123 und Funksendern HSF-L"
+   },
+   {
+    "name": "Funkübertragung",
+    "description": "Funkstrecken HSF-L → EZE-L → EWK-L/EPW/MWK inkl. Repeater, Lebenszeichenüberwachung"
+   },
+   {
+    "name": "Zentrale und Bedienung",
+    "description": "Zentrale EZE-L mit Warnlogik, Sektorverwaltung, Parametrierung, Bedienung und Anzeige"
+   },
+   {
+    "name": "Warnmittel",
+    "description": "8 AW126-L (kabelgebunden, Sektor 1), 10 EWK-L (funkbasiert, Sektor 2) mit ALADIN, 12 Personenwarngeräte EPW"
+   },
+   {
+    "name": "Maschinenwarnung",
+    "description": "MWK an Stopfmaschine und Zweiwegebagger mit Automatischer Sektorumschaltung (ASU)"
+   },
+   {
+    "name": "Energieversorgung",
+    "description": "Lynx Power Box (230 V), Akkus der Funkgeräte, Ladestation"
+   },
+   {
+    "name": "Projektierung und Aufbau",
+    "description": "Einschaltdistanzen, Standorte, Funkausleuchtung, Aufbau, Prüfung, Umbau, Abbau (M2S)"
+   }
+  ],
+  "runs": [],
+  "proposals": {
+   "analysis": {},
+   "measures": {},
+   "requirements": {},
+   "decomposition": null
+  },
+  "docControl": {
+   "docId": "SA-LYNX-RS-001",
+   "revision": "A",
+   "date": "2026-09-22",
+   "author": "",
+   "verifier": "",
+   "validator": "",
+   "dutyHolder": "",
+   "supplier": "Schweizer Electronic AG, Reiden",
+   "purpose": ""
+  },
+  "identConfig": {
+   "depth": "standard",
+   "overrides": {},
+   "sources": null
+  }
+ },
+ "functions": [
+  {
+   "id": "F-0001",
+   "name": "Zugfahrt an der Einschaltstelle erkennen",
+   "description": "Eingang: Radüberfahrten über die Schienenkontakte der Einschaltstelle (Süd km 57,050: 2 × RSK89; Nord km 60,550: RSK89 + RSR123). Verarbeitung: Auswertung der Kontaktreihenfolge zur Bestimmung der Fahrtrichtung. Ausgang: richtungsbezogene Zugmeldung an den angeschlossenen HSF-L.",
+   "kind": "mixed",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Ohne rechtzeitige Zugerkennung entsteht keine Warnung; Kern der Sicherheitsargumentation.",
+   "subsystem": "Zugerkennung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded",
+    "transition"
+   ],
+   "inputs": "Radüberfahrt Schienenkontakte",
+   "outputs": "Zugmeldung je Fahrtrichtung",
+   "safeState": "Bei erkanntem Fehler eines Schienenkontakts wird eine Störung an die EZE-L gemeldet und die Störungswarnung ausgelöst.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0002",
+   "name": "Einschaltmeldung per Funk an die Zentrale übertragen",
+   "description": "Eingang: Zugmeldung am HSF-L. Verarbeitung: gesicherte Funkübertragung zur EZE-L, bei der Einschaltstelle Nord über den Repeater bei km 59,250; zyklische Lebenszeichen. Ausgang: Einschaltmeldung in der EZE-L.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Ein unerkannter Verlust oder eine Verzögerung der Funkmeldung führt zum Ausbleiben oder zur Verspätung der Warnung.",
+   "subsystem": "Funkübertragung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded"
+   ],
+   "inputs": "Zugmeldung, Lebenszeichen",
+   "outputs": "Einschaltmeldung in der EZE-L",
+   "safeState": "Ausbleibende Lebenszeichen oder gestörte Funkstrecke werden erkannt und führen zur Störungswarnung.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0003",
+   "name": "Warnung in der Zentrale auslösen und verwalten",
+   "description": "Eingang: Ein- und Ausschaltmeldungen beider Richtungen, manuelle Auslösung. Verarbeitung: Warnlogik mit Zugzählung je Richtung (Zugfolge, Zugkreuzung) für beide Sektoren; Warnung endet erst, wenn alle eingeschalteten Züge ausgeschaltet sind. Ausgang: Warnbefehl an AW126-L, EWK-L, EPW und MWK.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Fehlerhafte Warnlogik kann eine Warnung verhindern oder vorzeitig beenden.",
+   "subsystem": "Zentrale und Bedienung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded",
+    "transition"
+   ],
+   "inputs": "Einschaltmeldungen, Ausschaltmeldungen, Handauslösung",
+   "outputs": "Warnbefehl je Sektor, Störungsmeldung",
+   "safeState": "Warnung bleibt aktiv bzw. Störungswarnung wird ausgelöst; Rücknahme nur durch Ausschaltung oder Quittierung des Sicherheitschefs.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0004",
+   "name": "Akustische und optische Warnung an den Warneinheiten ausgeben",
+   "description": "Eingang: Warnbefehl (AW126-L über Kabel, EWK-L über Funk). Verarbeitung: Ansteuerung von 8 AW126-L und 10 EWK-L mit Starktonhorn und Blitzleuchte. Ausgang: akustisches und optisches Warnsignal an allen Arbeitsplätzen beider Sektoren.",
+   "kind": "mixed",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Die akustische Warnung ist der primäre Informationsweg zum Personal.",
+   "subsystem": "Warnmittel",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded"
+   ],
+   "inputs": "Warnbefehl",
+   "outputs": "Akustisches und optisches Warnsignal",
+   "safeState": "Ausfall oder fehlendes Lebenszeichen einer Warneinheit wird erkannt und führt zur Störungswarnung.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0005",
+   "name": "Warnlautstärke automatisch an den Umgebungslärm anpassen",
+   "description": "Eingang: Umgebungslärm am Mikrofon jedes Starktonhorns. Verarbeitung: ALADIN regelt den Warnpegel zwischen 96 und 126 dB. Ausgang: Warnsignal so laut wie nötig, mindestens 3 dB(A) über dem Umgebungspegel.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Ein zu niedrig geregelter Pegel führt zu nicht wahrgenommener Warnung.",
+   "subsystem": "Warnmittel",
+   "interfaces": [],
+   "modes": [
+    "normal"
+   ],
+   "inputs": "Umgebungspegel am Horn",
+   "outputs": "Geregelter Warnpegel",
+   "safeState": "Bei Fehler der Pegelregelung wird mit maximalem Pegel (126 dB) gewarnt.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0006",
+   "name": "Warnung an Personenwarngeräten und Maschinen ausgeben",
+   "description": "Eingang: Warnbefehl der EZE-L. Verarbeitung: Funkübertragung an 12 Personenwarngeräte EPW und an die MWK von Stopfmaschine und Zweiwegebagger. Ausgang: Vibrations-, Ton- und Lichtsignal am EPW bzw. Warnung im Führerstand.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Maschinenführer und Einzelarbeitende hören die Warneinheiten bei Lärm bis 105 dB(A) nicht zuverlässig.",
+   "subsystem": "Maschinenwarnung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded"
+   ],
+   "inputs": "Warnbefehl",
+   "outputs": "Warnung am EPW und im Führerstand",
+   "safeState": "Verbindungsverlust wird am EPW bzw. im Führerstand und an der EZE-L angezeigt.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0007",
+   "name": "Warnsektor der Maschinen automatisch umschalten",
+   "description": "Eingang: Standort der Maschine (Sektorwechsel an der Sektorgrenze km 58,800). Verarbeitung: Automatische Sektorumschaltung ASU ordnet die MWK dem aktuellen Warnsektor zu. Ausgang: Warnung der Maschine aus dem richtigen Sektor ohne Zutun des Maschinenführers.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Eine falsche oder verzögerte Sektorzuordnung führt dazu, dass die Maschine die Warnung ihres aktuellen Sektors nicht erhält.",
+   "subsystem": "Maschinenwarnung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "transition"
+   ],
+   "inputs": "Maschinenstandort, Sektorgrenze",
+   "outputs": "Sektorzuordnung der MWK",
+   "safeState": "Bei unklarer Sektorzuordnung erhält die MWK die Warnungen beider Sektoren.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0008",
+   "name": "Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden",
+   "description": "Eingang: Radüberfahrt am RSK89 der Ausschaltstelle (km 59,650 für Richtung Süd, km 57,950 für Richtung Nord). Verarbeitung: richtungsabhängige Auswertung und Funkmeldung. Ausgang: Ausschaltmeldung an die EZE-L.",
+   "kind": "mixed",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Eine vorzeitige oder falsch zugeordnete Ausschaltung beendet die Warnung, während ein Zug noch die Baustelle befährt oder sich nähert.",
+   "subsystem": "Zugerkennung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded"
+   ],
+   "inputs": "Radüberfahrt Ausschaltkontakt",
+   "outputs": "Ausschaltmeldung je Fahrtrichtung",
+   "safeState": "Bei Fehler oder fehlender Ausschaltung bleibt die Warnung bestehen, bis der Sicherheitschef nach Sichtkontrolle quittiert.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0009",
+   "name": "Warnung manuell auslösen und quittieren",
+   "description": "Eingang: Betätigung an der EZE-L oder am Hand-Funksender HSF-L durch Sicherheitschef bzw. Vorwärter. Verarbeitung: manuelle Auslösung (Rückfallebene, Probewarnung) bzw. Quittierung nach Sichtkontrolle. Ausgang: Warnbefehl bzw. Rücknahme der Warnung.",
+   "kind": "mixed",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Rückfallebene bei Störung der Zugerkennung; eine Fehlquittierung kann eine laufende Warnung beenden.",
+   "subsystem": "Zentrale und Bedienung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded",
+    "emergency"
+   ],
+   "inputs": "Handauslösung, Quittierung",
+   "outputs": "Warnbefehl, Quittierung",
+   "safeState": "Quittierung nur bei freiem Gleis nach Sichtkontrolle; bei Fehler bleibt die Warnung aktiv.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0010",
+   "name": "Funkstrecken und Geräte überwachen und Störung melden",
+   "description": "Eingang: Lebenszeichen aller Funkteilnehmer, Kabelüberwachung der AW126-L, Geräte- und Akkuzustand. Verarbeitung: zyklische Überwachung durch die EZE-L. Ausgang: Störungswarnung (eigener Signalton) und Anzeige an der EZE-L.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Die Überwachung deckt gefährliche Ausfälle auf und leitet die Rückfallebene ein.",
+   "subsystem": "Funkübertragung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded",
+    "maintenance"
+   ],
+   "inputs": "Lebenszeichen, Kabelüberwachung, Akkuzustand",
+   "outputs": "Störungswarnung, Störungsanzeige",
+   "safeState": "Störungswarnung aktiv; Personal verlässt den Gefahrenbereich.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0011",
+   "name": "Anlage mit Energie versorgen",
+   "description": "Eingang: Baustrom 230 V, Akkus der Funkgeräte. Verarbeitung: Versorgung der kabelgebundenen Geräte über die Lynx Power Box; autarker Akkubetrieb von HSF-L, EWK-L und EPW für eine Schicht. Ausgang: Versorgungsspannung, Unterspannungsmeldung.",
+   "kind": "electronic",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Energieausfall führt zum Ausfall von Zugerkennung oder Warnung; muss erkannt und gemeldet werden.",
+   "subsystem": "Energieversorgung",
+   "interfaces": [],
+   "modes": [
+    "normal",
+    "degraded",
+    "emergency"
+   ],
+   "inputs": "Baustrom, Akkus",
+   "outputs": "Versorgungsspannung, Unterspannungsmeldung",
+   "safeState": "Unterspannung bzw. niedriger Akkustand wird rechtzeitig gemeldet und führt zur Störungswarnung.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  },
+  {
+   "id": "F-0012",
+   "name": "Anlage projektieren, aufbauen, prüfen und abbauen",
+   "description": "Eingang: Gleisplan, Streckengeschwindigkeit, Baustellenplan. Verarbeitung: Berechnung der Einschaltdistanzen, Festlegung der Standorte und Sektoren, Funkausleuchtung, Aufbau, Inbetriebnahmeprüfung, Umbau bei Baufortschritt, Abbau. Ausgang: geprüfte und freigegebene Anlage mit Prüfprotokoll.",
+   "kind": "procedural",
+   "safetyRelated": true,
+   "safetyRelatedRationale": "Projektierungs- und Aufbaufehler (zu kurze Einschaltdistanz, übersehene Weiche, Funklücke) sind systematische Ursachen fehlender Warnungen.",
+   "subsystem": "Projektierung und Aufbau",
+   "interfaces": [],
+   "modes": [
+    "commissioning",
+    "maintenance",
+    "decommissioning"
+   ],
+   "inputs": "Gleisplan, Geschwindigkeiten, Projektvorgaben",
+   "outputs": "Projektierungsplan, Prüfprotokoll, Freigabe",
+   "safeState": "Anlage gilt bis zur dokumentierten Prüfung und Freigabe als nicht betriebsbereit; keine Arbeiten im Gefahrenbereich.",
+   "tffr": null,
+   "tffrRationale": "",
+   "source": "manual",
+   "createdAt": "2026-09-22T08:00:00.000Z",
+   "createdBy": "Demo",
+   "updatedAt": "2026-09-22T08:00:00.000Z",
+   "updatedBy": "Demo"
+  }
+ ],
+ "hazards": [],
+ "requirements": [],
+ "ccas": []
+}

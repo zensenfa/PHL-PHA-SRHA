@@ -1,0 +1,49 @@
+{
+  "guidewords": [
+    {
+      "id": "loss",
+      "label": "Ausfall / keine Funktion",
+      "question": "Die Funktion wird nicht ausgeführt, obwohl sie gefordert ist."
+    },
+    {
+      "id": "unintended",
+      "label": "Unbeabsichtigte Ausführung",
+      "question": "Die Funktion wird ausgeführt, obwohl sie nicht gefordert ist."
+    },
+    {
+      "id": "early",
+      "label": "Zu früh",
+      "question": "Die Funktion wird vor dem geforderten Zeitpunkt oder der geforderten Bedingung ausgeführt."
+    },
+    {
+      "id": "late",
+      "label": "Zu spät",
+      "question": "Die Funktion wird nach dem geforderten Zeitpunkt oder außerhalb der zulässigen Zeit ausgeführt."
+    },
+    {
+      "id": "partial",
+      "label": "Teilweise / unvollständig",
+      "question": "Die Funktion wird nur teilweise ausgeführt (z. B. eine von zwei Schranken, ein Sektor von zwei)."
+    },
+    {
+      "id": "wrongValue",
+      "label": "Falscher Wert / Zustand",
+      "question": "Die Funktion liefert oder verwendet einen falschen Wert, Zustand, Ort oder Adressaten."
+    },
+    {
+      "id": "falseSafe",
+      "label": "Fälschlich als sicher gemeldet",
+      "question": "Ein unsicherer Zustand wird als sicher gemeldet oder angezeigt (gefährliche Fehlanzeige, verdeckter Fehler)."
+    },
+    {
+      "id": "stuck",
+      "label": "Nicht beendet / blockiert",
+      "question": "Die Funktion bleibt in einem Zwischenzustand hängen oder lässt sich nicht zurücknehmen."
+    },
+    {
+      "id": "degradedResponse",
+      "label": "Fehlerreaktion unzureichend",
+      "question": "Nach einem erkannten Fehler wird der sichere Zustand nicht, zu spät oder nicht dauerhaft eingenommen."
+    }
+  ]
+}

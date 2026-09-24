@@ -1,0 +1,38 @@
+{
+  "source": "EN 50126-2:2017 Tabelle 2 und EN 50129:2018 Tabelle A.1 — Zuordnung der tolerierbaren Funktionsausfallrate (TFFR, je Stunde und Funktion) zum Sicherheitsintegritätslevel.",
+  "bands": [
+    {
+      "sil": "SIL4",
+      "label": "SIL 4",
+      "min": 1e-09,
+      "max": 1e-08
+    },
+    {
+      "sil": "SIL3",
+      "label": "SIL 3",
+      "min": 1e-08,
+      "max": 1e-07
+    },
+    {
+      "sil": "SIL2",
+      "label": "SIL 2",
+      "min": 1e-07,
+      "max": 1e-06
+    },
+    {
+      "sil": "SIL1",
+      "label": "SIL 1",
+      "min": 1e-06,
+      "max": 1e-05
+    }
+  ],
+  "basicIntegrityThreshold": 1e-05,
+  "lowerLimit": 1e-09,
+  "rules": {
+    "belowRange": "TFFR anspruchsvoller als 10⁻⁹/h: Funktion in vollständig unabhängige Teilfunktionen aufteilen und TFFR aufteilen, oder mindestens SIL-4-Maßnahmen erfüllen und die Funktion mit weiteren technischen oder betrieblichen Maßnahmen kombinieren (EN 50126-2 10.2.7; EN 50129 A.5.2). Entscheidung durch den Ingenieur, niemals automatisch SIL 4.",
+    "basicIntegrity": "TFFR weniger anspruchsvoll als 10⁻⁵/h: Attribut „Basisintegrität“ (EN 50126-2 10.2.11). Kein SIL.",
+    "applicability": "Ein SIL gilt nur für elektronische Funktionen oder den elektronischen Anteil gemischter Funktionen (EN 50126-2 10.2.1, 10.3). Für mechanische, pneumatische, hydraulische oder prozedurale Anteile: „SIL nicht anwendbar — Regelwerk (CoP) angewendet“ mit Referenz.",
+    "noSil0": "„SIL 0“ wird nicht mehr verwendet (EN 50129 A.5.1). Nicht sicherheitsrelevante Funktionen werden als solche bezeichnet.",
+    "inheritance": "Nach der SIL-Zuordnung auf der Ebene der letzten unabhängigen Funktionen wird nur die TFFR weiter auf Teilfunktionen aufgeteilt; der SIL bleibt unverändert (EN 50126-2 10.2.9)."
+  }
+}

@@ -1,0 +1,2765 @@
+{
+  "schemaVersion": "rhas-project/1.0",
+  "exportedAt": "2026-07-09T14:00:00.000Z",
+  "project": {
+    "name": "Beispiel: BÜSA-23 Bahnübergang mit Halbschranken",
+    "description": "Vollständig befülltes Beispielprojekt (fiktive Anlage) für alle fünf Stufen — keine realen Systemdaten."
+  },
+  "meta": {
+    "systemDefinition": {
+      "name": "Bahnübergangssicherungsanlage Musterhausen (BÜSA-23)",
+      "type": "Bahnübergangssicherungsanlage mit Halbschranken (automatisch, ferngesteuert)",
+      "purpose": "Sicherung des Bahnübergangs km 42,3 gegen Kollisionen zwischen Schienenfahrzeugen und Straßenverkehrsteilnehmern durch rechtzeitige Warnung und Sperrung des Straßenverkehrs bei Zugannäherung.",
+      "missionProfile": "Zweigleisiger Streckenabschnitt, ca. 40 Zugfahrten je Tag (Regional- und Güterverkehr, v ≤ 120 km/h), 24/7-Betrieb, hohes Straßenverkehrsaufkommen einschließlich Fußgänger, Radfahrer und Schwerlastverkehr. Systemlebensdauer 25 Jahre.",
+      "description": "Automatische Halbschrankenanlage mit Straßenverkehrs-Lichtzeichen (Gelb/Rot) und Fußgängersignal. Zugerkennung über redundante Achszähler an den Einschaltpunkten beider Gleise und Richtungen; Ausschaltung über Achszähler hinter dem Übergang. Steuerung als zweikanaliger Rechner mit Fail-safe-Ausgängen für Antriebe und Lichtzeichen; Endlagenüberwachung der Schrankenbäume. Fernüberwachung und Diagnose über die Streckenzentrale; Rückmeldung „Übergang gesichert“ an das benachbarte elektronische Stellwerk als Fahrstraßenbedingung. Versorgung aus dem Ortsnetz mit unterbrechungsfreier Stromversorgung (USV) für mindestens 8 h.",
+      "boundary": "Innerhalb: Achszähler, Steuerung, Antriebe, Schrankenbäume, Lichtzeichen, Fußgängersignale, USV, Fernüberwachungs-Endgerät. Außerhalb (Schnittstellen): elektronisches Stellwerk (Fahrstraßenbedingung, Störmeldung), Streckenzentrale (Fernüberwachung), Ortsnetz, Straßenverkehr und Fußgänger, Instandhaltungspersonal, Triebfahrzeugführer (Überwachungssignal).",
+      "includedFunctions": "Zugannäherung erkennen, Straßenverkehr warnen, Halbschranken schließen, Übergang freigeben, Sicherungszustand an Stellwerk melden, Störungen erkennen und melden, Notstromversorgung.",
+      "excludedFunctions": "Fahrstraßenlogik des Stellwerks, Zugbeeinflussung (PZB/ETCS), Straßenverkehrsregelung außerhalb des Übergangsbereichs, Videoüberwachung (nicht sicherheitsrelevant).",
+      "location": "Freiland, ebener Übergang mit 2 Straßenfahrstreifen und beidseitigen Gehwegen; Schaltschrank 15 m neben dem Übergang; Kabelwege beider Achszählerkanäle teilen sich auf den letzten 40 m einen Kabelkanal.",
+      "physicalEnvironment": "Außentemperatur −25 °C bis +45 °C, Vereisung, Starkregen, Schneelast; Nähe zur 15-kV-Oberleitung (EMV); Vibration durch Schwerlastverkehr.",
+      "operatingStrategy": "Vollautomatischer Regelbetrieb ohne örtliches Personal; bei Störung Rückfall auf gesicherten Grundzustand (Dauerrot, Schranken geschlossen) und Meldung an Stellwerk und Zentrale; Weiterbetrieb im Störfall nur mit betrieblichen Ersatzmaßnahmen (Sicherungsposten, Befehl).",
+      "maintenanceStrategy": "Vierteljährliche Inspektion, jährliche Funktionsprüfung mit Nachweis der Vorwarnzeit, Batterietausch alle 5 Jahre, störungsbedingte Instandsetzung mit Interventionszeit ≤ 4 h; mobile Instandhaltungstrupps.",
+      "lifetime": "25 Jahre",
+      "logistics": "Ersatzteilhaltung in der Regionalwerkstatt; Diagnoseabruf über Fernüberwachung.",
+      "operatingConditions": "Regelbetrieb ohne Bedienhandlung. Bei Störung: Fahrdienstleiter (qualifiziert nach Richtlinie) leitet Ersatzmaßnahmen ein; Sicherungsposten (Berechtigung Bahnübergangsposten) sichert vor Ort; Instandhalter (Fachkraft BÜ-Technik) mit Zugriff auf Diagnose und Handkurbel.",
+      "infrastructureConstraints": "Bestehende Kabeltrassen; Einschaltpunkte durch Streckengeschwindigkeit und Vorwarnzeit festgelegt; kein Platz für Vollschranken.",
+      "personnel": "Straßenverkehrsteilnehmer und Fußgänger (Dritte) im Übergangsbereich; Zugpersonal und Fahrgäste bei Kollision; Instandhaltungspersonal im Gleisbereich bei Arbeiten.",
+      "humanActivitiesExcludedReason": "",
+      "pastExperience": "Branchenweit häufigste Unfallursache: Umfahren oder Unterqueren geschlossener Halbschranken. Bekannte technische Störmuster: Achszähler-Drift bei EMV-Einwirkung, Vereisung der Antriebe, Einschaltzeit-Toleranzüberschreitungen einer Steuerungscharge (Feldmeldungen 2026).",
+      "existingSafetyMeasures": "Redundante Achszähler je Einschaltpunkt; Fail-safe-Ausgänge der Steuerung; USV; Überwachungssignal für den Triebfahrzeugführer; Fernüberwachung mit Störmeldung. Annahme: Das Stellwerk verweigert die Fahrstraße ohne Rückmeldung „Übergang gesichert“.",
+      "assumptions": "Straßenverkehr hält bei Rot an (Verkehrsrecht, keine Anrechnung als Barriere). Interventionszeit ≤ 4 h wird eingehalten. Kein vorsätzlicher Missbrauch betrachtet.",
+      "deviationsFromReference": "",
+      "applicableStandards": "EN 50126-1/-2:2017, EN 50129:2018, EN 50128:2011, EN 50159:2010 (Fernüberwachung), EN 50121-4 (EMV), nationale BÜ-Richtlinie.",
+      "referenceSystems": "Baugleiche Anlagen des Herstellers (ca. 1 500 Übergänge im Feld) als Referenz für Ausfallraten der Antriebe und Achszähler.",
+      "legalFramework": "Eisenbahn-Bau- und Betriebsordnung, Straßenverkehrsordnung, CSM-RA (EU 402/2013).",
+      "modes": [
+        "normal",
+        "degraded",
+        "transition",
+        "maintenance",
+        "emergency",
+        "commissioning"
+      ],
+      "documents": [
+        {
+          "name": "Systembeschreibung BÜSA-23 (Auszug)",
+          "text": "Die Anlage BÜSA-23 sichert den Bahnübergang km 42,3. Zugerkennung: zwei Achszählerkanäle je Einschaltpunkt, Auswertung zweikanalig mit Vergleich, bei Diskrepanz Übergang in den gesicherten Grundzustand. Vorwarnzeit Straßenverkehr: Gelb 3 s, Rot 12 s vor Beginn der Schrankenschließung; Schließzeit 6 bis 8 s; Mindestsicherungszeit vor Zugankunft 5 s. Ausschaltung über Achszähler hinter dem Übergang mit Plausibilitätsprüfung der Achszahl. Kabelwege: Kanal A und Kanal B in getrennten Trassen, auf den letzten 40 m vor dem Schaltschrank gemeinsamer Kabelkanal. USV: 8 h Überbrückung bei Volllast (nicht unter Winterbedingungen geprüft). Fernüberwachung über Mobilfunk mit Rückfall auf zweites Netz; bei Ausfall beider Netze keine Meldung, Anlage bleibt im Regelbetrieb.",
+          "note": "Beispieldokument",
+          "addedAt": "2026-07-09T14:00:00.000Z"
+        }
+      ]
+    },
+    "interfaces": [
+      {
+        "id": "IF-0001",
+        "name": "Stellwerk-Schnittstelle",
+        "type": "externalSystem",
+        "partner": "Elektronisches Stellwerk (ESTW)",
+        "description": "Kriterium „Übergang gesichert“ (fail-safe, potentialfrei), Störmeldung; Zeitfenster Fahrstraßenbildung."
+      },
+      {
+        "id": "IF-0002",
+        "name": "Straßenverkehr und Fußgänger",
+        "type": "human",
+        "partner": "Verkehrsteilnehmer",
+        "description": "Wahrnehmung von Lichtzeichen, Fußgängersignal und Schrankenbäumen; Verhalten bei Rot."
+      },
+      {
+        "id": "IF-0003",
+        "name": "Streckenzentrale (Fernüberwachung)",
+        "type": "externalSystem",
+        "partner": "Streckenzentrale",
+        "description": "Meldungen über Mobilfunk (zwei Netze), Diagnoseabruf; keine Steuerbefehle."
+      },
+      {
+        "id": "IF-0004",
+        "name": "Instandhaltung vor Ort",
+        "type": "human",
+        "partner": "Instandhaltungstrupp",
+        "description": "Diagnosezugriff, Handkurbel, Prüfungen im Gleisbereich; Sperrung/Freigabe der Anlage."
+      },
+      {
+        "id": "IF-0005",
+        "name": "Energieversorgung",
+        "type": "physical",
+        "partner": "Ortsnetzbetreiber",
+        "description": "230 V Ortsnetz; Netzausfälle und Überspannungen."
+      }
+    ],
+    "subsystems": [
+      {
+        "name": "Zugerkennung",
+        "description": "Achszähler, Auswertung"
+      },
+      {
+        "name": "Sicherungslogik",
+        "description": "Zweikanalige Steuerung, Fail-safe-Ausgaben"
+      },
+      {
+        "name": "Straßenseite",
+        "description": "Lichtzeichen, Fußgängersignale, Antriebe, Schrankenbäume"
+      },
+      {
+        "name": "Energieversorgung",
+        "description": "Netzteil, USV"
+      },
+      {
+        "name": "Fernüberwachung",
+        "description": "Diagnose, Mobilfunk"
+      },
+      {
+        "name": "Betrieb",
+        "description": "Betriebliche Verfahren"
+      }
+    ],
+    "runs": [
+      {
+        "runId": "run_demo1",
+        "mode": "identification",
+        "depth": "standard",
+        "model": "mistral-small3.2:latest",
+        "provider": "ollama",
+        "startedAt": "2026-07-09T10:00:00.000Z",
+        "finishedAt": "2026-07-09T12:40:00.000Z",
+        "calls": 32,
+        "inputTokens": 41000,
+        "outputTokens": 38000,
+        "cancelled": false,
+        "stoppedBy": "",
+        "failedPasses": [],
+        "totals": {
+          "proposed": 29,
+          "passes": 32,
+          "failed": 0
+        },
+        "passes": [
+          {
+            "kind": "function",
+            "unit": "F-0001",
+            "label": "Funktion F-0001 Zugannäherung erkennen",
+            "ok": true,
+            "proposed": 4,
+            "merged": 1,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0002",
+            "label": "Funktion F-0002 Straßenverkehr warnen",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0003",
+            "label": "Funktion F-0003 Halbschranken schließen und Endlage überwachen",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0004",
+            "label": "Funktion F-0004 Sicherungszustand an Stellwerk melden",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0005",
+            "label": "Funktion F-0005 Übergang nach Zugdurchfahrt freigeben",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0006",
+            "label": "Funktion F-0006 Störungen erkennen und melden",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0007",
+            "label": "Funktion F-0007 Energie unterbrechungsfrei bereitstellen",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0008",
+            "label": "Funktion F-0008 Fernüberwachung und Diagnoseabruf",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "function",
+            "unit": "F-0009",
+            "label": "Funktion F-0009 Manuelle Notbedienung",
+            "ok": true,
+            "proposed": 2,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 300000
+          },
+          {
+            "kind": "interface",
+            "unit": "IF-0001",
+            "label": "Schnittstelle IF-0001 Stellwerk-Schnittstelle",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 280000
+          },
+          {
+            "kind": "interface",
+            "unit": "IF-0002",
+            "label": "Schnittstelle IF-0002 Straßenverkehr und Fußgänger",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 280000
+          },
+          {
+            "kind": "interface",
+            "unit": "IF-0003",
+            "label": "Schnittstelle IF-0003 Streckenzentrale (Fernüberwachung)",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 280000
+          },
+          {
+            "kind": "interface",
+            "unit": "IF-0004",
+            "label": "Schnittstelle IF-0004 Instandhaltung vor Ort",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 280000
+          },
+          {
+            "kind": "interface",
+            "unit": "IF-0005",
+            "label": "Schnittstelle IF-0005 Energieversorgung",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 280000
+          },
+          {
+            "kind": "mode",
+            "unit": "normal",
+            "label": "Betriebsart normal",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "mode",
+            "unit": "degraded",
+            "label": "Betriebsart degraded",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "mode",
+            "unit": "transition",
+            "label": "Betriebsart transition",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "mode",
+            "unit": "maintenance",
+            "label": "Betriebsart maintenance",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "mode",
+            "unit": "emergency",
+            "label": "Betriebsart emergency",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "mode",
+            "unit": "commissioning",
+            "label": "Betriebsart commissioning",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 250000
+          },
+          {
+            "kind": "source",
+            "unit": "a",
+            "label": "Gefährdungsquelle GQ-a",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "b",
+            "label": "Gefährdungsquelle GQ-b",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "c",
+            "label": "Gefährdungsquelle GQ-c",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "d",
+            "label": "Gefährdungsquelle GQ-d",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "e",
+            "label": "Gefährdungsquelle GQ-e",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "f",
+            "label": "Gefährdungsquelle GQ-f",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "g",
+            "label": "Gefährdungsquelle GQ-g",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "h",
+            "label": "Gefährdungsquelle GQ-h",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "i",
+            "label": "Gefährdungsquelle GQ-i",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "j",
+            "label": "Gefährdungsquelle GQ-j",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "k",
+            "label": "Gefährdungsquelle GQ-k",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "l",
+            "label": "Gefährdungsquelle GQ-l",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "m",
+            "label": "Gefährdungsquelle GQ-m",
+            "ok": true,
+            "proposed": 0,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 200000
+          },
+          {
+            "kind": "source",
+            "unit": "n",
+            "label": "Gefährdungsquelle GQ-n",
+            "ok": true,
+            "proposed": 3,
+            "merged": 0,
+            "duplicatesFlagged": 1,
+            "durationMs": 200000
+          },
+          {
+            "kind": "critique",
+            "unit": "*",
+            "label": "Kritikphase",
+            "ok": true,
+            "proposed": 0,
+            "durationMs": 180000,
+            "assessment": "Notbetrieb und Kommunikationsausfall unterrepräsentiert.",
+            "gapAreas": [
+              {
+                "title": "Rückfallverfahren bei Mehrfachausfall",
+                "why": "Keine Befunde zu GQ-c mit Kommunikationsausfall.",
+                "sourceCategory": "c"
+              }
+            ]
+          },
+          {
+            "kind": "gapfill",
+            "unit": "Rückfallverfahren bei Mehrfachausfall",
+            "label": "Lückenfüllung: Rückfallverfahren bei Mehrfachausfall",
+            "ok": true,
+            "proposed": 1,
+            "merged": 0,
+            "duplicatesFlagged": 0,
+            "durationMs": 260000
+          }
+        ]
+      },
+      {
+        "runId": "run_demo2",
+        "mode": "requirements",
+        "model": "mistral-small3.2:latest",
+        "provider": "ollama",
+        "startedAt": "2026-07-09T13:00:00.000Z",
+        "finishedAt": "2026-07-09T13:40:00.000Z",
+        "calls": 8,
+        "inputTokens": 12000,
+        "outputTokens": 9000,
+        "cancelled": false,
+        "passes": [],
+        "totals": {
+          "proposed": 8,
+          "passes": 8,
+          "failed": 0
+        }
+      }
+    ],
+    "docControl": {
+      "docId": "SA-BUESA-23",
+      "revision": "A",
+      "date": "2026-07-09",
+      "author": "M. Keller",
+      "verifier": "S. Brunner",
+      "validator": "A. Vogt",
+      "dutyHolder": "Musterbahn AG",
+      "supplier": "Schweizer Electronic AG (Beispiel)",
+      "purpose": "Beispielprojekt zur Demonstration der Arbeitsweise; alle Angaben fiktiv."
+    },
+    "identConfig": {
+      "depth": "standard",
+      "overrides": {},
+      "sources": null
+    }
+  },
+  "functions": [
+    {
+      "id": "F-0001",
+      "name": "Zugannäherung erkennen",
+      "description": "Achszählimpulse beider Kanäle am Einschaltpunkt erfassen, vergleichen und „Zug angekündigt“ an die Steuerung ausgeben.",
+      "kind": "electronic",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Auslöser der gesamten Sicherung; Ausfall führt direkt zum ungesicherten Übergang.",
+      "subsystem": "Zugerkennung",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "inputs": "Achszählimpulse Kanal A/B",
+      "outputs": "Zugmeldung",
+      "safeState": "Übergang sichern (Dauerrot, Schranken zu)",
+      "tffr": 1e-08,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0002",
+      "name": "Straßenverkehr warnen",
+      "description": "Lichtzeichen Gelb/Rot und Fußgängersignal nach Zugmeldung mit definierter Vorwarnzeit ansteuern und überwachen.",
+      "kind": "electronic",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Vorwarnzeit ist Voraussetzung für das Räumen des Übergangs.",
+      "subsystem": "Straßenseite",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "inputs": "Zugmeldung",
+      "outputs": "Lichtzeichen, Fußgängersignal",
+      "safeState": "Dauerrot",
+      "tffr": 1e-07,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0003",
+      "name": "Halbschranken schließen und Endlage überwachen",
+      "description": "Antriebe nach Vorwarnzeit ansteuern, Endlage „geschlossen“ erfassen und an die Sicherungslogik melden.",
+      "kind": "mixed",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Physische Sperrung des Straßenverkehrs.",
+      "subsystem": "Straßenseite",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "inputs": "Schließbefehl",
+      "outputs": "Endlagenmeldung",
+      "safeState": "Schranken geschlossen",
+      "tffr": 1e-07,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0004",
+      "name": "Sicherungszustand an Stellwerk melden",
+      "description": "Nur bei Dauerrot und Endlage „geschlossen“ das Kriterium „Übergang gesichert“ als Fahrstraßenbedingung an das Stellwerk ausgeben.",
+      "kind": "electronic",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Fahrterlaubnis hängt von dieser Meldung ab.",
+      "subsystem": "Sicherungslogik",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "inputs": "Lichtzeichenzustand, Endlagen",
+      "outputs": "Übergang gesichert (Stellwerk)",
+      "safeState": "Meldung zurückgenommen",
+      "tffr": 1e-08,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0005",
+      "name": "Übergang nach Zugdurchfahrt freigeben",
+      "description": "Ausschaltung über Achszähler hinter dem Übergang mit Plausibilitätsprüfung; Schranken öffnen, Lichtzeichen aus.",
+      "kind": "electronic",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Vorzeitige Freigabe bei zweitem Zug ist gefährlich.",
+      "subsystem": "Zugerkennung",
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "inputs": "Achszähler Ausschaltpunkt",
+      "outputs": "Freigabe",
+      "safeState": "Übergang bleibt gesichert",
+      "tffr": 1e-08,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0006",
+      "name": "Störungen erkennen und melden",
+      "description": "Eigendiagnose, Übergang in den gesicherten Grundzustand bei erkannter Störung, Meldung an Stellwerk und Streckenzentrale.",
+      "kind": "electronic",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Erkennung und Negation gefährlicher Fehler innerhalb der zulässigen Zeit.",
+      "subsystem": "Sicherungslogik",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded",
+        "transition"
+      ],
+      "inputs": "Diagnosedaten",
+      "outputs": "Störmeldung, Grundzustand",
+      "safeState": "Gesicherter Grundzustand",
+      "tffr": 1e-08,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0007",
+      "name": "Energie unterbrechungsfrei bereitstellen",
+      "description": "USV überbrückt Netzausfall für mindestens 8 h; bei Erschöpfung geordneter Übergang in den gesicherten Grundzustand.",
+      "kind": "mixed",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Energieverlust darf nicht zu offenem Übergang bei Zugannäherung führen.",
+      "subsystem": "Energieversorgung",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "inputs": "Ortsnetz",
+      "outputs": "48 V DC",
+      "safeState": "Schranken geschlossen, Dauerrot",
+      "tffr": 1e-06,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0008",
+      "name": "Fernüberwachung und Diagnoseabruf",
+      "description": "Betriebs- und Störmeldungen an die Streckenzentrale übertragen; Diagnosedaten bereitstellen.",
+      "kind": "electronic",
+      "safetyRelated": false,
+      "safetyRelatedRationale": "Rein informativ; keine Eigenschaft wird in der Sicherheitsargumentation verwendet, die Anlage sichert sich lokal.",
+      "subsystem": "Fernüberwachung",
+      "interfaces": [],
+      "modes": [
+        "normal",
+        "maintenance"
+      ],
+      "inputs": "Meldungen",
+      "outputs": "Telegramme",
+      "safeState": "–",
+      "tffr": null,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    },
+    {
+      "id": "F-0009",
+      "name": "Manuelle Notbedienung",
+      "description": "Handkurbelbetrieb der Schranken und örtliche Sicherung durch Sicherungsposten bei Anlagenausfall.",
+      "kind": "procedural",
+      "safetyRelated": true,
+      "safetyRelatedRationale": "Betriebliche Rückfallebene bei Ausfall der Anlage.",
+      "subsystem": "Betrieb",
+      "interfaces": [],
+      "modes": [
+        "emergency",
+        "degraded",
+        "maintenance"
+      ],
+      "inputs": "Befehl Fahrdienstleiter",
+      "outputs": "Gesicherter Übergang durch Posten",
+      "safeState": "Übergang durch Posten gesperrt",
+      "tffr": null,
+      "tffrRationale": "",
+      "source": "seed",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "updatedAt": "2026-07-09T14:00:00.000Z"
+    }
+  ],
+  "hazards": [
+    {
+      "id": "H-0001",
+      "title": "Übergang bei Zugannäherung nicht gesichert",
+      "description": "Bei Einfahrt eines Zuges in den Einschaltabschnitt bleibt der Übergang ungesichert (kein Rot, Schranken offen), weil die Zugannäherung nicht erkannt wird.",
+      "level": "boundary",
+      "sourceCategory": "b",
+      "domain": "",
+      "method": "guideword",
+      "guideword": "loss",
+      "functions": [
+        "F-0001"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Ausfall beider Achszählerkanäle (gemeinsame Ursache: Kabelkanal, Überspannung)",
+          "kind": "random"
+        },
+        {
+          "text": "Fehlerhafte Parametrierung des Einschaltpunkts nach Streckenänderung",
+          "kind": "systematic"
+        },
+        {
+          "text": "EMV-Einkopplung der Oberleitung in die Zählschleifen",
+          "kind": "external"
+        }
+      ],
+      "triggeringEvent": "Zug erreicht Einschaltpunkt",
+      "enablingConditions": [
+        "Straßenverkehr im Übergangsbereich"
+      ],
+      "railwayHazard": "Bahnübergang bei Zugfahrt ungesichert",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision Zug mit Straßenfahrzeug oder Fußgänger auf dem Übergang",
+          "affected": [
+            "third",
+            "passengers",
+            "staff"
+          ],
+          "severity": "catastrophic",
+          "severityRationale": "Kollision eines Zuges mit einem besetzten Straßenfahrzeug bei bis zu 120 km/h führt glaubhaft zu mehreren Todesfällen (Fahrzeuginsassen, ggf. Zugpersonal bei Entgleisung). Nicht „kritisch“, weil mehr als ein Todesfall glaubhaft ist.",
+          "frequency": "rare",
+          "frequencyRationale": "Zwei unabhängige Kanäle mit Vergleich; ein Doppelausfall wird je Anlage seltener als einmal in 10 Jahren erwartet, die Feldbasis von 1 500 Anlagen zeigt keinen Fall. Nicht „unwahrscheinlich“, weil der gemeinsame Kabelkanal die Unabhängigkeit einschränkt.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Undesirable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "ere",
+        "reference": "",
+        "rac": "matrix",
+        "justification": "Kein Regelwerk deckt die konkrete Doppelausfallkonstellation vollständig ab; Referenzsystem liefert nur Ausfallraten."
+      },
+      "existingBarriers": [
+        {
+          "text": "Überwachungssignal für den Triebfahrzeugführer zeigt Sicherungszustand",
+          "type": "frequency",
+          "effectiveness": "gering (Bremsweg > Sichtweite bei 120 km/h)",
+          "becomesSrac": false
+        },
+        {
+          "text": "Stellwerk verweigert Fahrstraße ohne Rückmeldung „Übergang gesichert“",
+          "type": "frequency",
+          "effectiveness": "hoch, außerhalb der Anlage",
+          "becomesSrac": true
+        }
+      ],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Getrennte Kabeltrassen für Achszählerkanal A und B bis zum Schaltschrank; keine gemeinsamen Kabelkanäle.",
+          "type": "frequencyReduction",
+          "hierarchy": "design",
+          "residualSeverity": "catastrophic",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Undesirable",
+          "rationale": "Beseitigt die identifizierte gemeinsame Ursache der beiden Kanäle; die verbleibende Doppelausfallrate folgt dem Produkt der Einzelraten mit sicherer Ausfallzeit und liegt bei einmal in mehr als 1 000 Jahren je Anlage.",
+          "status": "accepted",
+          "becomesSrac": false
+        },
+        {
+          "id": "M-0002",
+          "text": "Zyklischer Selbsttest der Zählschleifen mit Übergang in den gesicherten Grundzustand bei Diskrepanz innerhalb von 2 s.",
+          "type": "propagationReduction",
+          "hierarchy": "protective",
+          "residualSeverity": "catastrophic",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Undesirable",
+          "rationale": "Erkennt Einzelfehler vor dem zweiten Ausfall und negiert sie sicher; die sichere Ausfallzeit sinkt auf Sekunden.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": 1e-08,
+        "origin": "joint",
+        "justification": "Gemeinsam mit dem Betreiber aus dem Unfallziel je Übergang abgeleitet (katastrophal → höchst unwahrscheinlich gemäß Anhang C.4)."
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Kernfunktion, direkt unfallrelevant"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Funktion F-0001 Zugannäherung erkennen",
+        "passKind": "funktion",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "F-0001 ist die auslösende Funktion der gesamten Sicherung.",
+        "sourcesUsed": "Systembeschreibung, Abschnitt Zugerkennung",
+        "decisionRationale": "Übernehmen; nur verwerfen, wenn eine unabhängige dritte Erkennung nachgewiesen ist."
+      }
+    },
+    {
+      "id": "H-0002",
+      "title": "Vorwarnzeit für den Straßenverkehr zu kurz",
+      "description": "Die Zeit zwischen Beginn der Rotphase und Schrankenschließung bzw. Zugankunft unterschreitet den Mindestwert, sodass Fahrzeuge den Übergang nicht mehr räumen können.",
+      "level": "boundary",
+      "sourceCategory": "f",
+      "domain": "",
+      "method": "guideword",
+      "guideword": "late",
+      "functions": [
+        "F-0002"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Einschaltzeit-Toleranz der Steuerung überschritten (bekanntes Chargenproblem)",
+          "kind": "systematic"
+        },
+        {
+          "text": "Verzögerte Zugmeldung durch Störung eines Zählkanals",
+          "kind": "random"
+        }
+      ],
+      "triggeringEvent": "Zugmeldung kommt verspätet bei der Sicherungslogik an",
+      "enablingConditions": [
+        "Schwerlastfahrzeug auf dem Übergang"
+      ],
+      "railwayHazard": "Verkehrsteilnehmer bei Zugankunft noch im Gefahrraum",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision mit einem langsam räumenden Fahrzeug",
+          "affected": [
+            "third"
+          ],
+          "severity": "critical",
+          "severityRationale": "Ein einzelnes Fahrzeug mit wenigen Insassen ist betroffen; mindestens ein Todesfall glaubhaft. Nicht katastrophal, weil der Zug in der Regel nicht entgleist.",
+          "frequency": "occasional",
+          "frequencyRationale": "Feldmeldungen zeigen mehrere Toleranzüberschreitungen je Jahr im Netz; je Anlage ist mit einem Ereignis in 1 bis 10 Jahren zu rechnen. Nicht „wahrscheinlich“, weil die meisten Überschreitungen ohne Verkehr bleiben.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "cop",
+        "reference": "Nationale BÜ-Richtlinie, Abschnitt Vorwarn- und Sicherungszeiten",
+        "rac": "",
+        "justification": "Die Richtlinie legt Mindestzeiten und ihre Überwachung verbindlich fest und deckt die Gefährdung vollständig ab."
+      },
+      "existingBarriers": [
+        {
+          "text": "Mindestsicherungszeit 5 s vor Zugankunft in der Projektierung",
+          "type": "frequency",
+          "effectiveness": "mittel",
+          "becomesSrac": false
+        }
+      ],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Unabhängige Zeitüberwachung der Einschaltzeit mit Übergang in den gesicherten Grundzustand bei Unterschreitung der Vorwarnzeit.",
+          "type": "propagationReduction",
+          "hierarchy": "protective",
+          "residualSeverity": "critical",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Die zweite Zeitbasis erkennt jede Toleranzüberschreitung und erzwingt Dauerrot vor der Zugankunft; Restrisiko nur bei gleichzeitigem Ausfall der Überwachung.",
+          "status": "accepted",
+          "becomesSrac": false
+        },
+        {
+          "id": "M-0002",
+          "text": "Nachweis der Vorwarnzeit bei jeder jährlichen Funktionsprüfung mit Messprotokoll.",
+          "type": "frequencyReduction",
+          "hierarchy": "procedural",
+          "residualSeverity": "critical",
+          "residualFrequency": "rare",
+          "residualRiskClass": "Undesirable",
+          "rationale": "Deckt schleichende Drift auf; wirkt nur im Prüfintervall und hängt von der Durchführung ab (Anwendungsbedingung).",
+          "status": "accepted",
+          "becomesSrac": true
+        }
+      ],
+      "thr": {
+        "valuePerHour": 1e-07,
+        "origin": "cop",
+        "justification": "Aus Richtlinienvorgabe für die Zeitüberwachung abgeleitet."
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA / Betreiber",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Funktion F-0002 Straßenverkehr warnen",
+        "passKind": "funktion",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Feldmeldungen der Steuerungscharge belegen das Muster.",
+        "sourcesUsed": "Erfahrungen, Systembeschreibung (Zeiten)",
+        "decisionRationale": "Übernehmen; Feldbefunde stützen die Relevanz."
+      }
+    },
+    {
+      "id": "H-0003",
+      "title": "„Übergang gesichert“ ohne tatsächliche Sicherung gemeldet",
+      "description": "Das Kriterium „Übergang gesichert“ steht am Stellwerk an, obwohl Lichtzeichen oder Schranken nicht in Sicherungsstellung sind.",
+      "level": "boundary",
+      "sourceCategory": "e",
+      "domain": "",
+      "method": "interface",
+      "guideword": "falseSafe",
+      "functions": [
+        "F-0004"
+      ],
+      "interfaces": [
+        "IF-0001"
+      ],
+      "modes": [
+        "normal",
+        "degraded"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Fehlerhafte Verknüpfung der Endlagen- und Lichtzeichenkriterien in der Sicherungslogik",
+          "kind": "systematic"
+        },
+        {
+          "text": "Kleben eines Ausgaberelais",
+          "kind": "random"
+        }
+      ],
+      "triggeringEvent": "Fahrstraßenbildung durch das Stellwerk",
+      "enablingConditions": [
+        "Störung der Straßenseite gleichzeitig"
+      ],
+      "railwayHazard": "Zugfahrt über ungesicherten Übergang mit Fahrterlaubnis",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision bei Streckengeschwindigkeit",
+          "affected": [
+            "third",
+            "passengers"
+          ],
+          "severity": "catastrophic",
+          "severityRationale": "Fahrt mit voller Geschwindigkeit über einen als gesichert gemeldeten, tatsächlich offenen Übergang; mehrere Todesfälle glaubhaft. Nicht kritisch, weil kein Bremseinsatz zu erwarten ist.",
+          "frequency": "improbable",
+          "frequencyRationale": "Fail-safe-Ausgabe und zweikanalige Logik; gefährliche Fehlanzeige erfordert zwei unabhängige Fehler. Nicht „höchst unwahrscheinlich“, weil systematische Logikfehler nicht ausgeschlossen sind.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "ere",
+        "reference": "",
+        "rac": "matrix",
+        "justification": "Schnittstellenspezifisch, kein vollständiges Regelwerk."
+      },
+      "existingBarriers": [],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Kriterium „Übergang gesichert“ nur bei gleichzeitigem Nachweis von Dauerrot (rückgelesen) und beider Endlagen „geschlossen“, zweikanalig verknüpft und dynamisch überwacht.",
+          "type": "elimination",
+          "hierarchy": "design",
+          "residualSeverity": "catastrophic",
+          "residualFrequency": "highlyImprobable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Beseitigt die Möglichkeit einer statischen Fehlanzeige; dynamische Überwachung erkennt klebende Kontakte innerhalb eines Zyklus.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": 1e-08,
+        "origin": "dutyHolder",
+        "justification": "Vom Betreiber vorgegeben (Schnittstellenvertrag Stellwerk)."
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Schnittstelle IF-0001 Stellwerk-Schnittstelle",
+        "passKind": "schnittstelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Gefährliche Fehlanzeige an der sicherheitsrelevanten Schnittstelle.",
+        "sourcesUsed": "Systembeschreibung",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0004",
+      "title": "Straßenverkehrsteilnehmer umfährt geschlossene Halbschranke",
+      "description": "Bei geschlossenen Halbschranken und Rot befährt ein Verkehrsteilnehmer den Übergang durch Umfahren der Halbschranke auf der Gegenfahrbahn.",
+      "level": "boundary",
+      "sourceCategory": "d",
+      "domain": "",
+      "method": "mode",
+      "guideword": "",
+      "functions": [
+        "F-0003"
+      ],
+      "interfaces": [
+        "IF-0002"
+      ],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Vorsätzliches oder unaufmerksames Umfahren (vorhersehbarer Fehlgebrauch)",
+          "kind": "human"
+        }
+      ],
+      "triggeringEvent": "Fahrzeug nähert sich bei Rot und geschlossener Schranke",
+      "enablingConditions": [
+        "Lange Schließzeit",
+        "Keine Gegenverkehr-Sperre"
+      ],
+      "railwayHazard": "Fahrzeug im Gefahrraum bei Zugfahrt",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision Zug mit umfahrendem Fahrzeug",
+          "affected": [
+            "third"
+          ],
+          "severity": "critical",
+          "severityRationale": "Einzelnes Fahrzeug, mindestens ein Todesfall glaubhaft; Zug bleibt meist im Gleis.",
+          "frequency": "occasional",
+          "frequencyRationale": "Branchenweit häufigste Unfallursache; je Anlage mit Verkehrsaufkommen dieser Größe alle 1 bis 10 Jahre ein Beinaheereignis oder Unfall.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Undesirable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "reference",
+        "reference": "Bestehende Halbschrankenanlagen des Betreibers gleicher Bauart (Unfallstatistik 2016–2025)",
+        "rac": "",
+        "justification": "Referenzsystem mit gleicher Funktion, gleichem Betriebsumfeld und ausreichender Beobachtungsdauer."
+      },
+      "existingBarriers": [
+        {
+          "text": "Rotlichtüberwachung durch die Straßenverkehrsbehörde",
+          "type": "frequency",
+          "effectiveness": "gering",
+          "becomesSrac": true
+        }
+      ],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Verlängerung der Schrankenbäume und Sperrflächenmarkierung, um das Umfahren zu erschweren.",
+          "type": "frequencyReduction",
+          "hierarchy": "design",
+          "residualSeverity": "critical",
+          "residualFrequency": "rare",
+          "residualRiskClass": "Undesirable",
+          "rationale": "Physische Erschwernis reduziert Umfahrungen nach Referenzstatistik um etwa den Faktor 5; kein vollständiger Ausschluss.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Betreiber",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Betriebsart Normalbetrieb",
+        "passKind": "betriebsart",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Vorhersehbarer Fehlgebrauch (7.4.2.1 d).",
+        "sourcesUsed": "Erfahrungen",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0005",
+      "title": "Übergang bei Netzausfall nach Erschöpfung der USV offen",
+      "description": "Nach längerem Netzausfall ist die USV erschöpft; die Anlage fällt ohne geordneten Übergang in den Grundzustand aus, die Schranken bleiben offen.",
+      "level": "boundary",
+      "sourceCategory": "m",
+      "domain": "",
+      "method": "source",
+      "guideword": "",
+      "functions": [
+        "F-0006"
+      ],
+      "interfaces": [
+        "IF-0005"
+      ],
+      "modes": [
+        "degraded"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "USV-Kapazität unter Winterbedingungen geringer als projektiert",
+          "kind": "systematic"
+        },
+        {
+          "text": "Netzausfall länger als 8 h",
+          "kind": "external"
+        }
+      ],
+      "triggeringEvent": "USV-Spannung unterschreitet Abschaltschwelle",
+      "enablingConditions": [
+        "Zugannäherung während Ausfall"
+      ],
+      "railwayHazard": "Bahnübergang bei Zugfahrt ungesichert",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision auf dem ungesicherten Übergang",
+          "affected": [
+            "third",
+            "passengers"
+          ],
+          "severity": "catastrophic",
+          "severityRationale": "Wie H-0001: Kollision mit besetztem Fahrzeug bei Streckengeschwindigkeit.",
+          "frequency": "improbable",
+          "frequencyRationale": "Netzausfälle über 8 h sind in der Region selten (< 1 in 10 Jahren) und treffen nur dann, wenn zusätzlich ein Zug ohne Ersatzmaßnahme verkehrt.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "ere",
+        "reference": "",
+        "rac": "matrix",
+        "justification": "Explizite Abschätzung über Ausfalldauer und Betrieb."
+      },
+      "existingBarriers": [
+        {
+          "text": "Störmeldung an Stellwerk vor Erschöpfung; betriebliche Ersatzmaßnahmen",
+          "type": "frequency",
+          "effectiveness": "hoch, sofern Meldung ankommt",
+          "becomesSrac": true
+        }
+      ],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Geordneter Übergang in den gesicherten Grundzustand (Schranken schließen, Dauerrot mit Restenergie) bei USV-Reserve < 30 min; Rücknahme des Kriteriums „Übergang gesichert“.",
+          "type": "propagationReduction",
+          "hierarchy": "protective",
+          "residualSeverity": "catastrophic",
+          "residualFrequency": "highlyImprobable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Verhindert den offenen Übergang bei Energieverlust; die verbleibende Restenergie ist für den Schließvorgang bemessen.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": 1e-08,
+        "origin": "joint",
+        "justification": "Abgeleitet aus Unfallziel wie H-0001."
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Gefährdungsquelle GQ-m Elektrische Umgebung",
+        "passKind": "gefährdungsquelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "USV nicht unter Winterbedingungen geprüft (Dokument).",
+        "sourcesUsed": "Systembeschreibung: USV",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0006",
+      "title": "Vereisung verhindert vollständiges Schließen der Halbschranke",
+      "description": "Bei Frost und Feuchtigkeit erreicht der Schrankenantrieb die Endlage „geschlossen“ nicht; der Übergang ist nur teilweise gesperrt.",
+      "level": "boundary",
+      "sourceCategory": "n",
+      "domain": "",
+      "method": "source",
+      "guideword": "partial",
+      "functions": [
+        "F-0003"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Vereisung des Antriebsmechanismus",
+          "kind": "external"
+        },
+        {
+          "text": "Fehlende Antriebsheizung",
+          "kind": "systematic"
+        }
+      ],
+      "triggeringEvent": "Schließbefehl bei Vereisung",
+      "enablingConditions": [
+        "Außentemperatur < 0 °C",
+        "Hohe Luftfeuchtigkeit"
+      ],
+      "railwayHazard": "Verkehrsteilnehmer im Gefahrraum",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Fahrzeug passiert teilgeschlossene Schranke, Kollision",
+          "affected": [
+            "third"
+          ],
+          "severity": "critical",
+          "severityRationale": "Einzelfahrzeug; mindestens ein Todesfall glaubhaft.",
+          "frequency": "rare",
+          "frequencyRationale": "Vereisung tritt an wenigen Tagen im Jahr auf; die Endlagenüberwachung meldet den Zustand, sodass die Fahrstraße nicht gebildet wird; Ereignis mit Verkehr im Gefahrraum seltener als einmal in 10 Jahren.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "cop",
+        "reference": "Herstellerregelwerk Antriebsheizung; EN 50125-3 Umgebungsbedingungen",
+        "rac": "",
+        "justification": "Klimatische Randbedingungen sind durch Regelwerk abgedeckt."
+      },
+      "existingBarriers": [
+        {
+          "text": "Endlagenüberwachung verhindert Kriterium „Übergang gesichert“",
+          "type": "frequency",
+          "effectiveness": "hoch",
+          "becomesSrac": false
+        }
+      ],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Beheizung des Antriebsmechanismus mit Temperaturüberwachung.",
+          "type": "frequencyReduction",
+          "hierarchy": "design",
+          "residualSeverity": "critical",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Verhindert die Ursache; Heizungsausfall wird gemeldet.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Gefährdungsquelle GQ-n Natürliche Umgebung",
+        "passKind": "gefährdungsquelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Bekanntes Störmuster der Antriebe.",
+        "sourcesUsed": "Erfahrungen",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0007",
+      "title": "Vorzeitige Freigabe des Übergangs bei zweitem Zug",
+      "description": "Nach Durchfahrt des ersten Zuges wird der Übergang freigegeben, obwohl ein zweiter Zug auf dem Nachbargleis bereits im Einschaltabschnitt ist.",
+      "level": "boundary",
+      "sourceCategory": "f",
+      "domain": "",
+      "method": "guideword",
+      "guideword": "early",
+      "functions": [
+        "F-0005"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Fehlerhafte Zuordnung der Ausschaltmeldung zum Gleis",
+          "kind": "systematic"
+        },
+        {
+          "text": "Achszahl-Plausibilität unterdrückt Zugmeldung des zweiten Zuges",
+          "kind": "systematic"
+        }
+      ],
+      "triggeringEvent": "Ausschaltmeldung Gleis 1 während Zugmeldung Gleis 2",
+      "enablingConditions": [
+        "Zwei Züge im Abstand < Vorwarnzeit"
+      ],
+      "railwayHazard": "Übergang bei Zugfahrt ungesichert",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kollision mit dem zweiten Zug",
+          "affected": [
+            "third",
+            "passengers"
+          ],
+          "severity": "catastrophic",
+          "severityRationale": "Wie H-0001.",
+          "frequency": "improbable",
+          "frequencyRationale": "Zweizugfall tritt täglich auf, aber die Fehlfunktion erfordert einen systematischen Fehler in der Gleiszuordnung, der in der Validierung erkannt werden sollte.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "ere",
+        "reference": "",
+        "rac": "matrix",
+        "justification": "Logikfehler, explizite Abschätzung."
+      },
+      "existingBarriers": [],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Freigabe nur, wenn für BEIDE Gleise keine Zugmeldung ansteht (gleisselektive Verriegelung), verifiziert durch Testfälle mit Zwei-Zug-Szenarien.",
+          "type": "elimination",
+          "hierarchy": "design",
+          "residualSeverity": "catastrophic",
+          "residualFrequency": "highlyImprobable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Beseitigt die Ursache durch Verriegelung; Validierung deckt systematische Fehler ab.",
+          "status": "accepted",
+          "becomesSrac": false
+        }
+      ],
+      "thr": {
+        "valuePerHour": 1e-08,
+        "origin": "joint",
+        "justification": "Wie H-0001."
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Funktion F-0005 Übergang nach Zugdurchfahrt freigeben",
+        "passKind": "funktion",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Typischer Zweizugfall zweigleisiger Übergänge.",
+        "sourcesUsed": "Systembeschreibung",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0008",
+      "title": "Instandhalter im Gleisbereich ohne Sicherung gegen Zugfahrten",
+      "description": "Bei Arbeiten an Achszählern im Gleisbereich ist der Instandhalter nicht gegen Zugfahrten gesichert.",
+      "level": "boundary",
+      "sourceCategory": "k",
+      "domain": "",
+      "method": "mode",
+      "guideword": "",
+      "functions": [
+        "F-0009"
+      ],
+      "interfaces": [
+        "IF-0004"
+      ],
+      "modes": [
+        "maintenance"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Arbeiten ohne Sperrung oder Sicherungsposten (Zeitdruck)",
+          "kind": "human"
+        }
+      ],
+      "triggeringEvent": "Beginn der Arbeiten ohne angeforderte Sperrung",
+      "enablingConditions": [
+        "Einzelarbeit"
+      ],
+      "railwayHazard": "Person im Gleis bei Zugfahrt",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Erfassen des Instandhalters durch Zug",
+          "affected": [
+            "maintenance"
+          ],
+          "severity": "critical",
+          "severityRationale": "Ein Todesfall glaubhaft.",
+          "frequency": "rare",
+          "frequencyRationale": "Regelwerk fordert Sperrung; Verstöße sind selten, aber dokumentiert.",
+          "uncertainty": "reasonable",
+          "riskClass": "Undesirable"
+        }
+      ],
+      "riskClass": "Undesirable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": false,
+        "justification": "",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "cop",
+        "reference": "Betriebliche Regeln zur Sicherung von Arbeiten im Gleisbereich (Betreiber)",
+        "rac": "",
+        "justification": "Arbeitsschutz vollständig durch Regelwerk abgedeckt."
+      },
+      "existingBarriers": [],
+      "measures": [
+        {
+          "id": "M-0001",
+          "text": "Diagnose- und Prüfzugriff ohne Betreten des Gleisbereichs (Prüfstecker im Schaltschrank, Fernabruf).",
+          "type": "elimination",
+          "hierarchy": "design",
+          "residualSeverity": "critical",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Verringert die Notwendigkeit, den Gleisbereich zu betreten, auf Arbeiten an den Zählschleifen selbst.",
+          "status": "accepted",
+          "becomesSrac": false
+        },
+        {
+          "id": "M-0002",
+          "text": "Arbeiten im Gleisbereich nur mit Sperrung oder Sicherungsposten (Betreiberregel).",
+          "type": "propagationReduction",
+          "hierarchy": "procedural",
+          "residualSeverity": "critical",
+          "residualFrequency": "improbable",
+          "residualRiskClass": "Tolerable",
+          "rationale": "Bestehende Regel; Wirksamkeit hängt von Einhaltung ab (Anwendungsbedingung).",
+          "status": "accepted",
+          "becomesSrac": true
+        }
+      ],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "controlled",
+      "owner": "",
+      "responsibleEntity": "Betreiber",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Fachlich bestätigt"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Betriebsart Instandhaltung",
+        "passKind": "betriebsart",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Arbeitsschutz (7.4.2.1 k).",
+        "sourcesUsed": "Instandhaltungsstrategie",
+        "decisionRationale": "Übernehmen."
+      }
+    },
+    {
+      "id": "H-0009",
+      "title": "Unnötige Sperrung durch Phantomzug",
+      "description": "Die Achszähler melden eine Zugannäherung ohne Zug (Zähldrift, EMV); der Übergang wird ohne Grund gesperrt.",
+      "level": "boundary",
+      "sourceCategory": "b",
+      "domain": "",
+      "method": "guideword",
+      "guideword": "unintended",
+      "functions": [
+        "F-0001"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Zähldrift durch EMV-Einkopplung",
+          "kind": "external"
+        }
+      ],
+      "triggeringEvent": "Zählimpuls ohne Achse",
+      "enablingConditions": [],
+      "railwayHazard": "Verkehrsteilnehmer verlieren Vertrauen in die Anlage (Folgegefährdung: Umfahren)",
+      "accidents": [
+        {
+          "id": "A1",
+          "description": "Kein direkter Unfall; Folgegefährdung Umfahren bei wiederholten Fehlsperrungen",
+          "affected": [
+            "third"
+          ],
+          "severity": "insignificant",
+          "severityRationale": "Unmittelbar keine Verletzung; nur Verkehrsstörung.",
+          "frequency": "probable",
+          "frequencyRationale": "EMV-Einkopplungen nahe der Oberleitung treten mehrmals jährlich auf.",
+          "uncertainty": "reasonable",
+          "riskClass": "Tolerable"
+        }
+      ],
+      "riskClass": "Tolerable",
+      "residualRiskClass": "Tolerable",
+      "broadlyAcceptable": {
+        "decision": true,
+        "justification": "Unmittelbar keine Verletzungsfolge; die Folgegefährdung „Umfahren“ ist in H-0004 erfasst und dort bewertet. Anteil am Gesamtrisiko vernachlässigbar.",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z"
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "rac": "",
+        "justification": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "evaluated",
+      "owner": "",
+      "responsibleEntity": "Hersteller BÜSA",
+      "review": {
+        "decision": "accepted",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Verfügbarkeitsproblem mit Folgegefährdung; als weitgehend akzeptabel klassifiziert"
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Funktion F-0001 Zugannäherung erkennen",
+        "passKind": "funktion",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Leitwort „unbeabsichtigt“.",
+        "sourcesUsed": "Systembeschreibung",
+        "decisionRationale": "Übernehmen, aber Folgegefährdung getrennt bewerten."
+      }
+    },
+    {
+      "id": "H-0010",
+      "title": "Rückfall bei Ausfall beider Mobilfunknetze nicht definiert",
+      "description": "Bei Ausfall beider Mobilfunknetze erreichen Störmeldungen die Streckenzentrale nicht; die Anlage bleibt ohne Überwachung im Regelbetrieb, Ersatzmaßnahmen werden nicht eingeleitet.",
+      "level": "boundary",
+      "sourceCategory": "c",
+      "domain": "",
+      "method": "gapfill",
+      "guideword": "",
+      "functions": [
+        "F-0006",
+        "F-0008"
+      ],
+      "interfaces": [
+        "IF-0003"
+      ],
+      "modes": [
+        "degraded",
+        "emergency"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Doppelter Netzausfall (gemeinsame Ursache: Standort)",
+          "kind": "external"
+        }
+      ],
+      "triggeringEvent": "Störung der Anlage während Kommunikationsausfall",
+      "enablingConditions": [
+        "Störung tritt während des Ausfalls auf"
+      ],
+      "railwayHazard": "Störung bleibt unbemerkt",
+      "accidents": [],
+      "riskClass": null,
+      "residualRiskClass": null,
+      "broadlyAcceptable": {
+        "decision": null,
+        "justification": "",
+        "by": "",
+        "at": ""
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "justification": "",
+        "rac": "",
+        "racNote": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "identified",
+      "owner": "",
+      "responsibleEntity": "",
+      "review": {
+        "decision": "pending",
+        "by": "",
+        "at": "",
+        "rationale": ""
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Lückenfüllung: Rückfallverfahren bei Mehrfachausfall",
+        "passKind": "lückenfüllung:",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Dokument nennt die Lücke ausdrücklich („keine Meldung, Anlage bleibt im Regelbetrieb“).",
+        "sourcesUsed": "Systembeschreibung: Fernüberwachung",
+        "decisionRationale": "Übernehmen, wenn die Störmeldung an das Stellwerk ebenfalls über Mobilfunk läuft; sonst verwerfen."
+      }
+    },
+    {
+      "id": "H-0011",
+      "title": "Fußgängersignal bei starker Sonneneinstrahlung schlecht erkennbar",
+      "description": "Das Fußgängersignal ist bei tief stehender Sonne nicht ausreichend erkennbar; Fußgänger betreten den Übergang während der Rotphase.",
+      "level": "boundary",
+      "sourceCategory": "n",
+      "domain": "",
+      "method": "source",
+      "guideword": "",
+      "functions": [
+        "F-0002"
+      ],
+      "interfaces": [
+        "IF-0002"
+      ],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Unzureichende Leuchtdichte / fehlende Blendschutzblende",
+          "kind": "systematic"
+        }
+      ],
+      "triggeringEvent": "Rotphase bei Gegenlicht",
+      "enablingConditions": [
+        "Tief stehende Sonne",
+        "Fußgänger im Anmarsch"
+      ],
+      "railwayHazard": "Fußgänger im Gefahrraum",
+      "accidents": [],
+      "riskClass": null,
+      "residualRiskClass": null,
+      "broadlyAcceptable": {
+        "decision": null,
+        "justification": "",
+        "by": "",
+        "at": ""
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "justification": "",
+        "rac": "",
+        "racNote": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "identified",
+      "owner": "",
+      "responsibleEntity": "",
+      "review": {
+        "decision": "pending",
+        "by": "",
+        "at": "",
+        "rationale": ""
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Gefährdungsquelle GQ-n Natürliche Umgebung",
+        "passKind": "gefährdungsquelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Umwelteinfluss auf Wahrnehmung.",
+        "sourcesUsed": "Umgebung",
+        "decisionRationale": "Übernehmen, falls Signalgeber ohne Blendschutz projektiert sind."
+      }
+    },
+    {
+      "id": "H-0012",
+      "title": "Halbschranke schließt bei Sturmböen verzögert",
+      "description": "Starke Böen verzögern das Schließen der Schrankenbäume, sodass die Sicherungszeit unterschritten wird.",
+      "level": "boundary",
+      "sourceCategory": "n",
+      "domain": "",
+      "method": "source",
+      "guideword": "",
+      "functions": [
+        "F-0003"
+      ],
+      "interfaces": [],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Windlast auf Schrankenbaum",
+          "kind": "external"
+        }
+      ],
+      "triggeringEvent": "Schließbefehl bei Sturm",
+      "enablingConditions": [],
+      "railwayHazard": "",
+      "accidents": [],
+      "riskClass": null,
+      "residualRiskClass": null,
+      "broadlyAcceptable": {
+        "decision": null,
+        "justification": "",
+        "by": "",
+        "at": ""
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "justification": "",
+        "rac": "",
+        "racNote": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "identified",
+      "owner": "",
+      "responsibleEntity": "",
+      "review": {
+        "decision": "pending",
+        "by": "",
+        "at": "",
+        "rationale": ""
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Gefährdungsquelle GQ-n Natürliche Umgebung",
+        "passKind": "gefährdungsquelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "H-0002",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Witterungseinfluss auf Schließzeit.",
+        "sourcesUsed": "Umgebung",
+        "decisionRationale": "Möglicherweise durch H-0002 (Vorwarnzeit) abgedeckt."
+      }
+    },
+    {
+      "id": "H-0013",
+      "title": "Rotlichtkamera erfasst Verstoß bei Gegenlicht nicht",
+      "description": "Die Rotlichtüberwachungskamera erkennt Verstöße bei Gegenlicht nicht.",
+      "level": "boundary",
+      "sourceCategory": "f",
+      "domain": "",
+      "method": "source",
+      "guideword": "",
+      "functions": [],
+      "interfaces": [
+        "IF-0002"
+      ],
+      "modes": [
+        "normal"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Kamera ohne Gegenlichtkompensation",
+          "kind": "systematic"
+        }
+      ],
+      "triggeringEvent": "Verstoß bei Gegenlicht",
+      "enablingConditions": [],
+      "railwayHazard": "",
+      "accidents": [],
+      "riskClass": null,
+      "residualRiskClass": null,
+      "broadlyAcceptable": {
+        "decision": null,
+        "justification": "",
+        "by": "",
+        "at": ""
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "justification": "",
+        "rac": "",
+        "racNote": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "identified",
+      "owner": "",
+      "responsibleEntity": "",
+      "review": {
+        "decision": "rejected",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Außerhalb der Systemgrenze (Verkehrsüberwachung der Behörde), keine Sicherungsfunktion der Anlage."
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Gefährdungsquelle GQ-f Funktionalität",
+        "passKind": "gefährdungsquelle",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Verkehrsüberwachung.",
+        "sourcesUsed": "–",
+        "decisionRationale": "Verwerfen, wenn Kamera nicht Teil der Anlage."
+      }
+    },
+    {
+      "id": "H-0014",
+      "title": "Rückbau der Anlage ohne Rückbau der Straßensignalisierung",
+      "description": "Nach Außerbetriebnahme bleiben Lichtzeichen und Schranken sichtbar, sodass Verkehrsteilnehmer auf eine nicht mehr funktionsfähige Sicherung vertrauen.",
+      "level": "boundary",
+      "sourceCategory": "i",
+      "domain": "",
+      "method": "mode",
+      "guideword": "",
+      "functions": [
+        "F-0002"
+      ],
+      "interfaces": [],
+      "modes": [
+        "decommissioning"
+      ],
+      "lifecyclePhase": "",
+      "causes": [
+        {
+          "text": "Unvollständiges Rückbaukonzept",
+          "kind": "systematic"
+        }
+      ],
+      "triggeringEvent": "Zugfahrt nach Außerbetriebnahme (Übergang weiterhin genutzt)",
+      "enablingConditions": [],
+      "railwayHazard": "",
+      "accidents": [],
+      "riskClass": null,
+      "residualRiskClass": null,
+      "broadlyAcceptable": {
+        "decision": null,
+        "justification": "",
+        "by": "",
+        "at": ""
+      },
+      "rap": {
+        "principle": "",
+        "reference": "",
+        "justification": "",
+        "rac": "",
+        "racNote": ""
+      },
+      "existingBarriers": [],
+      "measures": [],
+      "thr": {
+        "valuePerHour": null,
+        "origin": "",
+        "justification": ""
+      },
+      "status": "identified",
+      "owner": "",
+      "responsibleEntity": "",
+      "review": {
+        "decision": "rejected",
+        "by": "M. Keller",
+        "at": "2026-07-09T14:00:00.000Z",
+        "rationale": "Betriebsart Rückbau nicht im Umfang dieser Analyse (Systemdefinition); wird bei Rückbau gesondert bewertet."
+      },
+      "provenance": {
+        "runId": "run_demo1",
+        "pass": "Betriebsart Rückbau",
+        "passKind": "betriebsart",
+        "unit": "",
+        "model": "mistral-small3.2:latest"
+      },
+      "duplicateOf": "",
+      "notes": "",
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller",
+      "reasoning": {
+        "whyIdentified": "Lebenszyklusende.",
+        "sourcesUsed": "–",
+        "decisionRationale": "Nur relevant, wenn Rückbau im Umfang."
+      }
+    }
+  ],
+  "requirements": [
+    {
+      "id": "SR-0001",
+      "text": "Die beiden Achszählerkanäle je Einschaltpunkt müssen über die gesamte Länge in getrennten Kabeltrassen geführt werden; ein gemeinsamer Kabelkanal darf nicht vorkommen.",
+      "title": "Getrennte Kabeltrassen der Achszählerkanäle",
+      "category": "technical",
+      "hazards": [
+        "H-0001"
+      ],
+      "functions": [
+        "F-0001"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "Kabelanlage",
+      "verificationMethod": "inspection",
+      "verificationNote": "Abnahmebegehung mit Trassenplan",
+      "rationale": "Setzt M-0001 von H-0001 um; beseitigt die gemeinsame Ursache.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0002",
+      "text": "Die Zugerkennung muss die Zählschleifen zyklisch mindestens einmal je 10 s prüfen und bei Diskrepanz der Kanäle innerhalb von 2 s den gesicherten Grundzustand einleiten.",
+      "title": "Selbsttest der Zählschleifen",
+      "category": "functional",
+      "hazards": [
+        "H-0001"
+      ],
+      "functions": [
+        "F-0001",
+        "F-0006"
+      ],
+      "measures": [
+        "M-0002"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "Übergang sichern (Dauerrot, Schranken zu)",
+      "timeToSafeState": "≤ 2 s",
+      "detection": "Kanalvergleich, Prüfimpuls",
+      "allocation": "Zugerkennung",
+      "verificationMethod": "test",
+      "verificationNote": "Fehlerinjektion je Kanal",
+      "rationale": "Setzt M-0002 von H-0001 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0003",
+      "text": "Die Sicherungslogik muss die Zeit zwischen Zugmeldung und Beginn der Rotphase mit einer von der Steuerung unabhängigen Zeitbasis überwachen und bei Überschreitung von 500 ms den gesicherten Grundzustand einleiten.",
+      "title": "Unabhängige Zeitüberwachung der Vorwarnzeit",
+      "category": "functional",
+      "hazards": [
+        "H-0002"
+      ],
+      "functions": [
+        "F-0002",
+        "F-0006"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "Dauerrot",
+      "timeToSafeState": "≤ 1 s",
+      "detection": "Zweite Zeitbasis",
+      "allocation": "Sicherungslogik",
+      "verificationMethod": "test",
+      "verificationNote": "Zeitmessung mit manipulierter Steuerzeit",
+      "rationale": "Setzt M-0001 von H-0002 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0004",
+      "text": "Der Instandhalter muss bei jeder jährlichen Funktionsprüfung die Vorwarnzeit messen und im Prüfprotokoll nachweisen; Abweichungen über 300 ms müssen vor Wiederinbetriebnahme behoben werden.",
+      "title": "Nachweis der Vorwarnzeit bei Funktionsprüfung",
+      "category": "srac",
+      "hazards": [
+        "H-0002"
+      ],
+      "functions": [],
+      "measures": [
+        "M-0002"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "",
+      "verificationMethod": "inspection",
+      "verificationNote": "Prüfprotokoll",
+      "rationale": "Betriebliche Maßnahme außerhalb der Systemgrenze.",
+      "status": "agreed",
+      "srac": {
+        "receiver": "Instandhalter (Betreiber)",
+        "origin": "Gefährdung H-0002, Maßnahme M-0002",
+        "verification": "Prüfprotokoll der jährlichen Funktionsprüfung"
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0005",
+      "text": "Das Kriterium „Übergang gesichert“ darf nur ausgegeben werden, wenn Dauerrot rückgelesen ist und beide Endlagen „geschlossen“ zweikanalig anstehen; die Ausgabe muss dynamisch überwacht werden, sodass ein klebender Kontakt innerhalb eines Zyklus (≤ 500 ms) zur Rücknahme führt.",
+      "title": "Dynamische Bildung des Kriteriums „Übergang gesichert“",
+      "category": "functional",
+      "hazards": [
+        "H-0003"
+      ],
+      "functions": [
+        "F-0004"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "Kriterium zurückgenommen",
+      "timeToSafeState": "≤ 500 ms",
+      "detection": "Dynamische Ausgabeüberwachung",
+      "allocation": "Sicherungslogik",
+      "verificationMethod": "test",
+      "verificationNote": "Fehlerinjektion am Ausgaberelais",
+      "rationale": "Setzt M-0001 von H-0003 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0006",
+      "text": "Das Stellwerk muss eine Fahrstraße über den Bahnübergang nur bei anstehendem Kriterium „Übergang gesichert“ bilden und bei Rücknahme des Kriteriums das Deckungssignal auf Halt stellen.",
+      "title": "Fahrstraßenbedingung im Stellwerk",
+      "category": "srac",
+      "hazards": [
+        "H-0001",
+        "H-0003",
+        "H-0005"
+      ],
+      "functions": [],
+      "measures": [],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "",
+      "verificationMethod": "demonstration",
+      "verificationNote": "Integrationstest Stellwerk–BÜSA",
+      "rationale": "Bestehende Barriere außerhalb der Systemgrenze, in der Bewertung angerechnet.",
+      "status": "agreed",
+      "srac": {
+        "receiver": "Stellwerkslieferant / Betreiber (Integration)",
+        "origin": "Bestehende Barriere H-0001",
+        "verification": "Integrationstest, Schnittstellenprotokoll"
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0007",
+      "text": "Die Anlage muss bei einer USV-Restkapazität unter 30 Minuten selbsttätig die Schranken schließen, Dauerrot einschalten, das Kriterium „Übergang gesichert“ zurücknehmen und eine Störmeldung absetzen; die dafür benötigte Energie muss reserviert sein.",
+      "title": "Geordneter Übergang bei USV-Erschöpfung",
+      "category": "functional",
+      "hazards": [
+        "H-0005"
+      ],
+      "functions": [
+        "F-0007",
+        "F-0006"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "Schranken geschlossen, Dauerrot",
+      "timeToSafeState": "≤ 20 s nach Unterschreiten der Schwelle",
+      "detection": "Kapazitätsüberwachung USV",
+      "allocation": "Energieversorgung, Sicherungslogik",
+      "verificationMethod": "test",
+      "verificationNote": "Entladetest bei −25 °C",
+      "rationale": "Setzt M-0001 von H-0005 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0008",
+      "text": "Die USV muss bei −25 °C und Volllast mindestens 8 Stunden überbrücken; der Nachweis muss durch Typprüfung erbracht werden.",
+      "title": "USV-Kapazität unter Winterbedingungen",
+      "category": "technical",
+      "hazards": [
+        "H-0005"
+      ],
+      "functions": [
+        "F-0007"
+      ],
+      "measures": [],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "Energieversorgung",
+      "verificationMethod": "test",
+      "verificationNote": "Typprüfung Klimakammer",
+      "rationale": "Ursache „Kapazität unter Winterbedingungen“ adressiert.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0009",
+      "text": "Die Freigabe des Übergangs darf nur erfolgen, wenn für beide Gleise keine Zugmeldung ansteht; die Verriegelung muss durch Testfälle mit gleichzeitigen Zügen auf beiden Gleisen in beiden Richtungen validiert werden.",
+      "title": "Gleisselektive Verriegelung der Freigabe",
+      "category": "functional",
+      "hazards": [
+        "H-0007"
+      ],
+      "functions": [
+        "F-0005"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "Übergang bleibt gesichert",
+      "timeToSafeState": "–",
+      "detection": "Zugmeldung je Gleis",
+      "allocation": "Sicherungslogik",
+      "verificationMethod": "test",
+      "verificationNote": "Zwei-Zug-Testfälle",
+      "rationale": "Setzt M-0001 von H-0007 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0010",
+      "text": "Die Schrankenantriebe müssen mit einer temperaturgeführten Heizung ausgestattet sein, die bei Außentemperaturen unter +3 °C aktiv ist; ein Heizungsausfall muss als Störung gemeldet werden.",
+      "title": "Antriebsheizung",
+      "category": "technical",
+      "hazards": [
+        "H-0006"
+      ],
+      "functions": [
+        "F-0003"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "Straßenseite",
+      "verificationMethod": "test",
+      "verificationNote": "Klimaprüfung Antrieb",
+      "rationale": "Setzt M-0001 von H-0006 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0011",
+      "text": "Der Betreiber muss sicherstellen, dass Arbeiten an Achszählern im Gleisbereich nur mit Gleissperrung oder Sicherungsposten durchgeführt werden.",
+      "title": "Arbeiten im Gleisbereich nur mit Sicherung",
+      "category": "srac",
+      "hazards": [
+        "H-0008"
+      ],
+      "functions": [],
+      "measures": [
+        "M-0002"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "",
+      "verificationMethod": "inspection",
+      "verificationNote": "Arbeitsanweisung, Audit",
+      "rationale": "Betriebliche Regel außerhalb der Systemgrenze.",
+      "status": "agreed",
+      "srac": {
+        "receiver": "Betreiber (Instandhaltungsorganisation)",
+        "origin": "Gefährdung H-0008, Maßnahme M-0002",
+        "verification": "Arbeitsanweisung und Auditnachweis"
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0012",
+      "text": "Die Anlage muss Diagnose und Funktionsprüfung der Achszähler über einen Prüfanschluss im Schaltschrank ermöglichen, sodass für Routineprüfungen kein Betreten des Gleisbereichs erforderlich ist.",
+      "title": "Prüfzugriff ohne Betreten des Gleisbereichs",
+      "category": "technical",
+      "hazards": [
+        "H-0008"
+      ],
+      "functions": [
+        "F-0006",
+        "F-0008"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "Sicherungslogik",
+      "verificationMethod": "demonstration",
+      "verificationNote": "Prüfablauf",
+      "rationale": "Setzt M-0001 von H-0008 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    },
+    {
+      "id": "SR-0013",
+      "text": "Die Schrankenbäume müssen mindestens zwei Drittel der Fahrbahnbreite je Richtung sperren; die Gegenfahrbahn muss im Übergangsbereich durch bauliche Sperrflächen vom Umfahren abgehalten werden.",
+      "title": "Verlängerte Schrankenbäume und Sperrflächen",
+      "category": "technical",
+      "hazards": [
+        "H-0004"
+      ],
+      "functions": [
+        "F-0003"
+      ],
+      "measures": [
+        "M-0001"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "Straßenseite / Straßenbaulastträger",
+      "verificationMethod": "inspection",
+      "verificationNote": "Abnahme vor Ort",
+      "rationale": "Setzt M-0001 von H-0004 um.",
+      "status": "reviewed",
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "ai",
+      "provenance": {
+        "runId": "run_demo2",
+        "pass": "Anforderungen",
+        "model": "mistral-small3.2:latest"
+      },
+      "createdAt": "2026-07-09T14:00:00.000Z",
+      "createdBy": "M. Keller",
+      "updatedAt": "2026-07-09T14:00:00.000Z",
+      "updatedBy": "M. Keller"
+    }
+  ],
+  "ccas": [
+    {
+      "id": "CCA-0001",
+      "functions": [
+        "F-0001",
+        "F-0004"
+      ],
+      "randomIndependence": true,
+      "systematicIndependence": false,
+      "evidenceRef": "CCA-Bericht BÜSA-23 Rev. A (Entwurf)",
+      "outcome": "dependent",
+      "assumptions": [
+        "Getrennte Kabeltrassen gemäß SR-0001 realisiert"
+      ],
+      "notes": "Systematische Unabhängigkeit nicht nachgewiesen (gemeinsame Spezifikation und Entwicklung); daher keine UND-Anrechnung, SIL bleibt auf Ebene der Gefährdung.",
+      "createdAt": "2026-07-09T14:00:00.000Z"
+    }
+  ]
+}

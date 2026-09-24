@@ -1,0 +1,39 @@
+{
+  "modes": [
+    {
+      "id": "normal",
+      "label": "Normalbetrieb",
+      "description": "Regulärer Betrieb unter normalen Umgebungs- und Lastbedingungen."
+    },
+    {
+      "id": "degraded",
+      "label": "Degradierter Betrieb",
+      "description": "Betrieb mit teilweisem Funktionsausfall, Rückfallebenen, reduzierter Leistung, Ersatzverfahren."
+    },
+    {
+      "id": "transition",
+      "label": "Betriebsartwechsel / Übergänge",
+      "description": "Ein- und Ausschalten, Umschalten zwischen Betriebsarten, Wiederanlauf nach Störung, Übergabe zwischen Sektoren oder Systemen."
+    },
+    {
+      "id": "maintenance",
+      "label": "Instandhaltung",
+      "description": "Geplante und ungeplante Wartung, Inspektion, Prüfung, Reparatur, Komponententausch, Software-/Parameteränderung."
+    },
+    {
+      "id": "emergency",
+      "label": "Notbetrieb / Notfall",
+      "description": "Notfallverfahren, Evakuierung, manuelle Sicherung, Betrieb nach Unfall oder Großstörung."
+    },
+    {
+      "id": "commissioning",
+      "label": "Errichtung / Inbetriebnahme",
+      "description": "Bau, Montage, Integration, Testbetrieb, Abnahme, Erstinbetriebnahme, Umbau im Betrieb."
+    },
+    {
+      "id": "decommissioning",
+      "label": "Rückbau / Entsorgung",
+      "description": "Außerbetriebnahme, Demontage, Entsorgung, Weiterbetrieb benachbarter Systeme."
+    }
+  ]
+}

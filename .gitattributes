@@ -1,0 +1,2 @@
+# Sources keep their original CRLF bytes; the build concatenates them 1:1.
+* -text

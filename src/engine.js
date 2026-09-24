@@ -154,24 +154,61 @@ function sim(a, b) {
   return DD.jaccard(DD.tokenize(a), DD.tokenize(b));
 }
 /** Within-batch merge (drop later near-duplicates, count them) and flag against existing hazards (never drops). */
+/** Union of two lists, keeping the first occurrence of each key (order preserved). */
+function unionBy(a, b, keyOf) {
+  const out = []; const seen = new Set();
+  for (const x of [...(a || []), ...(b || [])]) { const k = keyOf(x); if (k && !seen.has(k)) { seen.add(k); out.push(x); } }
+  return out;
+}
+/**
+ * Fold a near-duplicate suggestion into the one kept (WP0 fix): the kept item
+ * stays the base, but causes, guidewords, functions, interfaces, modes and
+ * enabling conditions of the duplicate are unioned in, and empty fields are
+ * filled, so no cause or coverage evidence is lost by the merge.
+ */
+function mergeInto(base, dup) {
+  const low = (s) => String(s || '').trim().toLowerCase();
+  base.causes = unionBy(base.causes, dup.causes, (c) => low(c && c.text));
+  base.guidewords = unionBy(base.guidewords, dup.guidewords, low);
+  if (!base.guideword && dup.guideword) base.guideword = dup.guideword;
+  base.functions = unionBy(base.functions, dup.functions, String);
+  base.interfaces = unionBy(base.interfaces, dup.interfaces, String);
+  base.modes = unionBy(base.modes, dup.modes, String);
+  base.enablingConditions = unionBy(base.enablingConditions, dup.enablingConditions, low);
+  if (!base.triggeringEvent && dup.triggeringEvent) base.triggeringEvent = dup.triggeringEvent;
+  if (!(base.accidents || []).length && (dup.accidents || []).length) base.accidents = dup.accidents;
+  const r = base.reasoning || (base.reasoning = {});
+  const dr = dup.reasoning || {};
+  if (dr.sourcesUsed && !String(r.sourcesUsed || '').includes(dr.sourcesUsed)) r.sourcesUsed = [r.sourcesUsed, dr.sourcesUsed].filter(Boolean).join(' | ');
+  base.mergedCount = (base.mergedCount || 1) + (dup.mergedCount || 1);
+  base.mergedTitles = unionBy(base.mergedTitles, [dup.title, ...(dup.mergedTitles || [])], low);
+  return base;
+}
+/**
+ * Within-batch merge of near-duplicates (nothing is dropped: see mergeInto),
+ * then flag, never suppress: duplicateOf = similar open/accepted hazard,
+ * previouslyRejected = similar hazard the engineer already rejected.
+ */
 function dedupBatch(items, existing, threshold = 0.6) {
   const kept = [];
-  let dropped = 0;
+  let merged = 0;
   for (const h of items) {
     const dupIdx = kept.findIndex((k) => sim(keyText(k), keyText(h)) >= threshold);
-    if (dupIdx >= 0) { kept[dupIdx].mergedCount = (kept[dupIdx].mergedCount || 1) + 1; dropped++; continue; }
+    if (dupIdx >= 0) { mergeInto(kept[dupIdx], h); merged++; continue; }
     kept.push(h);
   }
   for (const h of kept) {
-    let best = null; let bestSim = 0;
+    let best = null; let bestSim = 0; let rej = null; let rejSim = 0;
     for (const e of existing || []) {
-      if (e.review && e.review.decision === 'rejected') continue;
       const s = sim(keyText(e), keyText(h));
-      if (s >= threshold && s > bestSim) { best = e; bestSim = s; }
+      if (s < threshold) continue;
+      if (e.review && e.review.decision === 'rejected') { if (s > rejSim) { rej = e; rejSim = s; } }
+      else if (s > bestSim) { best = e; bestSim = s; }
     }
     h.duplicateOf = best ? best.id : '';
+    h.previouslyRejected = rej ? rej.id : '';
   }
-  return { kept, dropped };
+  return { kept, dropped: merged, merged };
 }
 
 // --------------------------------------------------------------- planning ----
@@ -229,6 +266,9 @@ async function runIdentification({ plan, ctx, existingHazards, provider, setting
   const modes = data.modes;
   const known = [...(existingHazards || [])];
   const titles = () => known.filter((h) => !h.review || h.review.decision !== 'rejected').map((h) => h.title);
+  // WP0 fix: rejected hazards are passed to the model so it stops re-proposing them.
+  const rejectedTitles = () => known.filter((h) => h.review && h.review.decision === 'rejected')
+    .map((h) => (h.review.rationale ? `${h.title} (Grund: ${String(h.review.rationale).slice(0, 140)})` : h.title));
   const passes = [...plan.passes];
   const results = [];
   const enums = { functionIds: ctx.functions.map((f) => f.id), interfaceIds: ctx.interfaces.map((i) => i.id) };
@@ -246,7 +286,7 @@ async function runIdentification({ plan, ctx, existingHazards, provider, setting
     if (onProgress) onProgress({ index: i, total: passes.length, pass, status: 'running' });
     const started = Date.now();
     let prompt; let schema = hazardSchema; let query = '';
-    const c = { ...ctx, modes };
+    const c = { ...ctx, modes, rejectedTitles: rejectedTitles() };
     if (pass.kind === 'function') { const f = ctx.functions.find((x) => x.id === pass.unit); query = `${f.name} ${f.description} ${f.inputs} ${f.outputs}`; prompt = P.buildFunctionPrompt({ ...c, docs: retrieve(chunks, query) }, f, guidewords, titles()); schema = functionSchema; }
     else if (pass.kind === 'interface') { const it = ctx.interfaces.find((x) => x.id === pass.unit); query = `${it.name} ${it.description} ${it.partner}`; prompt = P.buildInterfacePrompt({ ...c, docs: retrieve(chunks, query) }, it, titles()); }
     else if (pass.kind === 'mode') { const m = modes.find((x) => x.id === pass.unit); query = `${m.label} ${m.description}`; prompt = P.buildModePrompt({ ...c, docs: retrieve(chunks, query) }, m, titles()); }
@@ -388,7 +428,7 @@ async function runRequirements({ hazard, ctx, provider, settings, runState, sign
   }).filter((r) => r.text);
 }
 
-const api = { DEPTHS, chunkDocuments, retrieve, planIdentification, runIdentification, runDecomposition, runRiskAnalysis, runMeasures, runRequirements, normalizeHazardItem, normalizeAnalysis, dedupBatch, mapIds };
+const api = { DEPTHS, chunkDocuments, retrieve, planIdentification, runIdentification, runDecomposition, runRiskAnalysis, runMeasures, runRequirements, normalizeHazardItem, normalizeAnalysis, dedupBatch, mergeInto, mapIds };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_ENGINE = api;
 })();
 

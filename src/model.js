@@ -274,7 +274,7 @@ function makeHazard(fields = {}) {
     status: 'identified', owner: '', responsibleEntity: '',
     review: { decision: 'pending', by: '', at: '', rationale: '' },
     provenance: { runId: '', pass: '', model: '', reasoning: '' },
-    duplicateOf: '', notes: '',
+    duplicateOf: '', previouslyRejected: '', notes: '',
     createdAt: nowIso(), createdBy: '', updatedAt: nowIso(), updatedBy: '', ...fields,
   };
 }

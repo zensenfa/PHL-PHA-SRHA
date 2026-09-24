@@ -49,9 +49,11 @@ ${fmtList(interfaces, (i) => `- ${i.id} ${i.name}${i.partner ? ` ↔ ${i.partner
 ${docs ? `\nAUSZÜGE AUS REFERENZDOKUMENTEN:\n${docs}\n` : ''}`;
 }
 
-function alreadyBlock(titles) {
+function alreadyBlock(titles, rejected) {
   const list = M ? capTitles(titles, 150) : titles;
-  return `BEREITS IDENTIFIZIERTE GEFÄHRDUNGEN (nicht wiederholen):\n${fmtList(list, (t) => `- ${t}`)}`;
+  const known = `BEREITS IDENTIFIZIERTE GEFÄHRDUNGEN (nicht wiederholen):\n${fmtList(list, (t) => `- ${t}`)}`;
+  if (!rejected || !rejected.length) return known;
+  return `${known}\n\nVOM INGENIEUR VERWORFEN (nicht erneut vorschlagen, auch nicht umformuliert):\n${fmtList(capTitles(rejected, 60), (t) => `- ${t}`)}`;
 }
 
 function capTitles(titles, cap) {
@@ -102,7 +104,7 @@ Beschreibung: ${fn.description || '-'}
 Eingänge: ${fn.inputs || '-'} | Ausgänge: ${fn.outputs || '-'} | Sicherer Zustand: ${fn.safeState || '-'} | Art: ${fn.kind}
 Betriebsarten: ${(fn.modes || []).join(', ') || '-'}
 
-${alreadyBlock(titles)}`;
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
   return { systemPrompt, userPrompt };
 }
 
@@ -116,7 +118,7 @@ Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
 ZU ANALYSIERENDE SCHNITTSTELLE: ${iface.id} ${iface.name} (${iface.type}${iface.partner ? `, Gegenstelle: ${iface.partner}` : ''})
 Beschreibung: ${iface.description || '-'}
 
-${alreadyBlock(titles)}`;
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
   return { systemPrompt, userPrompt };
 }
 
@@ -129,7 +131,7 @@ Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
   const userPrompt = `${contextBlock(ctx)}
 ZU ANALYSIERENDE BETRIEBSART: ${mode.id} — ${mode.label}: ${mode.description}
 
-${alreadyBlock(titles)}`;
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
   return { systemPrompt, userPrompt };
 }
 
@@ -142,7 +144,7 @@ Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
   const userPrompt = `${contextBlock(ctx)}
 GEFÄHRDUNGSQUELLE ${source.code}: ${source.title} — ${source.description}
 
-${alreadyBlock(titles)}`;
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
   return { systemPrompt, userPrompt };
 }
 
@@ -152,7 +154,7 @@ function buildInteractionPrompt(ctx, titles) {
 Aufgabe: Interaktionsanalyse über alle Funktionen und Schnittstellen hinweg. Suche NUR nach Gefährdungen, die aus dem Zusammenwirken entstehen: Folgeausfälle (ein Ausfall verursacht den nächsten), gemeinsame Ursachen (Energie, Zeitbasis, Kabelwege, Software-Version, Personal, Umwelt), widersprüchliche Annahmen zwischen Funktionen, Mehrfachausfälle mit gemeinsamem Auslöser, Betriebsartwechsel unter Fehlerbedingungen. Keine Einzelfunktions-Gefährdungen wiederholen. Ordne alle beteiligten Funktionen zu.
 ${HAZARD_RULES}
 Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
-  return { systemPrompt, userPrompt: `${contextBlock(ctx)}\n${alreadyBlock(titles)}` };
+  return { systemPrompt, userPrompt: `${contextBlock(ctx)}\n${alreadyBlock(titles, ctx.rejectedTitles)}` };
 }
 
 function buildCritiquePrompt(ctx, { titles, bySource, byFunction, byMode }) {
@@ -180,7 +182,7 @@ LÜCKENBEREICH: ${gap.title}
 BEGRÜNDUNG DER KRITIK: ${gap.why}
 BETROFFENE FUNKTIONEN: ${(gap.relatedFunctions || []).join(', ') || '-'}
 
-${alreadyBlock(titles)}`;
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
   return { systemPrompt, userPrompt };
 }
 

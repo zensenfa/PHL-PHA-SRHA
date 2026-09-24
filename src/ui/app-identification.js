@@ -94,6 +94,7 @@ function renderFilters() {
 function hint(h) {
   const parts = [];
   if (h.duplicateOf) parts.push(A.pill('dup', `≈ ${h.duplicateOf}`));
+  if (h.previouslyRejected) parts.push(A.pill('rejected', `✕ ${h.previouslyRejected}`));
   if (h.mergedCount > 1) parts.push(A.pill('merge', `⊕ ${h.mergedCount}`));
   const ids = (h.guidewords || []).length ? h.guidewords : (h.guideword ? [h.guideword] : []);
   const labels = ids.map((id) => (DATA.guidewords.find((g) => g.id === id) || {}).label).filter(Boolean);
@@ -135,6 +136,8 @@ function openHazard(id) {
   const dupTitle = h.duplicateOf ? A.hzTitle(h.duplicateOf) : '';
   A.openDrawer(`${h.id} · ${M.label('review', h.review.decision)}`, `
 ${h.duplicateOf ? `<div class="warn">Möglicherweise Duplikat von <b>${A.esc(dupTitle)}</b>. <button class="btn link" id="hz-goto-dup">öffnen</button></div>` : ''}
+${h.previouslyRejected ? `<div class="warn">Ähnelt der bereits verworfenen Gefährdung <b>${A.esc(A.hzTitle(h.previouslyRejected))}</b> (${A.esc(h.previouslyRejected)}).</div>` : ''}
+${(h.mergedTitles || []).length ? `<div class="hint">Zusammengeführt aus ${h.mergedCount} Vorschlägen: ${A.esc(h.mergedTitles.join(' · '))}</div>` : ''}
 <div class="f"><label>Titel</label><input id="hz-title" value="${A.esc(h.title)}" /></div>
 <div class="f"><label>Beschreibung (Zustand an der Systemgrenze)</label><textarea id="hz-desc" rows="3">${A.esc(h.description)}</textarea></div>
 <div class="f"><label>Gefährdungsquelle (7.4.2.1)</label><select id="hz-source">${A.opts(Object.fromEntries(DATA.sources.map((s) => [s.id, `${s.code} ${s.title}`])), h.sourceCategory, '–')}</select></div>

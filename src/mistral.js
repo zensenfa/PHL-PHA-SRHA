@@ -1,8 +1,6 @@
-// Mistral Cloud API client (build plan §1.3: copied from RHL's mistral.js —
-// an explicit opt-in cloud alternative to the air-gapped Ollama default,
-// same provider set and key-hygiene rules as RHL: the API key lives in
-// browser localStorage only, never in project meta/IndexedDB/exports, so it
-// can never end up inside an exported hazard list).
+// Mistral Cloud API client (RHAS): an explicit opt-in cloud alternative to the
+// local Ollama provider. The API key lives in browser localStorage only, never
+// in project meta, IndexedDB or exports, so it cannot end up in a report.
 (function () {
 const DEFAULT_MISTRAL_MODEL = 'mistral-large-latest';
 const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
@@ -43,7 +41,7 @@ async function callMistral({ systemPrompt, userPrompt, apiKey, model, signal: ex
   let userCancelled = false;
   if (externalSignal) {
     if (externalSignal.aborted) { userCancelled = true; ctrl.abort(); }
-    // {once:true}: a Massiv run reuses ONE run-level AbortController across
+    // {once:true}: an identification run reuses ONE run-level AbortController across
     // hundreds of calls — without this, each call's listener (and its
     // closure) stays attached to that shared signal for the run's entire
     // lifetime, accumulating hundreds of dead listeners.
@@ -132,7 +130,7 @@ const api = { DEFAULT_MISTRAL_MODEL, buildMistralRequestBody, callMistral };
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_MISTRAL = api;
+  window.RHAS_MISTRAL = api;
 }
 })();
 

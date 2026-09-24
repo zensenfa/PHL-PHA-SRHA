@@ -1,9 +1,7 @@
-// Document ingestion for the Systemkontext input (build plan §1.3: copied
-// verbatim from RHL's documents.js). TXT is native (FileReader); DOCX/XLSX/PDF
-// go through vendored libraries (vendor/mammoth.browser.min.js,
-// vendor/xlsx.full.min.js, vendor/pdf.min.js). PDF extraction falls back to
-// the paste-text UI on failure (encrypted/scanned PDFs, or if pdf.js failed
-// to load) rather than hard-rejecting every PDF.
+// Document ingestion for the system context input (RHAS). TXT is native
+// (FileReader); DOCX/XLSX/PDF go through vendored libraries (mammoth, SheetJS,
+// pdf.js). PDF extraction falls back to the paste-text UI on failure (encrypted
+// or scanned PDFs, or if pdf.js failed to load) rather than rejecting every PDF.
 (function () {
 const MAX_EXTRACT_CHARS = 400000; // RHAS: retrieval is chunk-based, so whole documents are kept; only pathological sizes are capped
 const PDF_PAGE_CAP = 200; // RHAS: raised from 50 — excerpts are retrieved per pass, not pasted whole
@@ -88,7 +86,7 @@ async function getPdfWorkerBlobUrl() {
  * and two-column layouts are especially prone to this). Groups items into a
  * line whenever the y-coordinate holds within a 4px tolerance of the
  * previous item, then x-sorts each line's fragments before joining —
- * ported from the MIL-STD PHL Generator's proven text-extraction.js.
+ * a proven approach for multi-column PDF layouts.
  */
 function reconstructPdfPageText(items) {
   const Y_TOLERANCE = 4;
@@ -201,7 +199,7 @@ const api = { ingestFile, extensionOf, MAX_EXTRACT_CHARS, reconstructPdfPageText
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_DOCUMENTS = api;
+  window.RHAS_DOCUMENTS = api;
 }
 })();
 

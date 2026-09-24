@@ -21,10 +21,11 @@ function fileBase(code) { const dc = A.state.docControl; return `${A.slug(dc.doc
 
 function renderExports() {
   const cards = [
-    { kind: 'phl', desc: 'Vorläufige Gefährdungsliste mit Systemdefinition, Methode, Abdeckungsnachweis, verworfenen Vorschlägen.' },
-    { kind: 'pha', desc: 'Risikoanalyse und -bewertung: Kalibrierung, Szenarien, Bewertung, Maßnahmen, Restrisiko.' },
+    { kind: 'hazid', desc: 'Gefährdungsidentifikation (Risikobewertung Teil 1) mit Systemdefinition, Methode, Abdeckungsnachweis, verworfenen Vorschlägen.' },
+    { kind: 'risk', desc: 'Risikoanalyse und -bewertung (Risikobewertung Teil 2): Kalibrierung, Szenarien, Bewertung, Maßnahmen, Restrisiko.' },
+    { kind: 'hazlog', desc: 'Gefährdungsprotokoll nach EN 50126-1 7.4.2.2 a) bis g) mit exportierten Auflagen.' },
     { kind: 'srs', desc: 'Sicherheitsanforderungen, Funktionen mit TFFR/Integrität, SRAC-Verzeichnis, Nachverfolgbarkeit, CCA.' },
-    { kind: 'full', desc: 'Gesamtbericht PHL + PHA + SRS in einem Dokument.' },
+    { kind: 'full', desc: 'Gesamtbericht der Phasen 3 und 4 in einem Dokument.' },
   ];
   A.el('export-grid').innerHTML = cards.map((c) => `<div class="export-card"><b>${A.esc(R.DELIVERABLES[c.kind].code)} – ${A.esc(R.DELIVERABLES[c.kind].title)}</b><span>${A.esc(c.desc)}</span><div class="row"><button class="btn small primary" data-docx="${c.kind}">Word (.docx)</button><button class="btn small" data-print="${c.kind}">Druckansicht / PDF</button></div></div>`).join('') + `<div class="export-card"><b>Excel-Arbeitsmappe</b><span>Alle Artefakte als Tabellenblätter: Systemdefinition, Funktionen, Gefährdungsliste, Risikoanalyse (eine Zeile je Unfallszenario), Maßnahmen, Anforderungen, SRAC, Nachverfolgbarkeit, CCA, Abdeckung, KI-Läufe, Kalibrierung.</span><div class="row"><button id="btn-xlsx" class="btn small primary">Excel (.xlsx)</button></div></div>`;
   A.el('export-grid').querySelectorAll('[data-docx]').forEach((b) => { b.onclick = () => { try { const bytes = R.buildDocx(b.dataset.docx, bundle()); A.download(bytes, `${fileBase(R.DELIVERABLES[b.dataset.docx].code)}.docx`, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'); A.toast('Word-Dokument erzeugt'); } catch (e) { A.toast(`Export fehlgeschlagen: ${e.message}`, 'err'); console.error(e); } }; });

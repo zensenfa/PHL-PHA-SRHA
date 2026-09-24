@@ -102,7 +102,7 @@ const MEASURES_SCHEMA = {
       properties: {
         text: str(10),
         type: { type: 'string', enum: ['elimination', 'frequencyReduction', 'propagationReduction', 'severityMitigation'] },
-        hierarchy: { type: 'string', enum: ['design', 'protective', 'warning', 'procedural'] },
+        hierarchy: { type: 'string', enum: ['safeFunction', 'additionalSafety', 'safetyInformation'] },
         residualSeverity: { type: 'string', enum: SEVERITIES }, residualFrequency: { type: 'string', enum: FREQUENCIES },
         rationale: str(40), insideSystem: { type: 'boolean' },
       },

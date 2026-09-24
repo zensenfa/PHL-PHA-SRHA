@@ -3,7 +3,7 @@
 // themselves on window.RHAS_APP.stages and are rendered through refresh().
 // No native dialogs anywhere; every confirmation is an inline arm-then-confirm.
 (function () {
-const M = window.RHAS_MODEL, DB = window.RHAS_DB, PIPE = window.RMG_LLM_PIPELINE, DATA = window.RHAS_DATA;
+const M = window.RHAS_MODEL, DB = window.RHAS_DB, PIPE = window.RHAS_LLM_PIPELINE, DATA = window.RHAS_DATA;
 const A = window.RHAS_APP = {
   stages: {},
   state: {

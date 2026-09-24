@@ -120,3 +120,21 @@ test('hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to
 test('hazard sources are EN 50126-1 7.4.2.1 a) to n) in order', () => {
   assert.deepEqual(M.data().sources.map((s) => s.id), 'abcdefghijklmn'.split(''));
 });
+
+test('measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated', () => {
+  assert.deepEqual(Object.keys(M.LABELS.hierarchy), ['safeFunction', 'additionalSafety', 'safetyInformation']);
+  const map = { design: 'safeFunction', protective: 'additionalSafety', warning: 'additionalSafety', procedural: 'safetyInformation' };
+  for (const [legacy, now] of Object.entries(map)) {
+    assert.equal(M.normalizeHierarchy(legacy), now);
+    assert.equal(M.label('hierarchy', legacy), M.LABELS.hierarchy[now]);
+  }
+  const h = M.makeHazard({ measures: [M.makeMeasure({ hierarchy: 'procedural' })] });
+  M.recomputeHazardRisk(h);
+  assert.equal(h.measures[0].hierarchy, 'safetyInformation');
+  assert.equal(M.makeMeasure().hierarchy, 'additionalSafety');
+});
+
+test('assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)', () => {
+  const f = M.SYSTEM_DEFINITION_FIELDS.find((x) => x.key === 'assumptions');
+  assert.equal(f.ref, '7.3.2.1 d)');
+});

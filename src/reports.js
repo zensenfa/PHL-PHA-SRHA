@@ -1,8 +1,9 @@
 // Report generation for the Railway Hazard Analysis Suite: DOCX (own writer),
 // XLSX (SheetJS) and a print-ready HTML view, all from one bundle and one set
 // of table specifications, so the three formats can never disagree.
-// Deliverables: PHL (Gefährdungsliste), PHA (Risikoanalyse & -bewertung),
-// SRS (Sicherheitsanforderungsspezifikation) and the combined report.
+// Deliverables follow EN 50126-1 phase 3/4 outputs: hazard identification,
+// risk analysis and evaluation, hazard log, safety requirements and SRAC,
+// and the combined report.
 (function () {
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const DOCX = typeof require !== 'undefined' ? require('./docx.js') : window.RHAS_DOCX;
@@ -18,16 +19,23 @@ const REFERENCES = [
   ['EN 50126-1:2017', 'Bahnanwendungen – Spezifikation und Nachweis der Zuverlässigkeit, Verfügbarkeit, Instandhaltbarkeit und Sicherheit (RAMS) – Teil 1: Generischer RAMS-Prozess'],
   ['EN 50126-2:2017', 'RAMS – Teil 2: Systembezogene Sicherheitsmethodik'],
   ['EN 50129:2018', 'Bahnanwendungen – Telekommunikationstechnik, Signaltechnik und Datenverarbeitungssysteme – Sicherheitsrelevante elektronische Systeme für Signaltechnik'],
-  ['MIL-STD-882E', 'Department of Defense Standard Practice: System Safety (Tasks 201 PHL, 202 PHA, 203 SRHA) – nur zur Einordnung der Liefergegenstände'],
 ];
-const ACRONYMS = [['CCA', 'Common Cause Analysis (Analyse gemeinsamer Ursachen)'], ['CoP', 'Code of Practice (anerkannte Regeln der Technik)'], ['ERE', 'Explizite Risikoabschätzung'], ['PHA', 'Preliminary Hazard Analysis (vorläufige Gefährdungsanalyse)'], ['PHL', 'Preliminary Hazard List (vorläufige Gefährdungsliste)'], ['RAC', 'Risikoakzeptanzkriterium'], ['RAP', 'Risikoakzeptanzprinzip'], ['SIL', 'Sicherheitsintegritätslevel'], ['SRAC', 'Safety-Related Application Condition (sicherheitsbezogene Anwendungsbedingung)'], ['SRS', 'Safety Requirements Specification (Sicherheitsanforderungsspezifikation)'], ['TFFR', 'Tolerable Functional Failure Rate (tolerierbare Funktionsausfallrate)'], ['THR', 'Tolerable Hazard Rate (tolerierbare Gefährdungsrate)']];
+const ACRONYMS = [['CCA', 'Common Cause Analysis (Analyse gemeinsamer Ursachen)'], ['CoP', 'Code of Practice (anerkannte Regeln der Technik)'], ['ERE', 'Explizite Risikoabschätzung'], ['RAC', 'Risikoakzeptanzkriterium'], ['RAP', 'Risikoakzeptanzprinzip'], ['SIL', 'Sicherheitsintegritätslevel'], ['SRAC', 'Safety-Related Application Condition (sicherheitsbezogene Anwendungsbedingung)'], ['SRS', 'Safety Requirements Specification (Sicherheitsanforderungsspezifikation)'], ['TFFR', 'Tolerable Functional Failure Rate (tolerierbare Funktionsausfallrate)'], ['THR', 'Tolerable Hazard Rate (tolerierbare Gefährdungsrate)']];
 
+// Deliverables follow the EN 50126-1:2017 outputs of phase 3 (7.4.3 a) risk
+// assessment, b) hazard log) and phase 4 (7.5.3 a) RAMS system requirements
+// specification — safety part, b) SRAC). Keys 'phl'/'pha' are kept as
+// aliases so older exports and bookmarks keep working.
 const DELIVERABLES = {
-  phl: { code: 'PHL', title: 'Vorläufige Gefährdungsliste', purpose: 'Systematische Identifikation aller vernünftigerweise vorhersehbaren Gefährdungen des Systems an seiner Systemgrenze (EN 50126-1:2017 7.4.2.1; EN 50126-2:2017 5.2.2, 8.2). Entspricht dem Liefergegenstand PHL (Task 201) nach MIL-STD-882E.' },
-  pha: { code: 'PHA', title: 'Vorläufige Gefährdungsanalyse (Risikoanalyse und -bewertung)', purpose: 'Ursachen, Unfallszenarien, Häufigkeit und Schadensausmaß, Risikoklasse, Entscheidung „weitgehend akzeptabel“, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und Restrisiko je Gefährdung (EN 50126-1:2017 6.3, 7.4; EN 50126-2:2017 8.2–8.4). Entspricht dem Liefergegenstand PHA (Task 202) nach MIL-STD-882E.' },
-  srs: { code: 'SRS', title: 'Sicherheitsanforderungsspezifikation', purpose: 'Funktionale, technische und betriebliche Sicherheitsanforderungen sowie sicherheitsbezogene Anwendungsbedingungen, rückverfolgbar zu Gefährdungen, Maßnahmen und Funktionen, mit TFFR und Integritätslevel je sicherheitsrelevanter Funktion (EN 50126-1:2017 7.5.2; EN 50126-2:2017 9, 10; EN 50129:2018 5.3.7, 5.3.13, Anhang A). Entspricht dem Liefergegenstand SRHA (Task 203) nach MIL-STD-882E.' },
-  full: { code: 'SA', title: 'Sicherheitsanalyse (PHL, PHA, SRS)', purpose: 'Gesamtbericht der vorläufigen Gefährdungsliste, der Risikoanalyse und -bewertung und der Sicherheitsanforderungsspezifikation nach EN 50126-1/-2:2017 und EN 50129:2018.' },
+  hazid: { code: 'GI', title: 'Gefährdungsidentifikation', purpose: 'Systematische Identifikation aller vernünftigerweise vorhersehbaren Gefährdungen des Systems an seiner Systemgrenze als erster Teil der Risikobewertung (EN 50126-1:2017 7.4.2.1, 7.4.3 a); EN 50126-2:2017 5.2.2, 8.2).' },
+  risk: { code: 'RB', title: 'Risikoanalyse und Risikobewertung', purpose: 'Ursachen, Unfallszenarien, Häufigkeit und Schadensausmaß, Risikoklasse, Entscheidung „weitgehend akzeptabel“, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und Restrisiko je Gefährdung (EN 50126-1:2017 6.3, 7.4.2.1, 7.4.3 a); EN 50126-2:2017 8.2–8.4).' },
+  hazlog: { code: 'GP', title: 'Gefährdungsprotokoll (Hazard Log)', purpose: 'Grundlage des fortlaufenden Risikomanagements für die Sicherheit: je Gefährdung verantwortliche Stelle und beitragende Funktionen, Folgen und Häufigkeiten, Risiko, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und exportierte Sicherheitsauflagen (EN 50126-1:2017 7.4.2.2 a) bis g), 7.4.3 b); EN 50129:2018 5.3.6).' },
+  srs: { code: 'SAS', title: 'Sicherheitsanforderungen und sicherheitsbezogene Anwendungsbedingungen', purpose: 'Sicherheitsteil der RAMS-Systemanforderungsspezifikation: funktionale, technische und betriebliche Sicherheitsanforderungen sowie sicherheitsbezogene Anwendungsbedingungen, rückverfolgbar zu Gefährdungen, Maßnahmen und Funktionen, mit TFFR und Integritätslevel je sicherheitsrelevanter Funktion (EN 50126-1:2017 7.5.2, 7.5.3 a), b); EN 50126-2:2017 9, 10; EN 50129:2018 5.3.7, 5.3.13, Anhang A).' },
+  full: { code: 'SA', title: 'Sicherheitsanalyse (EN 50126-1 Phasen 3 und 4)', purpose: 'Gesamtbericht aus Gefährdungsidentifikation, Risikoanalyse und -bewertung, Gefährdungsprotokoll sowie Sicherheitsanforderungen und Anwendungsbedingungen nach EN 50126-1/-2:2017 und EN 50129:2018.' },
 };
+const KIND_ALIASES = { phl: 'hazid', pha: 'risk' };
+const resolveKind = (kind) => KIND_ALIASES[kind] || kind;
+const SCOPE_NOTE = 'Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.';
 
 // ------------------------------------------------------------ table specs ----
 function acceptedHazards(b) { return (b.hazards || []).filter((h) => h.review && h.review.decision === 'accepted').sort((x, y) => x.id.localeCompare(y.id)); }
@@ -104,6 +112,30 @@ function specMeasures(b) {
   for (const h of acceptedHazards(b)) for (const m of (h.measures || []).filter((x) => x.status !== 'rejected')) rows.push([h.id, h.title, m.id, m.text, L('measureType', m.type), L('hierarchy', m.hierarchy), `${L('severity', m.residualSeverity) || '?'} / ${L('frequency', m.residualFrequency) || '?'}`, riskCell(m.residualRiskClass), m.becomesSrac ? 'außerhalb → SRAC' : 'innerhalb', m.status === 'accepted' ? 'bestätigt' : 'vorgeschlagen', m.rationale]);
   return { key: 'measures', title: 'Maßnahmen und Restrisiko', landscape: true, fontSize: 8, columns: [{ header: 'Gef.', width: 0.05 }, { header: 'Gefährdung', width: 0.12 }, { header: 'Maßn.', width: 0.05 }, { header: 'Maßnahme', width: 0.2 }, { header: 'Wirkung', width: 0.09 }, { header: 'Hierarchie', width: 0.09 }, { header: 'Rest S / H', width: 0.09 }, { header: 'Restrisiko', width: 0.07 }, { header: 'Grenze', width: 0.06 }, { header: 'Status', width: 0.05 }, { header: 'Begründung', width: 0.13 }], rows };
 }
+/** EN 50126-1:2017 7.4.2.2 b) to g): one row per accepted hazard. */
+function specHazardLog(b) {
+  const rows = [];
+  for (const h of acceptedHazards(b)) {
+    const sracs = (b.requirements || []).filter((r) => r.category === 'srac' && r.status !== 'rejected' && (r.hazards || []).includes(h.id)).map((r) => `${r.id} → ${(r.srac && r.srac.receiver) || 'Empfänger offen'}`);
+    const exported = new Set((b.requirements || []).filter((r) => r.category === 'srac' && r.status !== 'rejected').flatMap((r) => r.measures || []));
+    const candidates = [...(h.measures || []).filter((m) => m.status !== 'rejected' && m.becomesSrac && !exported.has(`${h.id}/${m.id}`)).map((m) => `${m.id || 'Maßnahme'} (Kandidat)`), ...(h.existingBarriers || []).filter((x) => x.becomesSrac).map((x) => `${x.text} (Kandidat)`)];
+    const acc = (h.accidents || []).map((a) => `${a.description || '–'}: ${L('severity', a.severity) || '?'} / ${L('frequency', a.frequency) || '?'}`);
+    const ba = h.broadlyAcceptable || {};
+    const rap = ba.decision === true ? 'weitgehend akzeptabel' : [L('rap', h.rap && h.rap.principle), h.rap && h.rap.principle === 'ere' ? L('rac', h.rap.rac) : (h.rap && h.rap.reference)].filter(Boolean).join(' / ') || 'offen';
+    const thr = h.thr && h.thr.valuePerHour != null ? `THR ${M.formatRate(Number(h.thr.valuePerHour))}` : '';
+    rows.push([
+      h.id, h.title, nz(h.responsibleEntity || h.owner) || 'offen',
+      join([...(h.functions || []).map((f) => fnName(b, f)), ...(h.interfaces || []).map((i) => ifName(b, i))]),
+      join(acc) || 'offen',
+      `${L('riskClass', h.riskClass) || 'offen'} → ${L('riskClass', h.residualRiskClass) || 'offen'}`,
+      join([rap, thr]),
+      join((h.measures || []).filter((m) => m.status !== 'rejected').map((m) => `${m.id ? m.id + ': ' : ''}${m.text}`)) || '–',
+      join([...sracs, ...candidates]) || '–',
+      L('hazardStatus', h.status),
+    ]);
+  }
+  return { key: 'hazlog', title: 'Gefährdungsprotokoll', landscape: true, fontSize: 8, columns: [{ header: 'ID', width: 0.05 }, { header: 'Gefährdung', width: 0.14 }, { header: 'Verantwortlich (b)', width: 0.08 }, { header: 'Beitragende Funktionen (b)', width: 0.1 }, { header: 'Folgen / Häufigkeit (c)', width: 0.14 }, { header: 'Risiko → Rest (d)', width: 0.08 }, { header: 'RAP / RAC (e)', width: 0.1 }, { header: 'Maßnahmen (f)', width: 0.14 }, { header: 'Exportierte Auflagen (g)', width: 0.11 }, { header: 'Status', width: 0.06 }], rows };
+}
 function specEvaluationSummary(b) {
   const st = b.stats;
   const rows = M.RISK_CLASSES.map((c) => [riskCell(c), String(st.byClass[c] || 0), String(st.residualByClass[c] || 0)]);
@@ -149,10 +181,11 @@ function specNotSafetyRelated(b) {
 // -------------------------------------------------------------- sections ----
 /** Section list per deliverable: {heading, level, paragraphs?, bullets?, specs?} — consumed by DOCX and HTML. */
 function sections(kind, b) {
+  kind = resolveKind(kind);
   const d = DELIVERABLES[kind];
   const st = b.stats;
   const common = [
-    { heading: '1 Zweck und Geltungsbereich', paragraphs: [d.purpose, `System: ${b.sd.name || '(ohne Namen)'} (${b.sd.type || ''}). Zweck des Systems: ${b.sd.purpose || '–'}`, b.docControl.purpose || ''] },
+    { heading: '1 Zweck und Geltungsbereich', paragraphs: [d.purpose, SCOPE_NOTE, `System: ${b.sd.name || '(ohne Namen)'} (${b.sd.type || ''}). Zweck des Systems: ${b.sd.purpose || '–'}`, b.docControl.purpose || ''] },
     { heading: '2 Normative Referenzen und Abkürzungen', specs: [{ key: 'refs', title: 'Referenzen', columns: [{ header: 'Dokument', width: 0.22 }, { header: 'Titel', width: 0.78 }], rows: REFERENCES }, { key: 'acr', title: 'Abkürzungen', columns: [{ header: 'Abkürzung', width: 0.15 }, { header: 'Bedeutung', width: 0.85 }], rows: ACRONYMS }] },
     { heading: '3 Systemdefinition (EN 50126-1 7.3.2.1, Anhang D)', paragraphs: [b.sdValidation.ok ? 'Das normative Minimum der Systemdefinition (7.3.2.1 a) bis e)) ist dokumentiert.' : `Hinweis: ${b.sdValidation.findings.filter((f) => f.level === 'error').length} normative Angaben der Systemdefinition fehlen (siehe Tabelle, mit (N) markierte Felder).`], specs: [specSystemDefinition(b), specFunctions(b), specInterfaces(b), { key: 'subs', title: 'Teilsysteme', columns: [{ header: 'Teilsystem', width: 0.3 }, { header: 'Beschreibung', width: 0.7 }], rows: (b.subsystems || []).map((s) => [s.name, s.description]) }, specDocuments(b)] },
   ];
@@ -162,13 +195,13 @@ function sections(kind, b) {
     `Das Werkzeug ist ein Werkzeug mit indirektem Einfluss auf die Sicherheit im Sinne von EN 50129 6.3 (Erstellung und Nachverfolgung von Sicherheitsdokumentation); es erzeugt keine Entwurfs- oder Konfigurationsdaten. Sprachmodell: ${[...new Set((b.runs || []).map((r) => r.model).filter(Boolean))].join(', ') || 'keine KI-Läufe'}.`,
   ], specs: [specRuns(b), specPassLog(b), specCoverage(b)] };
   const phl = [
-    { heading: '5 Gefährdungsliste (PHL)', paragraphs: [`${st.hazards.accepted} übernommene Gefährdungen an der Systemgrenze; ${st.hazards.rejected} Vorschläge verworfen; ${st.hazards.pending} Vorschläge noch ungeprüft.`], specs: [specPhl(b)] },
+    { heading: '5 Gefährdungsliste (EN 50126-1 7.4.2.1)', paragraphs: [`${st.hazards.accepted} übernommene Gefährdungen an der Systemgrenze; ${st.hazards.rejected} Vorschläge verworfen; ${st.hazards.pending} Vorschläge noch ungeprüft.`], specs: [specPhl(b)] },
     { heading: '6 Verworfene Vorschläge', specs: [specRejected(b)] },
     { heading: '7 Annahmen und offene Punkte', specs: [specAssumptions(b), specOpenPoints(b)] },
   ];
   const pha = [
     { heading: '5 Risikoakzeptanzkriterien und Kalibrierung (EN 50126-1 Anhang C, EN 50126-2 8.3)', paragraphs: [b.calibration.note, b.calibration.equivalentFatality], specs: specCalibration(b) },
-    { heading: '6 Risikoanalyse und -bewertung (PHA)', paragraphs: ['Je Gefährdung: Ursachen (typisiert), auslösendes Ereignis und Bedingungen, Gefährdung auf Ebene des Eisenbahnsystems, Unfallszenarien mit Schadensausmaß und Häufigkeit samt Begründung, berechnete Risikoklasse, bestehende Barrieren, Entscheidung „weitgehend akzeptabel“ bzw. gewähltes Risikoakzeptanzprinzip und -kriterium, THR.'], specs: [specPha(b)] },
+    { heading: '6 Risikoanalyse und -bewertung (EN 50126-1 7.4.2.1; EN 50126-2 8)', paragraphs: ['Je Gefährdung: Ursachen (typisiert), auslösendes Ereignis und Bedingungen, Gefährdung auf Ebene des Eisenbahnsystems, Unfallszenarien mit Schadensausmaß und Häufigkeit samt Begründung, berechnete Risikoklasse, bestehende Barrieren, Entscheidung „weitgehend akzeptabel“ bzw. gewähltes Risikoakzeptanzprinzip und -kriterium, THR.'], specs: [specPha(b)] },
     { heading: '7 Maßnahmen und Restrisiko (EN 50126-1 5.9.2, 7.4.2.1)', specs: [specMeasures(b)] },
     { heading: '8 Ergebnis der Bewertung', paragraphs: ['Die ganzheitliche Bewertung des Restrisikos über alle Gefährdungen (EN 50126-2 5.3) und die Zustimmung des Betreibers bzw. der Behörde zu Risiken der Klassen „Unerwünscht“ und „Tragbar“ (EN 50126-1 Tabelle C.8) sind außerhalb dieses Werkzeugs zu dokumentieren.'], specs: [specEvaluationSummary(b)] },
     { heading: '9 Annahmen und offene Punkte', specs: [specAssumptions(b), specOpenPoints(b)] },
@@ -182,10 +215,18 @@ function sections(kind, b) {
     { heading: '10 Annahmen und offene Punkte', specs: [specAssumptions(b), specOpenPoints(b)] },
   ];
   const renum = (list, start) => list.map((s, i) => ({ ...s, heading: s.heading.replace(/^\d+/, String(start + i)) }));
-  if (kind === 'phl') return [...common, method, ...phl];
-  if (kind === 'pha') return [...common, method, ...pha];
+  const hazlog = [
+    { heading: '5 Gefährdungsprotokoll (EN 50126-1 7.4.2.2)', paragraphs: [
+      'Zweck (7.4.2.2 a)): Das Gefährdungsprotokoll ist die Grundlage des fortlaufenden Risikomanagements für die Sicherheit. Es wird über den gesamten Lebenszyklus fortgeschrieben, sobald sich identifizierte Gefährdungen ändern oder neue Gefährdungen erkannt werden.',
+      'Je Gefährdung enthält es die verantwortliche Stelle und die beitragenden Funktionen (b)), Folgen und Häufigkeiten (c)), das Risiko (d)), Risikoakzeptanzprinzip und -kriterium (e)), die Maßnahmen (f)) und die exportierten Sicherheitsauflagen (g)). Ein Auszug für andere Beteiligte (externes Gefährdungsprotokoll) umfasst die Gefährdungen mit exportierten Auflagen.',
+    ], specs: [specHazardLog(b)] },
+    { heading: '6 Annahmen und offene Punkte', specs: [specAssumptions(b), specOpenPoints(b)] },
+  ];
+  if (kind === 'hazid') return [...common, method, ...phl];
+  if (kind === 'risk') return [...common, method, ...pha];
+  if (kind === 'hazlog') return [...common, method, ...hazlog];
   if (kind === 'srs') return [...common, method, ...srs];
-  return [...common, method, ...renum(phl, 5), ...renum(pha.slice(0, 4), 8), ...renum(srs, 12)];
+  return [...common, method, ...renum(phl.slice(0, 2), 5), ...renum(pha.slice(0, 4), 7), ...renum(hazlog.slice(0, 1), 11), ...renum(srs, 12)];
 }
 
 // ------------------------------------------------------------------ DOCX ----
@@ -195,6 +236,7 @@ function docControlRows(b, d) {
 }
 
 function buildDocx(kind, b) {
+  kind = resolveKind(kind);
   const d = DELIVERABLES[kind];
   const dc = b.docControl;
   const doc = DOCX.createDocument({ title: `${d.title} – ${b.sd.name || b.project.name}`, subtitle: b.sd.name, author: dc.author, subject: d.title, headerText: `${dc.docId || d.code} · Rev. ${dc.revision || '–'} · ${b.sd.name || b.project.name}`, footerText: `Railway Hazard Analysis Suite · ${dateDe(b.exportedAt)}` });
@@ -233,6 +275,7 @@ function buildXlsx(b) {
   add('Gefährdungsliste', specPhl(b));
   add('Risikoanalyse', specPhaFlat(b));
   add('Maßnahmen', specMeasures(b));
+  add('Gefährdungsprotokoll', specHazardLog(b));
   add('Funktionen-SIL', specFunctionIntegrity(b));
   add('Anforderungen', specRequirementsAll(b));
   add('SRAC', specSrac(b));
@@ -263,6 +306,7 @@ function specRequirementsAll(b) {
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function cellHtml(c) { if (c == null) return ''; if (typeof c === 'object') { if (c.paragraphs) return c.paragraphs.map((p) => `<div>${cellHtml(p)}</div>`).join(''); return `<span style="${c.shade ? `background:#${c.shade};padding:0 4px;` : ''}${c.bold ? 'font-weight:600;' : ''}">${esc(c.text)}</span>`; } return esc(c); }
 function buildPrintHtml(kind, b) {
+  kind = resolveKind(kind);
   const d = DELIVERABLES[kind];
   const secs = sections(kind, b);
   const body = secs.map((s) => `<section><h2>${esc(s.heading)}</h2>${(s.paragraphs || []).filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join('')}${(s.specs || []).map((spec) => `<h3>${esc(spec.title)}</h3>${spec.rows.length ? `<table class="${spec.landscape ? 'wide' : ''}"><thead><tr>${spec.columns.map((c) => `<th>${esc(c.header)}</th>`).join('')}</tr></thead><tbody>${spec.rows.map((r) => `<tr>${r.map((c) => `<td>${cellHtml(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '<p class="hint">Keine Einträge.</p>'}`).join('')}</section>`).join('');
@@ -290,7 +334,7 @@ function makeBundle({ project, docControl, sd, functions, interfaces, subsystems
   return { project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
 }
 
-const api = { DELIVERABLES, makeBundle, sections, buildDocx, buildXlsx, buildPrintHtml };
+const api = { DELIVERABLES, KIND_ALIASES, resolveKind, makeBundle, sections, buildDocx, buildXlsx, buildPrintHtml };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_REPORTS = api;
 })();
 

@@ -1,7 +1,5 @@
-// Local-only Ollama client (build plan §1.3: copied from RHL's ollama.js —
-// transport/streaming/stall-detection/cancel/error-mapping only; RHL's own
-// prompt builders are NOT copied, since RMG's prompts are genuinely new and
-// live in prompts.js, built for the Exhaustive/Massiv orchestrators).
+// Local Ollama client (RHAS): transport, streaming, stall detection, cancel
+// and error mapping only; prompts are built in prompts.js.
 (function () {
 const DEFAULT_OLLAMA_URL = 'http://localhost:11434';
 const DEFAULT_MODEL = 'mistral-nemo:12b';
@@ -46,7 +44,7 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
   let userCancelled = false;
   if (externalSignal) {
     if (externalSignal.aborted) { userCancelled = true; ctrl.abort(); }
-    // {once:true}: a Massiv run reuses ONE run-level AbortController across
+    // {once:true}: an identification run reuses ONE run-level AbortController across
     // hundreds of calls — without this, each call's listener (and its
     // closure) stays attached to that shared signal for the run's entire
     // lifetime, accumulating hundreds of dead listeners.
@@ -149,7 +147,7 @@ const api = { DEFAULT_OLLAMA_URL, DEFAULT_MODEL, promptHash, extractAndParseJSON
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_OLLAMA = api;
+  window.RHAS_OLLAMA = api;
 }
 })();
 

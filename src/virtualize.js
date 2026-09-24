@@ -1,6 +1,5 @@
-// Row-window computation for virtualized tables (build plan §5, P5 — the
-// suggestion tray and hazard workspace both need this at 500-1,000+ rows;
-// copied verbatim from RHL's virtualize.js, proven at 5,000 rows there).
+// Row-window computation for virtualized tables (RHAS): the suggestion tray and
+// hazard workspace can hold 1,000+ rows.
 // Pure — no DOM. Given a scroll position and row geometry, returns which
 // slice of `items` to actually render, plus the padding needed above/below
 // so the scrollbar still reflects the true total height.
@@ -36,7 +35,7 @@ const api = { computeVisibleRange };
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_VIRTUALIZE = api;
+  window.RHAS_VIRTUALIZE = api;
 }
 })();
 

@@ -2,7 +2,7 @@
 // functions, interfaces, subsystems, modes and reference documents. The AI
 // decomposition lands as a proposal box; nothing is written until accepted.
 (function () {
-const A = window.RHAS_APP, M = window.RHAS_MODEL, DATA = window.RHAS_DATA, E = window.RHAS_ENGINE, DOCS = window.RMG_DOCUMENTS;
+const A = window.RHAS_APP, M = window.RHAS_MODEL, DATA = window.RHAS_DATA, E = window.RHAS_ENGINE, DOCS = window.RHAS_DOCUMENTS;
 
 const GROUPS = [
   { title: 'Zweck und Mission', keys: ['name', 'type', 'purpose', 'missionProfile', 'description', 'includedFunctions', 'excludedFunctions', 'lifetime'] },

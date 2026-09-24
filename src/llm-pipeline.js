@@ -1,18 +1,13 @@
-// LLM resilience primitives (build plan §1.3: copied from RHL's
-// llm-pipeline.js — callLlm/preflights/circuit breaker/budget tracker/caps/
-// runPass are provider-agnostic and already tested; RHL's own orchestrators
-// (runCategorySweep/runPersonaSweep/etc.) are NOT copied — RMG's Exhaustive
-// (P3) and Massiv (P4) orchestrators are genuinely new and live in
-// exhaustive.js/massiv.js, built on top of these same primitives).
+// LLM resilience primitives for RHAS: callLlm, preflights, circuit breaker,
+// budget tracker, soft/hard caps and runPass. Provider-agnostic; the
+// orchestration of identification passes lives in engine.js.
 (function () {
-const OLLAMA = typeof require !== 'undefined' ? require('./ollama.js') : window.RMG_OLLAMA;
-const MISTRAL = typeof require !== 'undefined' ? require('./mistral.js') : window.RMG_MISTRAL;
+const OLLAMA = typeof require !== 'undefined' ? require('./ollama.js') : window.RHAS_OLLAMA;
+const MISTRAL = typeof require !== 'undefined' ? require('./mistral.js') : window.RHAS_MISTRAL;
 
-// Configurable defaults (build plan A1: defaults, not requirements — stamped
-// into the run log so a reviewer sees what was actually used). Seeded at the
-// MIL-STD PHL Generator's own Massiv-mode calibration (90/240 min, 80/300
-// calls) since THIS product's whole point is reaching that scale — unlike
-// RHL's much smaller per-run modes, which seeded far more conservatively.
+// Configurable defaults, not requirements: stamped into the run log so a
+// reviewer sees what was actually used. To be recalibrated on measured
+// railway identification runs (Standard depth = 45 calls).
 const DEFAULT_CAPS = {
   softCapElapsedMin: 90,
   softCapCalls: 80,
@@ -111,7 +106,7 @@ function createRunState(capOverrides) {
   };
 }
 
-/** One seam for both providers — everything downstream (runPass, the Exhaustive/Massiv orchestrators) is provider-agnostic. */
+/** One seam for both providers — everything downstream (runPass, the identification orchestration in engine.js) is provider-agnostic. */
 async function callLlm({ provider, settings, systemPrompt, userPrompt, schema, signal, onToken }) {
   if (provider === 'mistral-api') {
     return MISTRAL.callMistral({ systemPrompt, userPrompt, apiKey: settings.mistralApiKey, model: settings.mistralModel, signal, schema, onToken });
@@ -197,7 +192,7 @@ async function preflight(provider, settings) {
 /**
  * Run one named pass. Never throws on a call failure — records it on the
  * breaker + run state and returns { ok: false }, so a multi-pass caller
- * (Exhaustive/Massiv) can continue with sibling passes (partial salvage).
+ * (the identification run) can continue with sibling passes (partial salvage).
  * DOES throw if the breaker was already tripped before this call, since
  * that means the whole run must stop, not just this pass.
  */
@@ -246,7 +241,7 @@ const api = {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_LLM_PIPELINE = api;
+  window.RHAS_LLM_PIPELINE = api;
 }
 })();
 

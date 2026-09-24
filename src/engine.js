@@ -10,9 +10,9 @@
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const S = typeof require !== 'undefined' ? require('./schemas.js') : window.RHAS_SCHEMAS;
 const P = typeof require !== 'undefined' ? require('./prompts.js') : window.RHAS_PROMPTS;
-const PIPE = typeof require !== 'undefined' ? require('./llm-pipeline.js') : window.RMG_LLM_PIPELINE;
-const OLL = typeof require !== 'undefined' ? require('./ollama.js') : window.RMG_OLLAMA;
-const DD = typeof require !== 'undefined' ? require('./dedup.js') : window.RMG_DEDUP;
+const PIPE = typeof require !== 'undefined' ? require('./llm-pipeline.js') : window.RHAS_LLM_PIPELINE;
+const OLL = typeof require !== 'undefined' ? require('./ollama.js') : window.RHAS_OLLAMA;
+const DD = typeof require !== 'undefined' ? require('./dedup.js') : window.RHAS_DEDUP;
 
 // ------------------------------------------------------ document retrieval ----
 const CHUNK = 1200;
@@ -383,11 +383,11 @@ async function runMeasures({ hazard, ctx, provider, settings, runState, signal }
   const docs = retrieve(chunks, `${hazard.title} ${hazard.description}`, 3000);
   const raw = await single({ prompt: P.buildMeasuresPrompt({ ...ctx, modes: M.data().modes, docs }, hazard, ctx.calibration), schema: S.MEASURES_SCHEMA, provider, settings, runState, signal, passName: `Maßnahmen ${hazard.id}` });
   const TYPES = ['elimination', 'frequencyReduction', 'propagationReduction', 'severityMitigation'];
-  const HIER = ['design', 'protective', 'warning', 'procedural'];
+  const HIER = ['safeFunction', 'additionalSafety', 'safetyInformation', ...Object.keys(M.LEGACY_HIERARCHY)];
   return (Array.isArray(raw.measures) ? raw.measures : []).map((m) => M.makeMeasure({
     text: itemText(m),
     type: enumFrom(m, ['type', 'wirkung', 'measureType', 'hierarchy'], TYPES, 'frequencyReduction'),
-    hierarchy: enumFrom(m, ['hierarchy', 'hierarchie', 'control', 'type'], HIER, 'protective'),
+    hierarchy: M.normalizeHierarchy(enumFrom(m, ['hierarchy', 'hierarchie', 'control', 'type'], HIER, 'additionalSafety')),
     residualSeverity: enumFrom(m, ['residualSeverity', 'restSchadensausmass'], S.SEVERITIES, ''),
     residualFrequency: enumFrom(m, ['residualFrequency', 'restHaeufigkeit'], S.FREQUENCIES, ''),
     rationale: str(pick(m, ['rationale', 'begruendung', 'justification'])),

@@ -39,7 +39,8 @@ const LABELS = {
   causeKind: { systematic: 'Systematisch', random: 'Zufällig', human: 'Menschlich', external: 'Extern' },
   barrierType: { frequency: 'Häufigkeitsmindernd', severity: 'Schadensmindernd' },
   measureType: { elimination: 'Gefährdung vermeiden', frequencyReduction: 'Häufigkeit der Gefährdung senken', propagationReduction: 'Übergang Gefährdung → Unfall verhindern', severityMitigation: 'Schadensausmaß mindern' },
-  hierarchy: { design: 'Konstruktiv (Vermeidung durch Entwurf)', protective: 'Technische Schutzfunktion', warning: 'Warnung / Anzeige', procedural: 'Organisatorisch / Verfahren' },
+  // EN 50126-1:2017 5.9.2 a) to c): steps of the risk reduction strategy (replaces an earlier design/protective/warning/procedural scale).
+  hierarchy: { safeFunction: 'Funktion sicher gestalten (EN 50126-1 5.9.2 a))', additionalSafety: 'Zusätzliche Sicherheitsfunktion / Barriere (5.9.2 b))', safetyInformation: 'Sicherheitsbezogene Information / Auflage (5.9.2 c))' },
   rap: { cop: 'Anerkannte Regeln der Technik (CoP)', reference: 'Referenzsystem', ere: 'Explizite Risikoabschätzung' },
   rac: { matrix: 'Kalibrierte Risikomatrix (EN 50126-1 Anhang C)', alarp: 'ALARP', game: 'GAME', mem: 'MEM', legal: 'Gesetzliche / behördliche Vorgabe', other: 'Sonstige (begründen)' },
   thrOrigin: { dutyHolder: 'Vom Betreiber vorgegeben', joint: 'Gemeinsam vereinbart', supplier: 'Vom Lieferanten vorgeschlagen (zu vereinbaren)', ere: 'Aus expliziter Risikoabschätzung abgeleitet', reference: 'Aus Referenzsystem abgeleitet', cop: 'Aus Regelwerk abgeleitet' },
@@ -60,7 +61,14 @@ const RISK_RANK = { Negligible: 1, Tolerable: 2, Undesirable: 3, Intolerable: 4 
 function label(kind, value) {
   const map = LABELS[kind];
   if (!map) return value == null ? '' : String(value);
+  if (kind === 'hierarchy') value = normalizeHierarchy(value);
   return value == null || value === '' ? '' : (map[value] || String(value));
+}
+
+/** Legacy measure hierarchy keys (projects created before WP1) mapped to EN 50126-1 5.9.2 a) to c). */
+const LEGACY_HIERARCHY = { design: 'safeFunction', protective: 'additionalSafety', warning: 'additionalSafety', procedural: 'safetyInformation' };
+function normalizeHierarchy(value) {
+  return (value && LEGACY_HIERARCHY[value]) || value;
 }
 
 // ------------------------------------------------------------ identifiers ----
@@ -109,9 +117,10 @@ function worstRiskClass(classes) {
 function recomputeHazardRisk(h, calibration) {
   for (const a of h.accidents || []) a.riskClass = riskClassOrNull(a.frequency, a.severity, calibration);
   h.riskClass = worstRiskClass((h.accidents || []).map((a) => a.riskClass));
-  for (const m of h.measures || []) m.residualRiskClass = riskClassOrNull(m.residualFrequency, m.residualSeverity, calibration);
+  for (const m of h.measures || []) { m.hierarchy = normalizeHierarchy(m.hierarchy); m.residualRiskClass = riskClassOrNull(m.residualFrequency, m.residualSeverity, calibration); }
   const residuals = (h.measures || []).filter((m) => m.status !== 'rejected').map((m) => m.residualRiskClass).filter(Boolean); // PATCH-2
-  // Residual risk of the hazard = best (lowest) residual any single confirmed measure claims — conservative enough for a PHA; engineer confirms.
+  // Residual risk of the hazard = best (lowest) residual any single confirmed measure claims. This is OPTIMISTIC
+  // (measures can act on different accident scenarios); the engineer confirms it. Per-scenario residual risk is planned.
   h.residualRiskClass = residuals.length ? residuals.reduce((best, c) => (RISK_RANK[c] < RISK_RANK[best] ? c : best)) : h.riskClass;
   return h;
 }
@@ -246,7 +255,7 @@ const SYSTEM_DEFINITION_FIELDS = [
   { key: 'humanActivitiesExcludedReason', label: 'Begründung, falls keine menschlichen Tätigkeiten betrachtet werden', norm: 'D', ref: '7.3.2.1 c)' },
   { key: 'pastExperience', label: 'Erfahrungen mit ähnlichen Systemen (Betriebsdaten, Unfälle, Störungen)', norm: 'N', ref: '7.3.2.1 c)' },
   { key: 'existingSafetyMeasures', label: 'Bestehende Sicherheitsmaßnahmen und Annahmen, die den Umfang der Risikobewertung begrenzen', norm: 'N', ref: '7.3.2.1 d)' },
-  { key: 'assumptions', label: 'Annahmen zu Schnittstellen und Systemgrenzen (RAMS-Annahmen)', norm: 'N', ref: '6.5.2' },
+  { key: 'assumptions', label: 'Annahmen zu Schnittstellen und Systemgrenzen (RAMS-Annahmen)', norm: 'N', ref: '7.3.2.1 d)' },
   { key: 'deviationsFromReference', label: 'Abweichungen von einer Referenzversion (mit Begründung)', norm: 'D', ref: '7.3.2.1 e)' },
   { key: 'applicableStandards', label: 'Anzuwendende Normen / anerkannte Regeln der Technik (CoP)', norm: 'D', ref: 'EN 50126-2 8.3.1' },
   { key: 'referenceSystems', label: 'Referenzsysteme (falls Referenzsystem-Prinzip angewendet wird)', norm: 'D', ref: 'EN 50126-2 8.3.2' },
@@ -284,7 +293,7 @@ function makeAccident(fields = {}) {
 }
 
 function makeMeasure(fields = {}) {
-  return { id: '', text: '', type: 'frequencyReduction', hierarchy: 'protective', residualSeverity: '', residualFrequency: '', residualRiskClass: null, rationale: '', status: 'proposed', becomesSrac: false, ...fields };
+  return { id: '', text: '', type: 'frequencyReduction', hierarchy: 'additionalSafety', residualSeverity: '', residualFrequency: '', residualRiskClass: null, rationale: '', status: 'proposed', becomesSrac: false, ...fields };
 }
 
 function makeRequirement(fields = {}) {
@@ -332,7 +341,7 @@ function hazardCompleteness(h) {
   if (isBlank(h.triggeringEvent)) analysedProblems.push('Auslösendes Ereignis fehlt');
   if (isBlank(h.accidents)) analysedProblems.push('Kein Unfallszenario');
   else if (h.accidents.some((a) => isBlank(a.severity) || isBlank(a.frequency))) analysedProblems.push('Unfallszenario ohne Schadensausmaß/Häufigkeit');
-  else if (h.accidents.some((a) => isBlank(a.severityRationale) || isBlank(a.frequencyRationale))) analysedProblems.push('Begründung für Schadensausmaß/Häufigkeit fehlt (8.2.4)');
+  else if (h.accidents.some((a) => isBlank(a.severityRationale) || isBlank(a.frequencyRationale))) analysedProblems.push('Begründung für Schadensausmaß/Häufigkeit fehlt (EN 50126-2 8.2.4)');
   out.analysed = out.identified && analysedProblems.length === 0;
   p.push(...analysedProblems);
 
@@ -343,8 +352,8 @@ function hazardCompleteness(h) {
   else if (ba.decision === true && isBlank(ba.justification)) evalProblems.push('Begründung für „weitgehend akzeptabel“ fehlt (6.3)');
   else if (ba.decision === false) {
     if (isBlank(h.rap && h.rap.principle)) evalProblems.push('Risikoakzeptanzprinzip nicht gewählt (6.3, EN 50126-2 8.3)');
-    else if (h.rap.principle === 'ere' && isBlank(h.rap.rac)) evalProblems.push('Risikoakzeptanzkriterium für explizite Risikoabschätzung fehlt (8.3.3)');
-    else if (h.rap.principle !== 'ere' && isBlank(h.rap.reference)) evalProblems.push('Referenz auf Regelwerk / Referenzsystem fehlt (8.3.1, 8.3.2)');
+    else if (h.rap.principle === 'ere' && isBlank(h.rap.rac)) evalProblems.push('Risikoakzeptanzkriterium für explizite Risikoabschätzung fehlt (EN 50126-2 8.3.3)');
+    else if (h.rap.principle !== 'ere' && isBlank(h.rap.reference)) evalProblems.push('Referenz auf Regelwerk / Referenzsystem fehlt (EN 50126-2 8.3.1, 8.3.2)');
   }
   out.evaluated = out.analysed && evalProblems.length === 0;
   p.push(...evalProblems);
@@ -379,7 +388,7 @@ function requirementCompleteness(r, functions) {
 }
 
 // --------------------------------------------------------------- coverage ----
-/** Coverage evidence for the PHL: what was searched, by which pass, and what it yielded. Computed purely from provenance and record fields. */
+/** Coverage evidence for the hazard identification: what was searched, by which pass, and what it yielded. Computed purely from provenance and record fields. */
 function coverage({ hazards, functions, interfaces, sources, guidewords, modes, runs }) {
   const all = hazards || [];
   const accepted = all.filter((h) => h.review && h.review.decision === 'accepted');
@@ -437,7 +446,7 @@ function projectStats({ hazards, requirements, functions, sd }) {
 
 const api = {
   LABELS, FREQUENCIES, SEVERITIES, RISK_CLASSES, RISK_RANK, SYSTEM_DEFINITION_FIELDS,
-  data, label, nextId, nowIso,
+  data, label, normalizeHierarchy, LEGACY_HIERARCHY, nextId, nowIso,
   riskClass, riskClassOrNull, worstRiskClass, recomputeHazardRisk,
   silFromTffr, functionIntegrity, parseRate, formatRate,
   checkOrSum, checkHazardAllocation,

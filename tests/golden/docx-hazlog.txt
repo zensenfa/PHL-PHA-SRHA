@@ -1,7 +1,7 @@
-Sicherheitsanforderungen und sicherheitsbezogene Anwendungsbedingungen
+Gefährdungsprotokoll (Hazard Log)
 Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) – Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation
 Dokument
- | SAS – Sicherheitsanforderungen und sicherheitsbezogene Anwendungsbedingungen
+ | GP – Gefährdungsprotokoll (Hazard Log)
  | Dokument-ID
  | SA-LYNX-RS-001
  | Revision
@@ -43,7 +43,7 @@ Dieses Dokument ist ein Werkzeug-Export. Freigabe, Verifikation und Validierung 
 Inhaltsverzeichnis
  TOC \o "1-3" \h \z \u Inhaltsverzeichnis wird beim Öffnen in Word aktualisiert (F9).
 1 Zweck und Geltungsbereich
-Sicherheitsteil der RAMS-Systemanforderungsspezifikation: funktionale, technische und betriebliche Sicherheitsanforderungen sowie sicherheitsbezogene Anwendungsbedingungen, rückverfolgbar zu Gefährdungen, Maßnahmen und Funktionen, mit TFFR und Integritätslevel je sicherheitsrelevanter Funktion (EN 50126-1:2017 7.5.2, 7.5.3 a), b); EN 50126-2:2017 9, 10; EN 50129:2018 5.3.7, 5.3.13, Anhang A).
+Grundlage des fortlaufenden Risikomanagements für die Sicherheit: je Gefährdung verantwortliche Stelle und beitragende Funktionen, Folgen und Häufigkeiten, Risiko, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und exportierte Sicherheitsauflagen (EN 50126-1:2017 7.4.2.2 a) bis g), 7.4.3 b); EN 50129:2018 5.3.6).
 Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.
 System: Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) (Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation). Zweck des Systems: Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.
 2 Normative Referenzen und Abkürzungen
@@ -672,241 +672,42 @@ Dimension
  | 2
  | 2
  |
-5 Ableitung der Sicherheitsanforderungen
-Ableitungskette nach EN 50129 5.3.7: Gefährdungsidentifikation und -analyse → Risikobewertung → Maßnahmen → Sicherheitsanforderungen → Zuordnung von TFFR und Integritätslevel je sicherheitsrelevanter Funktion. Funktionale Sicherheitsanforderungen bestehen aus dem funktionalen Anteil und dem Sicherheitsintegritätsanteil (EN 50129 A.2). Ein SIL wird nur elektronischen Funktionen oder dem elektronischen Anteil gemischter Funktionen zugeordnet (EN 50126-2 10.2.1); für andere Anteile wird die Anwendung anerkannter Regeln der Technik dokumentiert.
-Die Angaben „Integrität (gefordert)“ sind Anforderungen, keine Nachweise: Der Nachweis eines SIL setzt Qualitäts- und Sicherheitsmanagementbedingungen, technische Sicherheitsbedingungen und das quantitative Ziel gemeinsam voraus (EN 50129 A.5.1).
-6 Funktionen und Sicherheitsintegrität
-Funktionen und Sicherheitsintegrität (EN 50126-2 Tabelle 2 / EN 50129 Tabelle A.1)
+5 Gefährdungsprotokoll (EN 50126-1 7.4.2.2)
+Zweck (7.4.2.2 a)): Das Gefährdungsprotokoll ist die Grundlage des fortlaufenden Risikomanagements für die Sicherheit. Es wird über den gesamten Lebenszyklus fortgeschrieben, sobald sich identifizierte Gefährdungen ändern oder neue Gefährdungen erkannt werden.
+Je Gefährdung enthält es die verantwortliche Stelle und die beitragenden Funktionen (b)), Folgen und Häufigkeiten (c)), das Risiko (d)), Risikoakzeptanzprinzip und -kriterium (e)), die Maßnahmen (f)) und die exportierten Sicherheitsauflagen (g)). Ein Auszug für andere Beteiligte (externes Gefährdungsprotokoll) umfasst die Gefährdungen mit exportierten Auflagen.
+Gefährdungsprotokoll
 ID
- | Funktion
- | Art
- | Sich.-rel.
- | Begründung
- | TFFR [1/h]
- | Integrität (gefordert)
- | Gefährdungen / THR
- | Prüfhinweise
- | F-0001
- | Zugfahrt an der Einschaltstelle erkennen
- | Gemischt (elektronischer Anteil)
- | ja
- | Ohne rechtzeitige Zugerkennung entsteht keine Warnung; Kern der Sicherheitsargumentation.
- | 1 × 10^-8 /h
- | SIL 3
- | H-0001; H-0002 (THR 5 × 10^-8 /h)
- |
- | F-0002
- | Einschaltmeldung per Funk an die Zentrale übertragen
- | Elektronisch
- | ja
- | Ein unerkannter Verlust oder eine Verzögerung der Funkmeldung führt zum Ausbleiben oder zur Verspätung der Warnung.
- | 1 × 10^-8 /h
- | SIL 3
- | H-0002 (THR 5 × 10^-8 /h)
- |
- | F-0003
- | Warnung in der Zentrale auslösen und verwalten
- | Elektronisch
- | ja
- | Fehlerhafte Warnlogik kann eine Warnung verhindern oder vorzeitig beenden.
- | 1 × 10^-8 /h
- | SIL 3
- | H-0002 (THR 5 × 10^-8 /h)
- |
- | F-0004
- | Akustische und optische Warnung an den Warneinheiten ausgeben
- | Gemischt (elektronischer Anteil)
- | ja
- | Die akustische Warnung ist der primäre Informationsweg zum Personal.
- | 1,5 × 10^-8 /h
- | SIL 3
- | H-0002 (THR 5 × 10^-8 /h)
- |
- | F-0005
- | Warnlautstärke automatisch an den Umgebungslärm anpassen
- | Elektronisch
- | ja
- | Ein zu niedrig geregelter Pegel führt zu nicht wahrgenommener Warnung.
- | 1 × 10^-7 /h
- | SIL 2
- |
- |
- | F-0006
- | Warnung an Personenwarngeräten und Maschinen ausgeben
- | Elektronisch
- | ja
- | Maschinenführer und Einzelarbeitende hören die Warneinheiten bei Lärm bis 105 dB(A) nicht zuverlässig.
- | 1 × 10^-7 /h
- | SIL 2
- |
- |
- | F-0007
- | Warnsektor der Maschinen automatisch umschalten
- | Elektronisch
- | ja
- | Eine falsche oder verzögerte Sektorzuordnung führt dazu, dass die Maschine die Warnung ihres aktuellen Sektors nicht erhält.
- | 1 × 10^-7 /h
- | SIL 2
- |
- |
- | F-0008
- | Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden
- | Gemischt (elektronischer Anteil)
- | ja
- | Eine vorzeitige oder falsch zugeordnete Ausschaltung beendet die Warnung, während ein Zug noch die Baustelle befährt oder sich nähert.
- | 1 × 10^-8 /h
- | SIL 3
- |
- |
- | F-0009
- | Warnung manuell auslösen und quittieren
- | Gemischt (elektronischer Anteil)
- | ja
- | Rückfallebene bei Störung der Zugerkennung; eine Fehlquittierung kann eine laufende Warnung beenden.
- | 1 × 10^-7 /h
- | SIL 2
- |
- |
- | F-0010
- | Funkstrecken und Geräte überwachen und Störung melden
- | Elektronisch
- | ja
- | Die Überwachung deckt gefährliche Ausfälle auf und leitet die Rückfallebene ein.
- | 1 × 10^-7 /h
- | SIL 2
- |
- |
- | F-0011
- | Anlage mit Energie versorgen
- | Elektronisch
- | ja
- | Energieausfall führt zum Ausfall von Zugerkennung oder Warnung; muss erkannt und gemeldet werden.
- | 1 × 10^-5 /h
- | Basisintegrität
- |
- | TFFR weniger anspruchsvoll als 10⁻⁵/h: Attribut „Basisintegrität“ (EN 50126-2 10.2.11). Kein SIL.
- | F-0012
- | Anlage projektieren, aufbauen, prüfen und abbauen
- | Prozedural / menschlich
- | ja
- | Projektierungs- und Aufbaufehler (zu kurze Einschaltdistanz, übersehene Weiche, Funklücke) sind systematische Ursachen fehlender Warnungen.
- | –
- | SIL nicht anwendbar (CoP)
- | H-0001
- | Ein SIL gilt nur für elektronische Funktionen oder den elektronischen Anteil gemischter Funktionen (EN 50126-2 10.2.1, 10.3). Für mechanische, pneumatische, hydraulische oder prozedurale Anteile: „SIL nicht anwendbar — Regelwerk (CoP) angewendet“ mit Referenz.
- |
-Unabhängigkeitsnachweise (CCA)
-ID
- | Funktionen
- | Zufällig unabh.
- | Systematisch unabh.
- | Ergebnis
- | Nachweis
- | Annahmen
- | CCA-0001
- | F-0004, F-0006
- | nein
- | nein
- | abhängig
- | LYNX-SB-01 Kap. 5–7
- | Gemeinsame EZE-L; Gemeinsamer Funkkanal
- |
-Als nicht sicherheitsrelevant eingestufte Funktionen (EN 50129 5.3.1)
-Keine Einträge.
-7 Sicherheitsanforderungen
-3 Anforderungen, davon 3 vollständig dokumentiert.
-Funktionale Sicherheitsanforderung
-ID
- | Titel
- | Anforderung
- | Gefährdungen
- | Funktionen
- | Maßnahmen
- | Sicherer Zustand / Zeit / Erkennung
- | Verifikation
- | Status
- | Begründung
- | R-0001
- | Warnung bei Fahrt über Spurwechsel W 12/13
- | Die Anlage muss bei jeder Zugfahrt über W 12/13 auf Gleis 1 die Warnung spätestens 20 s vor Erreichen des Baustellenendes bei 140 km/h in beiden Sektoren auslösen.
- | H-0001
- | F-0001, F-0003
- | H-0001/M1
- | Störungswarnung bei Ausfall der Einschaltstelle Gleis 2 / ≤ 2 s / Lebenszeichenüberwachung
- | Test: Simulierte Kontaktauslösung mit Zeitmessung
- | Geprüft
- | Massnahme M1
- |
-Technische Sicherheitsanforderung
-Keine Einträge.
-Betriebliche / instandhalterische Anforderung
-ID
- | Titel
- | Anforderung
- | Gefährdungen
- | Funktionen
- | Maßnahmen
- | Sicherer Zustand / Zeit / Erkennung
- | Verifikation
- | Status
- | Begründung
- | R-0003
- | Bestätigung der Sicherung vor jeder Schicht
- | Der Sicherheitschef muss sich vor jeder Schicht die Sicherung von W 12/13 bestätigen lassen und dies dokumentieren.
- | H-0001
- |
- |
- |
- | Review: Wöchentliche Stichprobe
- | Entwurf
- |
- |
-8 Sicherheitsbezogene Anwendungsbedingungen (SRAC)
-Jede Anwendungsbedingung ist eindeutig identifiziert, mindestens einer Gefährdung zugeordnet und an einen Empfänger gerichtet (EN 50129 5.3.13).
-Sicherheitsbezogene Anwendungsbedingungen (EN 50129 5.3.13, Tabelle 1)
-Identifier
- | Titel
- | Herkunft
- | Gefährdung(en)
- | Empfänger
- | Text
- | Nachweis
- | Status
- | R-0002
- | Sicherung Spurwechsel W 12/13 durch die Infrastrukturbetreiberin
- | Massnahme M2; AB-02 (LYNX-SH-02)
- | H-0001
- | Infrastrukturbetreiberin – Fahrdienstleitung / Stellwerk
- | Die Infrastrukturbetreiberin muss W 12/13 während der Bauzeit gegen Umstellen sichern und jede Aufhebung vorab dem Sicherheitschef mitteilen.
- | Stellwerksjournal und Übergabeprotokoll
- | Vereinbart
- |
-9 Nachverfolgbarkeit
-Hinweis: 1 nicht weitgehend akzeptable Gefährdung(en) ohne Anforderung: H-0002.
-Nachverfolgbarkeit Gefährdung → Funktion → Maßnahme → Anforderung
-Gefährdung
- | Titel
- | Risiko → Rest
- | Funktionen (Integrität)
- | Maßnahmen
- | Anforderungen
+ | Gefährdung
+ | Verantwortlich (b)
+ | Beitragende Funktionen (b)
+ | Folgen / Häufigkeit (c)
+ | Risiko → Rest (d)
+ | RAP / RAC (e)
+ | Maßnahmen (f)
+ | Exportierte Auflagen (g)
  | Status
  | H-0001
  | Keine oder zu kurze Warnung bei Zugfahrt über Spurwechsel W 12/13
+ | Projektierung M2S / Infrastrukturbetreiberin
+ | F-0001 Zugfahrt an der Einschaltstelle erkennen; F-0012 Anlage projektieren, aufbauen, prüfen und abbauen; IF-0008 Anlage zu Fahrdienstleitung und Stellwerk
+ | Zug erfasst Arbeiter auf der Brücke über die Wigger: Kritisch / Gelegentlich; Zug kollidiert mit Zweiwegebagger im Lichtraum; Entgleisung: Katastrophal / Unwahrscheinlich
  | Unerwünscht → Tragbar
- | F-0001 (SIL 3); F-0012 (SIL nicht anwendbar (CoP))
- | M1, M2, M3
- | R-0001 (Funktionale); R-0002 (Sicherheitsbezogene); R-0003 (Betriebliche)
- | nachverfolgt
+ | Explizite Risikoabschätzung / Kalibrierte Risikomatrix (EN 50126-1 Anhang C)
+ | M1: Zusätzliche Einschaltstelle auf Gleis 2 vor dem Spurwechsel W 12/13; M2: Infrastrukturbetreiberin sichert W 12/13 für die gesamte Bauzeit; M3: Vier-Augen-Prüfung der Einschaltstellen gegen den Gleisplan
+ | R-0002 → Infrastrukturbetreiberin – Fahrdienstleitung / Stellwerk; Stellwerkssicherung W 12/13 in Grundstellung (Kandidat)
+ | Identifiziert
  | H-0002
  | Personal im Gefahrenbereich erhält keine Warnung trotz Zugannäherung auf Gleis 1
+ | Schweizer Electronic
+ | F-0001 Zugfahrt an der Einschaltstelle erkennen; F-0002 Einschaltmeldung per Funk an die Zentrale übertragen; F-0003 Warnung in der Zentrale auslösen und verwalten; F-0004 Akustische und optische Warnung an den Warneinheiten ausgeben
+ | Zug erfasst Personen im Gefahrenbereich von Gleis 1: Kritisch / Unwahrscheinlich
  | Tragbar → Vernachlässigbar
- | F-0001 (SIL 3); F-0002 (SIL 3); F-0003 (SIL 3); F-0004 (SIL 3)
- | M1
+ | Anerkannte Regeln der Technik (CoP) / EN 50129:2018 (SIL 3), EN 50159; Vorgabe IB-02; THR 5 × 10^-8 /h
+ | M1: Tägliche Funktionsprüfung mit Probewarnung in beiden Sektoren
+ | –
+ | Identifiziert
  |
- | OHNE ANFORDERUNG
- |
-10 Annahmen und offene Punkte
+6 Annahmen und offene Punkte
 Annahmen
 Herkunft
  | Annahme

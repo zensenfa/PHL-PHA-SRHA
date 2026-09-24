@@ -1,7 +1,7 @@
-Vorläufige Gefährdungsliste
+Gefährdungsidentifikation
 Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) – Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation
 Dokument
- | PHL – Vorläufige Gefährdungsliste
+ | GI – Gefährdungsidentifikation
  | Dokument-ID
  | SA-LYNX-RS-001
  | Revision
@@ -43,7 +43,8 @@ Dieses Dokument ist ein Werkzeug-Export. Freigabe, Verifikation und Validierung 
 Inhaltsverzeichnis
  TOC \o "1-3" \h \z \u Inhaltsverzeichnis wird beim Öffnen in Word aktualisiert (F9).
 1 Zweck und Geltungsbereich
-Systematische Identifikation aller vernünftigerweise vorhersehbaren Gefährdungen des Systems an seiner Systemgrenze (EN 50126-1:2017 7.4.2.1; EN 50126-2:2017 5.2.2, 8.2). Entspricht dem Liefergegenstand PHL (Task 201) nach MIL-STD-882E.
+Systematische Identifikation aller vernünftigerweise vorhersehbaren Gefährdungen des Systems an seiner Systemgrenze als erster Teil der Risikobewertung (EN 50126-1:2017 7.4.2.1, 7.4.3 a); EN 50126-2:2017 5.2.2, 8.2).
+Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.
 System: Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) (Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation). Zweck des Systems: Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.
 2 Normative Referenzen und Abkürzungen
 Referenzen
@@ -55,8 +56,6 @@ Dokument
  | RAMS – Teil 2: Systembezogene Sicherheitsmethodik
  | EN 50129:2018
  | Bahnanwendungen – Telekommunikationstechnik, Signaltechnik und Datenverarbeitungssysteme – Sicherheitsrelevante elektronische Systeme für Signaltechnik
- | MIL-STD-882E
- | Department of Defense Standard Practice: System Safety (Tasks 201 PHL, 202 PHA, 203 SRHA) – nur zur Einordnung der Liefergegenstände
  |
 Abkürzungen
 Abkürzung
@@ -67,10 +66,6 @@ Abkürzung
  | Code of Practice (anerkannte Regeln der Technik)
  | ERE
  | Explizite Risikoabschätzung
- | PHA
- | Preliminary Hazard Analysis (vorläufige Gefährdungsanalyse)
- | PHL
- | Preliminary Hazard List (vorläufige Gefährdungsliste)
  | RAC
  | Risikoakzeptanzkriterium
  | RAP
@@ -153,7 +148,7 @@ Merkmal
  | EN 50126-1 7.3.2.1 d)
  | Sicherheitsgerichtete Auslegung (Überwachung der Funkstrecken mit Störungsmeldung, fehlende Lebenszeichen führen zur Störungswarnung); diversitäre Schienenkontakte an der Einschaltstelle Nord (RSK89 mechanisch + RSR123 induktiv); Repeater für die abgeschattete Funkstrecke; Einschaltdistanz für 140 km/h mit Zuschlag projektiert; ALADIN-Lautstärkeanpassung; tägliche Funktionsprüfung mit Probewarnung; manuelle Auslösung als Rückfallebene; betriebliche Sicherung des Spurwechsels W 12/13 (Annahme, Bestätigung der Infrastrukturbetreiberin ausstehend). Annahme für den Umfang: Das Arbeitsgleis 2 ist gesperrt; Gefährdungen aus Fahrten auf Gleis 2 werden nicht betrachtet.
  | Annahmen zu Schnittstellen und Systemgrenzen (RAMS-Annahmen) (N)
- | EN 50126-1 6.5.2
+ | EN 50126-1 7.3.2.1 d)
  | A1: Höchstgeschwindigkeit auf Gleis 1 im Baustellenbereich 140 km/h; keine Langsamfahrstelle. A2: Erforderliche Mindestwarnzeit 20 s (Räumzeit 12 s + Reaktionszeit 3 s + Sicherheitszuschlag 5 s), maximale Warnzeit 60 s (Projektvorgabe der Infrastrukturbetreiberin). A3: Der Spurwechsel W 12/13 wird während der Arbeiten im Stellwerk gegen Umstellen gesichert; Nordfahrten wechseln bereits im Bahnhof Süd (km 61,800) auf Gleis 1. A4: Die Akkus der Funkgeräte reichen für eine Schicht von 8 h bei Temperaturen bis −15 °C (Projektannahme, Nachweis ausstehend). A5: Die Schienenkontakte beeinflussen Achszähler und Gleisfreimeldung nicht. A6: ALADIN stellt an jedem Arbeitsplatz einen Warnpegel mindestens 3 dB(A) über dem Umgebungspegel ein; bei kurzen Lärmspitzen direkt am Arbeitsplatz ausserhalb der Mikrofonreichweite ist dies nicht separat nachgewiesen. A7: Keine weitere Lynx-Anlage arbeitet im Funkbereich auf derselben Frequenz ohne Abstimmung.
  | Abweichungen von einer Referenzversion (mit Begründung)
  | EN 50126-1 7.3.2.1 e)
@@ -677,7 +672,7 @@ Dimension
  | 2
  | 2
  |
-5 Gefährdungsliste (PHL)
+5 Gefährdungsliste (EN 50126-1 7.4.2.1)
 2 übernommene Gefährdungen an der Systemgrenze; 1 Vorschläge verworfen; 0 Vorschläge noch ungeprüft.
 Gefährdungsliste
 ID

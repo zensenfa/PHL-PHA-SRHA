@@ -1,15 +1,9 @@
-// Suggestion deduplication (build plan §1.3: copied verbatim from RHL's
-// dedup.js, itself ported from the MIL-STD PHL Generator's
-// pipeline/normalisation.js). That tool's own forensic finding motivates
-// this module's existence: running several independent identification
-// passes over the same system re-discovers the same physical hazard through
-// different lenses — its Exhaustive mode measured 64% duplicate output
-// (413/642) before this kind of merge existed. Proven at n=1000+, exactly
-// RMG's Massiv-mode scale.
-// Two uses here: (a) merge near-duplicates WITHIN one run's suggestions
-// before they reach the tray; (b) flag (never auto-suppress) suggestions
-// that look like an existing hazard — the engineer decides, per the
-// suggest-only principle carried over from RHL. Pure — no DOM, no storage.
+// Suggestion deduplication for the Railway Hazard Analysis Suite (RHAS).
+// Several independent identification passes over the same system re-discover
+// the same hazard through different lenses, so near-duplicates are expected.
+// Two uses: (a) merge near-duplicates within one run's suggestions before they
+// reach the review tray; (b) flag, never auto-suppress, suggestions that look
+// like an existing hazard; the engineer decides. Pure: no DOM, no storage.
 (function () {
 function normalizeForDedup(text) {
   if (!text) return '';
@@ -196,7 +190,7 @@ const api = { normalizeForDedup, tokenize, jaccard, scoreCompleteness, mergeSugg
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
 } else {
-  window.RMG_DEDUP = api;
+  window.RHAS_DEDUP = api;
 }
 })();
 

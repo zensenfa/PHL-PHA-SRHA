@@ -127,6 +127,7 @@ table.grid .desc { color: var(--ink-3); display: block; max-width: 640px; white-
 th.w-id { width: 64px; } th.w-s { width: 90px; } th.w-m { width: 130px; } th.w-a { width: 70px; }
 .pill { display: inline-block; padding: 0 6px; border-radius: 9px; font-size: var(--fs-xs); white-space: nowrap; border: 1px solid transparent; }
 .pill.Intolerable { background: var(--r-int-soft); color: var(--r-int); } .pill.Undesirable { background: var(--r-und-soft); color: var(--r-und); } .pill.Tolerable { background: var(--r-tol-soft); color: var(--r-tol); } .pill.Negligible { background: var(--r-neg-soft); color: var(--r-neg); }
+.pill.Unacceptable { background: var(--r-int-soft); color: var(--r-int); } .pill.Acceptable { background: var(--r-neg-soft); color: var(--r-neg); }
 .pill.pending { background: var(--info-soft); color: var(--info); } .pill.accepted { background: var(--ok-soft); color: var(--ok); } .pill.rejected { background: #eceff2; color: var(--ink-3); }
 .pill.dup { background: var(--warn-soft); color: var(--warn); } .pill.merge { background: var(--info-soft); color: var(--info); } .pill.proposal { background: #efe7fb; color: #5b2ca0; }
 .pill.gray { background: #eceff2; color: var(--ink-2); }

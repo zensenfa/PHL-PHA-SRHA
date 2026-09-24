@@ -13,8 +13,11 @@ const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
 const join = (arr, sep = '; ') => (arr || []).filter(Boolean).join(sep);
 const dateDe = (iso) => { if (!iso) return ''; const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }); };
-const RISK_SHADE = { Intolerable: 'FDECEB', Undesirable: 'FBF0DF', Tolerable: 'F7F1D6', Negligible: 'E6F3EA' };
-const riskCell = (rc) => (rc ? { text: L('riskClass', rc), shade: RISK_SHADE[rc], bold: true } : '–');
+const RISK_SHADE = { Intolerable: 'FDECEB', Undesirable: 'FBF0DF', Tolerable: 'F7F1D6', Negligible: 'E6F3EA', Unacceptable: 'FDECEB', Acceptable: 'E6F3EA' };
+// WP3: classes of other calibrations get a shade by rank (worst = red, best = green).
+const SHADE_SCALE = ['E6F3EA', 'F7F1D6', 'FBF0DF', 'FDECEB'];
+const shadeOf = (rc) => { if (RISK_SHADE[rc]) return RISK_SHADE[rc]; const ids = M.riskClassIds(); const i = ids.indexOf(rc); if (i < 0) return undefined; const pos = ids.length > 1 ? (ids.length - 1 - i) / (ids.length - 1) : 1; return SHADE_SCALE[Math.round(pos * (SHADE_SCALE.length - 1))]; };
+const riskCell = (rc) => (rc ? { text: L('riskClass', rc), shade: shadeOf(rc), bold: true } : '–');
 
 const REFERENCES = [
   ['EN 50126-1:2017', 'Bahnanwendungen – Spezifikation und Nachweis der Zuverlässigkeit, Verfügbarkeit, Instandhaltbarkeit und Sicherheit (RAMS) – Teil 1: Generischer RAMS-Prozess'],
@@ -151,9 +154,9 @@ function specHazardLog(b) {
 }
 function specEvaluationSummary(b) {
   const st = b.stats;
-  const rows = M.RISK_CLASSES.map((c) => [riskCell(c), String(st.byClass[c] || 0), String(st.residualByClass[c] || 0)]);
+  const rows = M.riskClassIds().map((c) => [riskCell(c), String(st.byClass[c] || 0), String(st.residualByClass[c] || 0)]);
   rows.push(['Weitgehend akzeptabel (6.3)', String(st.hazards.broadlyAcceptable), '–']);
-  rows.push(['Nicht klassifiziert', String(st.hazards.accepted - M.RISK_CLASSES.reduce((n, c) => n + (st.byClass[c] || 0), 0)), '–']);
+  rows.push(['Nicht klassifiziert', String(st.hazards.accepted - M.riskClassIds().reduce((n, c) => n + (st.byClass[c] || 0), 0)), '–']);
   return { key: 'eval', title: 'Ergebnis der Risikobewertung', columns: [{ header: 'Risikoklasse', width: 0.4 }, { header: 'Ausgangsrisiko (Gefährdungen)', width: 0.3 }, { header: 'Restrisiko nach Maßnahmen', width: 0.3 }], rows, zebra: false };
 }
 function specOpenPoints(b) {
@@ -340,6 +343,7 @@ ${body}
 
 // ---------------------------------------------------------------- bundle ----
 function makeBundle({ profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
+  M.setCalibration(calibration); // WP3: labels and ranks from the project calibration
   const exportedAt = new Date().toISOString();
   const stats = M.projectStats({ hazards, requirements, functions, sd });
   const coverage = M.coverage({ hazards, functions, interfaces, sources: data.sources, guidewords: data.guidewords, modes: data.modes.filter((m) => (sd.modes || []).includes(m.id)), runs });

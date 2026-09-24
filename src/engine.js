@@ -349,13 +349,14 @@ async function runDecomposition({ ctx, provider, settings, runState, signal }) {
   return { subsystems, functions, interfaces, assumptions: strList(raw.assumptions), openQuestions: strList(raw.openQuestions) };
 }
 
-function normalizeAnalysis(raw) {
+function normalizeAnalysis(raw, cal) {
+  const SV = cal ? M.severityIds(cal) : S.SEVERITIES; const FR = cal ? M.frequencyIds(cal) : S.FREQUENCIES;
   const accidents = (Array.isArray(raw.accidents) ? raw.accidents : []).map((a, i) => M.makeAccident({
     id: `A${i + 1}`, description: itemText(a),
     affected: strList(a && a.affected).filter((x) => S.AFFECTED.includes(x)),
-    severity: enumFrom(a, ['severity', 'schadensausmass', 'severityCategory'], S.SEVERITIES, ''),
+    severity: enumFrom(a, ['severity', 'schadensausmass', 'severityCategory'], SV, ''),
     severityRationale: str(pick(a, ['severityRationale', 'severityJustification', 'begruendungSchadensausmass'])),
-    frequency: enumFrom(a, ['frequency', 'haeufigkeit', 'frequencyCategory'], S.FREQUENCIES, ''),
+    frequency: enumFrom(a, ['frequency', 'haeufigkeit', 'frequencyCategory'], FR, ''),
     frequencyRationale: str(pick(a, ['frequencyRationale', 'frequencyJustification', 'begruendungHaeufigkeit'])),
   })).filter((a) => a.description);
   const rap = raw.suggestedRap || raw.rap || {};
@@ -374,22 +375,22 @@ function normalizeAnalysis(raw) {
 async function runRiskAnalysis({ hazard, ctx, provider, settings, runState, signal }) {
   const chunks = chunkDocuments(ctx.documents);
   const docs = retrieve(chunks, `${hazard.title} ${hazard.description} ${hazard.triggeringEvent}`, 4000);
-  const raw = await single({ prompt: P.buildRiskAnalysisPrompt({ ...ctx, modes: M.data().modes, docs }, hazard, ctx.calibration), schema: S.RISK_ANALYSIS_SCHEMA, provider, settings, runState, signal, passName: `Risikoanalyse ${hazard.id}` });
-  return normalizeAnalysis(raw);
+  const raw = await single({ prompt: P.buildRiskAnalysisPrompt({ ...ctx, modes: M.data().modes, docs }, hazard, ctx.calibration), schema: S.withCalibration(S.RISK_ANALYSIS_SCHEMA, ctx.calibration), provider, settings, runState, signal, passName: `Risikoanalyse ${hazard.id}` });
+  return normalizeAnalysis(raw, ctx.calibration);
 }
 
 async function runMeasures({ hazard, ctx, provider, settings, runState, signal }) {
   const chunks = chunkDocuments(ctx.documents);
   const docs = retrieve(chunks, `${hazard.title} ${hazard.description}`, 3000);
-  const raw = await single({ prompt: P.buildMeasuresPrompt({ ...ctx, modes: M.data().modes, docs }, hazard, ctx.calibration), schema: S.MEASURES_SCHEMA, provider, settings, runState, signal, passName: `Maßnahmen ${hazard.id}` });
+  const raw = await single({ prompt: P.buildMeasuresPrompt({ ...ctx, modes: M.data().modes, docs }, hazard, ctx.calibration), schema: S.withCalibration(S.MEASURES_SCHEMA, ctx.calibration), provider, settings, runState, signal, passName: `Maßnahmen ${hazard.id}` });
   const TYPES = ['elimination', 'frequencyReduction', 'propagationReduction', 'severityMitigation'];
   const HIER = ['safeFunction', 'additionalSafety', 'safetyInformation', ...Object.keys(M.LEGACY_HIERARCHY)];
   return (Array.isArray(raw.measures) ? raw.measures : []).map((m) => M.makeMeasure({
     text: itemText(m),
     type: enumFrom(m, ['type', 'wirkung', 'measureType', 'hierarchy'], TYPES, 'frequencyReduction'),
     hierarchy: M.normalizeHierarchy(enumFrom(m, ['hierarchy', 'hierarchie', 'control', 'type'], HIER, 'additionalSafety')),
-    residualSeverity: enumFrom(m, ['residualSeverity', 'restSchadensausmass'], S.SEVERITIES, ''),
-    residualFrequency: enumFrom(m, ['residualFrequency', 'restHaeufigkeit'], S.FREQUENCIES, ''),
+    residualSeverity: enumFrom(m, ['residualSeverity', 'restSchadensausmass'], ctx && ctx.calibration ? M.severityIds(ctx.calibration) : S.SEVERITIES, ''),
+    residualFrequency: enumFrom(m, ['residualFrequency', 'restHaeufigkeit'], ctx && ctx.calibration ? M.frequencyIds(ctx.calibration) : S.FREQUENCIES, ''),
     rationale: str(pick(m, ['rationale', 'begruendung', 'justification'])),
     // Outside the system boundary => candidate for a safety-related application condition.
     becomesSrac: m && (m.insideSystem === false || m.outsideSystem === true || m.external === true),

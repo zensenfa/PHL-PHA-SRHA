@@ -87,7 +87,7 @@ function bindSettings() {
 
 // ------------------------------------------------------------- persistence ----
 A.ctx = () => ({ profile: A.state.projectProfile, sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, documents: A.state.sd.documents || [], calibration: A.calibration() });
-A.calibration = () => A.state.calibration || DATA.calibration;
+A.calibration = () => { const c = (A.state && A.state.calibration) || DATA.calibration; M.setCalibration(c); return c; };
 
 A.saveMeta = async (key, value) => { A.state[key === 'systemDefinition' ? 'sd' : key] = value; await DB.setMeta(A.state.pdb, key, value); await DB.touchProject(A.state.project.projectId); };
 A.saveSd = async () => { await DB.setMeta(A.state.pdb, 'systemDefinition', A.state.sd); await DB.touchProject(A.state.project.projectId); };
@@ -129,6 +129,7 @@ A.openProject = async (projectId) => {
   s.docControl = { docId: '', revision: 'A', date: A.today(), author: '', verifier: '', validator: '', dutyHolder: '', supplier: '', purpose: '', ...(await DB.getMeta(pdb, 'docControl', {})) };
   s.calibration = await DB.getMeta(pdb, 'calibration', null);
   s.projectProfile = PROFILE.migrateProfile(await DB.getMeta(pdb, 'projectProfile', null));
+  A.calibration(); // activate the project calibration for labels and ranks
   s.identConfig = { depth: 'standard', overrides: {}, sources: null, ...(await DB.getMeta(pdb, 'identConfig', {})) };
   localStorage.setItem('rhas_last_project', projectId);
   A.el('doc-id').value = s.docControl.docId; A.el('doc-rev').value = s.docControl.revision; if (!A.el('doc-author').value) A.el('doc-author').value = s.docControl.author || localStorage.getItem('rhas_author') || '';

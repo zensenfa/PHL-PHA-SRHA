@@ -26,11 +26,11 @@ function filtered() {
 
 function renderFilters() {
   const keep = (id, html) => { const s = A.el(id); const v = s.value; s.innerHTML = html; s.value = v; };
-  keep('an-f-class', '<option value="">Alle Risikoklassen</option>' + M.RISK_CLASSES.map((c) => `<option value="${c}">${M.label('riskClass', c)}</option>`).join(''));
+  keep('an-f-class', '<option value="">Alle Risikoklassen</option>' + M.riskClassIds().map((c) => `<option value="${c}">${M.label('riskClass', c)}</option>`).join(''));
   keep('an-f-source', '<option value="">Alle Quellen</option>' + DATA.sources.map((s) => `<option value="${s.id}">${s.code} ${A.esc(s.title)}</option>`).join(''));
 }
 
-function worst(h, key) { const ranked = key === 'severity' ? M.SEVERITIES : M.FREQUENCIES; let best = ''; for (const a of h.accidents || []) { if (a[key] && (best === '' || ranked.indexOf(a[key]) < ranked.indexOf(best))) best = a[key]; } return best; }
+function worst(h, key) { const ranked = key === 'severity' ? M.severityIds() : M.frequencyIds(); let best = ''; for (const a of h.accidents || []) { if (a[key] && (best === '' || ranked.indexOf(a[key]) < ranked.indexOf(best))) best = a[key]; } return best; }
 
 function renderTable() {
   cached = filtered();
@@ -47,9 +47,9 @@ function renderSummary() {
   const st = A.state.stats || M.projectStats({ hazards: A.state.hazards, requirements: A.state.requirements, functions: A.state.functions, sd: A.state.sd });
   const cal = CAL();
   const heat = `<table class="heat"><thead><tr><th>Häufigkeit \\ Schadensausmaß</th>${cal.severities.map((s) => `<th>${A.esc(s.label)}</th>`).join('')}</tr></thead><tbody>${cal.frequencies.map((f) => `<tr><th>${A.esc(f.label)}</th>${cal.severities.map((s) => { const rc = cal.matrix[f.id][s.id]; const n = st.heat[f.id][s.id]; return `<td class="pill ${rc}" style="display:table-cell;border-radius:0;opacity:${n ? 1 : .45}">${n || ''}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
-  p.innerHTML = `<div class="kpis">${M.RISK_CLASSES.map((c) => `<div class="kpi"><b>${st.byClass[c]}</b><span>${M.label('riskClass', c)} (Ausgangsrisiko)</span></div>`).join('')}<div class="kpi"><b>${st.hazards.broadlyAcceptable}</b><span>weitgehend akzeptabel</span></div>${M.RISK_CLASSES.map((c) => `<div class="kpi"><b>${st.residualByClass[c]}</b><span>${M.label('riskClass', c)} (Restrisiko)</span></div>`).join('')}</div>
+  p.innerHTML = `<div class="kpis">${M.riskClassIds().map((c) => `<div class="kpi"><b>${st.byClass[c]}</b><span>${M.label('riskClass', c)} (Ausgangsrisiko)</span></div>`).join('')}<div class="kpi"><b>${st.hazards.broadlyAcceptable}</b><span>weitgehend akzeptabel</span></div>${M.riskClassIds().map((c) => `<div class="kpi"><b>${st.residualByClass[c]}</b><span>${M.label('riskClass', c)} (Restrisiko)</span></div>`).join('')}</div>
 <div class="cov-grid"><div><div class="lbl">Unfallszenarien je Häufigkeit × Schadensausmaß (Kalibrierung ${A.esc(cal.id)} v${cal.version})</div>${heat}</div>
-<div><div class="lbl">Risikoakzeptanzkategorien (EN 50126-1 Tabelle C.8)</div><table class="grid">${cal.riskClasses.map((r) => `<tr><td>${A.riskPill(r.id)}</td><td>${A.esc(r.action)}</td></tr>`).join('')}</table></div></div>`;
+<div><div class="lbl">Risikoakzeptanzkategorien (Projektkalibrierung, EN 50126-1 Anhang C)</div><table class="grid">${cal.riskClasses.map((r) => `<tr><td>${A.riskPill(r.id)}</td><td>${A.esc(r.action)}</td></tr>`).join('')}</table></div></div>`;
 }
 
 // --------------------------------------------------------------- drawer ----

@@ -157,7 +157,24 @@ function withEnums(schema, { functionIds = [], interfaceIds = [], guidewordRequi
   return s;
 }
 
-const api = { SEVERITIES, FREQUENCIES, AFFECTED, CAUSE_KINDS, SOURCE_IDS, GUIDEWORDS, MODES, DECOMPOSITION_SCHEMA, HAZARD_LIST_SCHEMA, CRITIQUE_SCHEMA, RISK_ANALYSIS_SCHEMA, MEASURES_SCHEMA, REQUIREMENTS_SCHEMA, withEnums };
+/** WP3: replace frequency/severity enums with the project calibration's category ids. */
+function withCalibration(schema, cal) {
+  if (!cal) return schema;
+  const fr = (cal.frequencies || []).map((x) => x.id); const sv = (cal.severities || []).map((x) => x.id);
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return node;
+    if (Array.isArray(node)) return node.map(walk);
+    const out = {};
+    for (const [k, v] of Object.entries(node)) {
+      if ((k === 'severity' || k === 'residualSeverity') && v && v.enum) out[k] = { ...v, enum: sv };
+      else if ((k === 'frequency' || k === 'residualFrequency') && v && v.enum) out[k] = { ...v, enum: fr };
+      else out[k] = walk(v);
+    }
+    return out;
+  };
+  return walk(schema);
+}
+const api = { withCalibration, SEVERITIES, FREQUENCIES, AFFECTED, CAUSE_KINDS, SOURCE_IDS, GUIDEWORDS, MODES, DECOMPOSITION_SCHEMA, HAZARD_LIST_SCHEMA, CRITIQUE_SCHEMA, RISK_ANALYSIS_SCHEMA, MEASURES_SCHEMA, REQUIREMENTS_SCHEMA, withEnums };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_SCHEMAS = api;
 })();
 

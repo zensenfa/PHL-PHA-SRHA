@@ -8,6 +8,7 @@
   "modules": [
     "src/model.js",
     "src/profile.js",
+    "src/calibration.js",
     "src/schemas.js",
     "src/prompts.js",
     "src/ollama.js",

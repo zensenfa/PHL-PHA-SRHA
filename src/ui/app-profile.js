@@ -1,7 +1,7 @@
 // Stage 0: Projektprofil (WP2 setup wizard). The profile is edited as a draft;
 // the first confirmation locks it, later changes need a reason and are logged.
 (function () {
-const A = window.RHAS_APP, P = window.RHAS_PROFILE, DATA = window.RHAS_DATA;
+const A = window.RHAS_APP, P = window.RHAS_PROFILE, DATA = window.RHAS_DATA, C = window.RHAS_CALIBRATION, M = window.RHAS_MODEL;
 
 const clone = (o) => JSON.parse(JSON.stringify(o));
 const draft = () => { if (!A.state.profileDraft || A.state.profileDraftFor !== A.state.project.projectId) { A.state.profileDraft = clone(A.state.projectProfile); A.state.profileDraftFor = A.state.project.projectId; } return A.state.profileDraft; };
@@ -21,7 +21,7 @@ function checks(key, label, map, selected, ref) {
 
 function renderForm() {
   const d = draft();
-  const cals = [DATA.calibration].filter(Boolean);
+  const cals = [A.calibration()].filter(Boolean);
   const sec = d.security || {};
   A.el('profile-form').innerHTML = `
 <fieldset><legend>Rolle und Betrachtungsgegenstand</legend>
@@ -32,7 +32,7 @@ ${checks('lifecyclePhases', 'Lebenszyklusumfang', P.PHASES, d.lifecyclePhases, '
 </fieldset>
 <fieldset><legend>Risikoakzeptanz und Integrität</legend>
 ${select('ramsScope', d.ramsScope)}
-<div class="f"><label>Kalibrierung<span class="ref">EN 50126-1 Anhang C.1</span></label><select data-pf="calibrationId">${cals.map((c) => `<option value="${A.esc(c.id)}"${c.id === d.calibrationId ? ' selected' : ''}>${A.esc(c.title)}</option>`).join('')}</select></div>
+<div class="f"><label>Kalibrierung<span class="ref">EN 50126-1 Anhang C.1</span></label><select data-pf="calibrationId" disabled title="Wird im Abschnitt Kalibrierung geändert">${cals.map((c) => `<option value="${A.esc(c.id)}"${c.id === d.calibrationId ? ' selected' : ''}>${A.esc(c.title)}</option>`).join('')}</select></div>
 ${checks('permittedRaps', 'Zulässige Risikoakzeptanzprinzipien', P.RAP, d.permittedRaps, 'EN 50126-1 7.4.2.1; EN 50126-2 8.3')}
 ${select('thrSource', d.thrSource)}${select('silApplicability', d.silApplicability)}
 </fieldset>
@@ -90,7 +90,75 @@ function renderActions() {
   if (A.el('btn-profile-reset')) A.el('btn-profile-reset').onclick = () => { A.state.profileDraft = clone(A.state.projectProfile); render(); };
 }
 
-function render() { renderForm(); renderActions(); renderStatus(); }
+
+// --------------------------------------------------------- calibration ----
+const calDraft = () => { if (!A.state.calDraft || A.state.calDraftFor !== A.state.project.projectId) { A.state.calDraft = clone(A.calibration()); A.state.calDraftFor = A.state.project.projectId; } return A.state.calDraft; };
+const esc = (v) => A.esc(v == null ? '' : v);
+
+function renderCalibration() {
+  const cur = A.calibration(); const d = calDraft();
+  const v = C.validateCalibration(d);
+  const changes = C.describeChange(cur, d);
+  const imp = C.impact(A.state.hazards, d);
+  const opt = (set) => Object.entries(C.SETS[set]).map(([k, x]) => `<option value="${k}">${esc(x.label)}</option>`).join('');
+  const cls = d.riskClasses || [];
+  const cell = (f, sv) => { const val = (d.matrix[f] || {})[sv] || ''; return `<td class="pill ${esc(val)}" style="display:table-cell;border-radius:0"><select data-cell="${esc(f)}|${esc(sv)}"><option value="">–</option>${cls.map((r) => `<option value="${esc(r.id)}"${r.id === val ? ' selected' : ''}>${esc(r.label)}</option>`).join('')}</select></td>`; };
+  A.el('calibration-editor').innerHTML = `
+<div class="row"><b>${esc(cur.title)}</b><span class="mono">${esc(cur.id)} v${esc(cur.version)}</span>${cur.approvedBy ? A.pill('accepted', `freigegeben: ${cur.approvedBy} ${A.fmtDate(cur.approvedAt)}`) : A.pill('pending', 'nicht freigegeben')}
+<span class="spacer"></span><button id="btn-cal-export" class="btn small" type="button">Exportieren (JSON)</button><button id="btn-cal-import" class="btn small" type="button">Importieren</button></div>
+<div class="row"><span class="hint">Neu aus Vorlage:</span><select id="cal-t-f">${opt('frequency')}</select><select id="cal-t-s">${opt('severity')}</select><select id="cal-t-a">${opt('acceptance')}</select><button id="btn-cal-template" class="btn small" type="button">Vorlage laden</button></div>
+${v.findings.length ? `<div class="findings${v.ok ? ' ok' : ''}"><ul>${v.findings.map((f) => `<li class="${f.level}">${esc(f.text)}</li>`).join('')}</ul></div>` : ''}
+<div class="f"><label>Bezeichnung</label><input data-cal="title" value="${esc(d.title)}" /></div>
+<div class="f"><label>Kennung</label><input data-cal="id" value="${esc(d.id)}" /></div>
+<div class="lbl">Häufigkeitskategorien (häufigste zuerst)</div>
+<table class="grid"><thead><tr><th class="w-s">Kennung</th><th>Bezeichnung</th><th>Beschreibung</th><th>Beispielbereich</th></tr></thead><tbody>${d.frequencies.map((x, i) => `<tr><td class="mono">${esc(x.id)}</td><td><input data-cat="frequencies|${i}|label" value="${esc(x.label)}" /></td><td><input data-cat="frequencies|${i}|definition" value="${esc(x.definition)}" /></td><td><input data-cat="frequencies|${i}|range" value="${esc(x.range)}" /></td></tr>`).join('')}</tbody></table>
+<div class="lbl">Schadenskategorien (schwerste zuerst)</div>
+<table class="grid"><thead><tr><th class="w-s">Kennung</th><th>Bezeichnung</th><th>Personen / Umwelt</th><th>Betrieb / Sachwerte</th></tr></thead><tbody>${d.severities.map((x, i) => `<tr><td class="mono">${esc(x.id)}</td><td><input data-cat="severities|${i}|label" value="${esc(x.label)}" /></td><td><input data-cat="severities|${i}|persons" value="${esc(x.persons)}" /></td><td><input data-cat="severities|${i}|service" value="${esc(x.service)}" /></td></tr>`).join('')}</tbody></table>
+<div class="lbl">Risikoakzeptanzkategorien</div>
+<table class="grid"><thead><tr><th class="w-s">Kennung</th><th>Bezeichnung</th><th>Erforderliche Handlung</th><th class="w-a">Rang</th><th class="w-a">Maßnahmen nötig</th><th class="w-a">Muss reduziert werden</th></tr></thead><tbody>${cls.map((x, i) => `<tr><td>${A.pill(x.id, x.id)}</td><td><input data-cat="riskClasses|${i}|label" value="${esc(x.label)}" /></td><td><input data-cat="riskClasses|${i}|action" value="${esc(x.action)}" /></td><td><input class="w-3" data-cat="riskClasses|${i}|rank" value="${esc(x.rank)}" /></td><td><input type="checkbox" data-flag="${i}|needsMeasures"${M.classMeta(x.id, d) && M.classMeta(x.id, d).needsMeasures ? ' checked' : ''}/></td><td><input type="checkbox" data-flag="${i}|mustReduce"${M.classMeta(x.id, d) && M.classMeta(x.id, d).mustReduce ? ' checked' : ''}/></td></tr>`).join('')}</tbody></table>
+<div class="lbl">Risikomatrix (Häufigkeit des Unfalls × Schadensausmaß)</div>
+<table class="heat"><thead><tr><th>Häufigkeit \\ Schadensausmaß</th>${d.severities.map((x) => `<th>${esc(x.label)}</th>`).join('')}</tr></thead><tbody>${d.frequencies.map((f) => `<tr><th>${esc(f.label)}</th>${d.severities.map((x) => cell(f.id, x.id)).join('')}</tr>`).join('')}</tbody></table>
+<div class="panel">
+${changes.length ? `<div class="hint">Änderungen: ${esc(changes.join(' · '))}</div>` : '<div class="hint">Keine Änderungen gegenüber der gespeicherten Kalibrierung.</div>'}
+${imp.invalid.length ? `<div class="warn">${imp.invalid.length} Gefährdung(en) verwenden Kategorien, die in dieser Kalibrierung nicht existieren (${esc(imp.invalid.map((x) => x.id).join(', '))}); ihre Szenarien müssen neu eingestuft werden.</div>` : ''}
+${imp.changed.length ? `<div class="hint">${imp.changed.length} Gefährdung(en) ändern ihre Risikoklasse: ${esc(imp.changed.map((x) => `${x.id} ${x.from} ⇒ ${x.to}`).join('; '))}</div>` : ''}
+<div class="f"><label>Begründung</label><textarea id="cal-reason" rows="2" placeholder="Pflicht, sobald das Profil bestätigt ist oder Gefährdungen existieren"></textarea></div>
+<div class="row"><button id="btn-cal-apply" class="btn primary" type="button"${v.ok && changes.length ? '' : ' disabled'}>Kalibrierung übernehmen</button><button id="btn-cal-discard" class="btn" type="button"${changes.length ? '' : ' disabled'}>Verwerfen</button>
+<span class="spacer"></span><input id="cal-approver" placeholder="Freigabe durch (Betreiber)" /><button id="btn-cal-approve2" class="btn small" type="button"${changes.length ? ' disabled' : ''}>Freigeben</button></div>
+</div>`;
+  const ed = A.el('calibration-editor');
+  ed.querySelectorAll('[data-cal]').forEach((el) => { el.oninput = () => { d[el.dataset.cal] = el.value; }; el.onchange = () => renderCalibration(); });
+  ed.querySelectorAll('[data-cat]').forEach((el) => { el.oninput = () => { const [k, i, f] = el.dataset.cat.split('|'); d[k][Number(i)][f] = f === 'rank' ? Number(el.value) : el.value; }; el.onchange = () => renderCalibration(); });
+  ed.querySelectorAll('[data-flag]').forEach((el) => { el.onchange = () => { const [i, f] = el.dataset.flag.split('|'); d.riskClasses[Number(i)][f] = el.checked; renderCalibration(); }; });
+  ed.querySelectorAll('[data-cell]').forEach((el) => { el.onchange = () => { const [f, sv] = el.dataset.cell.split('|'); d.matrix[f] = d.matrix[f] || {}; d.matrix[f][sv] = el.value; renderCalibration(); }; });
+  A.el('btn-cal-template').onclick = () => { A.state.calDraft = C.fromTemplate({ frequency: A.el('cal-t-f').value, severity: A.el('cal-t-s').value, acceptance: A.el('cal-t-a').value }); renderCalibration(); };
+  A.el('btn-cal-discard').onclick = () => { A.state.calDraft = clone(A.calibration()); renderCalibration(); };
+  A.el('btn-cal-export').onclick = () => A.download(JSON.stringify(A.calibration(), null, 1), `${A.slug(A.calibration().id)}_kalibrierung.json`, 'application/json');
+  A.el('btn-cal-import').onclick = () => A.el('import-calibration-file').click();
+  A.el('import-calibration-file').onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { A.state.calDraft = JSON.parse(await f.text()); renderCalibration(); A.toast('Kalibrierung geladen – prüfen und übernehmen'); } catch (err) { A.toast(`Import fehlgeschlagen: ${err.message}`, 'err'); } e.target.value = ''; };
+  A.el('btn-cal-apply').onclick = () => applyCalibration(clone(d), A.el('cal-reason').value.trim());
+  A.el('btn-cal-approve2').onclick = async () => { const by = A.el('cal-approver').value.trim(); if (!by) { A.toast('Name für die Freigabe eintragen', 'err'); return; } await applyCalibration({ ...clone(A.calibration()), approvedBy: by, approvedAt: M.nowIso() }, `Freigabe der Kalibrierung durch ${by}`, true); };
+}
+
+async function applyCalibration(next, reason, approvalOnly) {
+  const cur = A.calibration(); const prof = A.state.projectProfile;
+  const needReason = !approvalOnly && (prof.confirmedAt || A.state.hazards.length);
+  if (needReason && !reason) { A.toast('Begründung für die Kalibrierungsänderung erforderlich', 'err'); return; }
+  if (!approvalOnly) { next.version = next.id === cur.id ? Number(cur.version || 1) + 1 : 1; next.approvedBy = ''; next.approvedAt = ''; }
+  const v = C.validateCalibration(next); if (!v.ok) { A.toast('Kalibrierung unvollständig', 'err'); return; }
+  const changes = approvalOnly ? [`Freigabe ${next.approvedBy}`] : C.describeChange(cur, next);
+  await A.saveMeta('calibration', next);
+  A.calibration();
+  for (const h of A.state.hazards) await A.saveHazard(h); // recompute risk classes with the new matrix
+  const entry = { at: M.nowIso(), by: A.author(), reason: reason || 'Kalibrierung festgelegt', changes: changes.map((c) => ({ field: 'calibration', from: `${cur.id} v${cur.version}`, to: `${next.id} v${next.version}: ${c}` })) };
+  await A.saveMeta('projectProfile', { ...prof, calibrationId: next.id, changeLog: [...(prof.changeLog || []), entry] });
+  A.state.profileDraft = clone(A.state.projectProfile);
+  A.state.calDraft = clone(next);
+  A.toast(approvalOnly ? 'Kalibrierung freigegeben' : `Kalibrierung übernommen (v${next.version}); ${A.state.hazards.length} Gefährdungen neu bewertet`);
+  A.refresh();
+}
+
+function render() { renderForm(); renderActions(); renderStatus(); renderCalibration(); }
 
 A.stages.profile = { render, bind() {} };
 })();

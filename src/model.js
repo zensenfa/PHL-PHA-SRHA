@@ -53,15 +53,39 @@ const LABELS = {
   review: { pending: 'Offen', accepted: 'Übernommen', rejected: 'Verworfen' },
 };
 
-const FREQUENCIES = Object.keys(LABELS.frequency);
-const SEVERITIES = Object.keys(LABELS.severity);
-const RISK_CLASSES = Object.keys(LABELS.riskClass);
-const RISK_RANK = { Negligible: 1, Tolerable: 2, Undesirable: 3, Intolerable: 4 };
+// ------------------------------------------------------ active calibration ----
+// WP3: categories, labels and ranks come from the project calibration, not from
+// fixed lists, so any EN 50126-1 Annex C category set can be used. The UI and
+// report builder set the active calibration; functions that decide something
+// also accept an explicit calibration argument.
+let ACTIVE = null;
+function setCalibration(cal) { ACTIVE = cal || null; }
+function activeCalibration() { return ACTIVE || data().calibration; }
+const idsOf = (list) => (list || []).map((x) => x.id);
+function frequencyIds(cal) { return idsOf((cal || activeCalibration()).frequencies); }
+function severityIds(cal) { return idsOf((cal || activeCalibration()).severities); }
+/** Risk class ids, worst first. */
+function riskClassIds(cal) { return [...((cal || activeCalibration()).riskClasses || [])].sort((a, b) => Number(b.rank) - Number(a.rank)).map((r) => r.id); }
+/** Rank and decision flags of a risk class; flags fall back to rank-based defaults for older calibrations. */
+function classMeta(c, cal) {
+  const list = (cal || activeCalibration()).riskClasses || [];
+  const r = list.find((x) => x.id === c);
+  if (!r) return null;
+  const max = Math.max(...list.map((x) => Number(x.rank)));
+  const rank = Number(r.rank);
+  return { rank, needsMeasures: r.needsMeasures != null ? !!r.needsMeasures : (list.length > 2 ? rank >= 2 : rank === max), mustReduce: r.mustReduce != null ? !!r.mustReduce : rank === max };
+}
+function rankOf(c, cal) { const m = classMeta(c, cal); return m ? m.rank : 0; }
 
 function label(kind, value) {
   const map = LABELS[kind];
   if (!map) return value == null ? '' : String(value);
   if (kind === 'hierarchy') value = normalizeHierarchy(value);
+  if ((kind === 'frequency' || kind === 'severity' || kind === 'riskClass') && value) {
+    const list = activeCalibration()[kind === 'frequency' ? 'frequencies' : kind === 'severity' ? 'severities' : 'riskClasses'];
+    const hit = (list || []).find((x) => x.id === value);
+    if (hit && hit.label) return hit.label;
+  }
   return value == null || value === '' ? '' : (map[value] || String(value));
 }
 
@@ -104,11 +128,11 @@ function riskClassOrNull(frequency, severity, calibration) {
 }
 
 /** Highest (worst) risk class among a list of classes; null when none. */
-function worstRiskClass(classes) {
+function worstRiskClass(classes, cal) {
   let worst = null;
   for (const c of classes || []) {
-    if (!c || !RISK_RANK[c]) continue;
-    if (!worst || RISK_RANK[c] > RISK_RANK[worst]) worst = c;
+    if (!c || !rankOf(c, cal)) continue;
+    if (!worst || rankOf(c, cal) > rankOf(worst, cal)) worst = c;
   }
   return worst;
 }
@@ -116,12 +140,12 @@ function worstRiskClass(classes) {
 /** Recompute every derived risk field on a hazard (accident classes, worst class, residual per measure). Mutates and returns the hazard. */
 function recomputeHazardRisk(h, calibration) {
   for (const a of h.accidents || []) a.riskClass = riskClassOrNull(a.frequency, a.severity, calibration);
-  h.riskClass = worstRiskClass((h.accidents || []).map((a) => a.riskClass));
+  h.riskClass = worstRiskClass((h.accidents || []).map((a) => a.riskClass), calibration);
   for (const m of h.measures || []) { m.hierarchy = normalizeHierarchy(m.hierarchy); m.residualRiskClass = riskClassOrNull(m.residualFrequency, m.residualSeverity, calibration); }
   const residuals = (h.measures || []).filter((m) => m.status !== 'rejected').map((m) => m.residualRiskClass).filter(Boolean); // PATCH-2
   // Residual risk of the hazard = best (lowest) residual any single confirmed measure claims. This is OPTIMISTIC
   // (measures can act on different accident scenarios); the engineer confirms it. Per-scenario residual risk is planned.
-  h.residualRiskClass = residuals.length ? residuals.reduce((best, c) => (RISK_RANK[c] < RISK_RANK[best] ? c : best)) : h.riskClass;
+  h.residualRiskClass = residuals.length ? residuals.reduce((best, c) => (rankOf(c, calibration) < rankOf(best, calibration) ? c : best)) : h.riskClass;
   return h;
 }
 
@@ -360,9 +384,10 @@ function hazardCompleteness(h) {
 
   const ctrlProblems = [];
   if (ba.decision === false) {
-    const needsMeasures = h.riskClass && RISK_RANK[h.riskClass] >= RISK_RANK.Tolerable;
+    const needsMeasures = !!(h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures);
     if (needsMeasures && isBlank((h.measures || []).filter((m) => m.status !== 'rejected'))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
-    if (h.riskClass === 'Intolerable' && (!h.residualRiskClass || h.residualRiskClass === 'Intolerable')) ctrlProblems.push('Untragbares Risiko ohne wirksame Reduktion (Tabelle C.8)');
+    const must = (c) => !!(c && (classMeta(c) || {}).mustReduce);
+    if (must(h.riskClass) && (!h.residualRiskClass || must(h.residualRiskClass))) ctrlProblems.push('Nicht akzeptables Risiko ohne wirksame Reduktion (EN 50126-1 Tabelle C.8 bzw. Projektkalibrierung)');
     if ((h.measures || []).filter((m) => m.status !== 'rejected').some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
   }
   out.controlled = out.evaluated && ctrlProblems.length === 0;
@@ -421,11 +446,11 @@ function projectStats({ hazards, requirements, functions, sd }) {
   const accepted = all.filter((h) => h.review && h.review.decision === 'accepted');
   const comp = accepted.map(hazardCompleteness);
   const byClass = {};
-  for (const c of RISK_CLASSES) byClass[c] = accepted.filter((h) => h.riskClass === c).length;
+  for (const c of riskClassIds()) byClass[c] = accepted.filter((h) => h.riskClass === c).length;
   const residualByClass = {};
-  for (const c of RISK_CLASSES) residualByClass[c] = accepted.filter((h) => h.residualRiskClass === c).length;
+  for (const c of riskClassIds()) residualByClass[c] = accepted.filter((h) => h.residualRiskClass === c).length;
   const heat = {};
-  for (const f of FREQUENCIES) { heat[f] = {}; for (const s of SEVERITIES) heat[f][s] = 0; }
+  for (const f of frequencyIds()) { heat[f] = {}; for (const s of severityIds()) heat[f][s] = 0; }
   for (const h of accepted) for (const a of h.accidents || []) if (a.frequency && a.severity && heat[a.frequency]) heat[a.frequency][a.severity]++;
   const reqs = requirements || [];
   const sdv = validateSystemDefinition(sd || {}, functions || []);
@@ -445,7 +470,7 @@ function projectStats({ hazards, requirements, functions, sd }) {
 }
 
 const api = {
-  LABELS, FREQUENCIES, SEVERITIES, RISK_CLASSES, RISK_RANK, SYSTEM_DEFINITION_FIELDS,
+  LABELS, SYSTEM_DEFINITION_FIELDS, setCalibration, activeCalibration, frequencyIds, severityIds, riskClassIds, classMeta, rankOf,
   data, label, normalizeHierarchy, LEGACY_HIERARCHY, nextId, nowIso,
   riskClass, riskClassOrNull, worstRiskClass, recomputeHazardRisk,
   silFromTffr, functionIntegrity, parseRate, formatRate,

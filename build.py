@@ -31,6 +31,7 @@ def data_json():
         'guidewords': load('guidewords.json')['guidewords'],
         'modes': load('modes.json')['modes'],
         'demo': load('demo-project.json'),
+        'domains': load('domains.json'),
     }
     return json.dumps(data, ensure_ascii=False).encode('utf-8')
 

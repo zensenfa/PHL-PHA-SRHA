@@ -121,6 +121,20 @@ Dokument
  | EN 50129:2018
  | Bahnanwendungen – Telekommunikationstechnik, Signaltechnik und Datenverarbeitungssysteme – Sicherheitsrelevante elektronische Systeme für Signaltechnik
  |
+Domänenspezifische Normen (Domänenpaket Zugsteuerung, Zugsicherung und Signaltechnik (inkl. Warnsysteme), v1; Anwendbarkeit im Projekt zu prüfen)
+Dokument
+ | Titel / Zweck
+ | EN 50129:2018
+ | Sicherheitsrelevante elektronische Systeme für Signaltechnik (Sicherheitsnachweis, SIL, SRAC)
+ | EN 50716:2023
+ | Software für Bahnanwendungen
+ | EN 50159
+ | Sicherheitsrelevante Kommunikation in Übertragungssystemen
+ | EN 50121-4
+ | EMV – Signal- und Telekommunikationseinrichtungen
+ | EN 16704
+ | Sicherheit bei Arbeiten im Gleisbereich (für Warnsysteme)
+ |
 Abkürzungen
 Abkürzung
  | Bedeutung

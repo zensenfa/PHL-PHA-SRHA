@@ -8,6 +8,7 @@
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const DOCX = typeof require !== 'undefined' ? require('./docx.js') : window.RHAS_DOCX;
 const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
+const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
 
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
@@ -44,6 +45,10 @@ function securityNote(b) {
   const sec = (b.profile && b.profile.security) || { level: 0 };
   if (Number(sec.level) === 0) return `Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: ${sec.justification || '(fehlt)'}`;
   return `Security: ${PROFILE.label('security.level', sec.level)}.`;
+}
+function specDomainStandards(b) {
+  const pack = DOMAINS.packFor(b.profile);
+  return { key: 'domainStd', title: `Domänenspezifische Normen (Domänenpaket ${pack ? `${pack.label}, v${pack.version}` : '–'}; Anwendbarkeit im Projekt zu prüfen)`, columns: [{ header: 'Dokument', width: 0.22 }, { header: 'Titel / Zweck', width: 0.78 }], rows: pack ? pack.standards : [] };
 }
 function specProfile(b) {
   return { key: 'profile', title: 'Projektprofil', columns: [{ header: 'Merkmal', width: 0.28 }, { header: 'Festlegung', width: 0.52 }, { header: 'Bezug', width: 0.2 }], rows: PROFILE.summaryRows(b.profile).concat([['Bestätigt', b.profile.confirmedAt ? `${dateDe(b.profile.confirmedAt)}${b.profile.confirmedBy ? ` durch ${b.profile.confirmedBy}` : ''}` : 'nicht bestätigt', '']]) };
@@ -202,7 +207,7 @@ function sections(kind, b) {
   const st = b.stats;
   const common = [
     { heading: '1 Zweck und Geltungsbereich', paragraphs: [d.purpose, SCOPE_NOTE, securityNote(b), `System: ${b.sd.name || '(ohne Namen)'} (${b.sd.type || ''}). Zweck des Systems: ${b.sd.purpose || '–'}`, b.docControl.purpose || ''], specs: [specProfile(b), specProfileLog(b)] },
-    { heading: '2 Normative Referenzen und Abkürzungen', specs: [{ key: 'refs', title: 'Referenzen', columns: [{ header: 'Dokument', width: 0.22 }, { header: 'Titel', width: 0.78 }], rows: REFERENCES }, { key: 'acr', title: 'Abkürzungen', columns: [{ header: 'Abkürzung', width: 0.15 }, { header: 'Bedeutung', width: 0.85 }], rows: ACRONYMS }] },
+    { heading: '2 Normative Referenzen und Abkürzungen', specs: [{ key: 'refs', title: 'Referenzen', columns: [{ header: 'Dokument', width: 0.22 }, { header: 'Titel', width: 0.78 }], rows: REFERENCES }, specDomainStandards(b), { key: 'acr', title: 'Abkürzungen', columns: [{ header: 'Abkürzung', width: 0.15 }, { header: 'Bedeutung', width: 0.85 }], rows: ACRONYMS }] },
     { heading: '3 Systemdefinition (EN 50126-1 7.3.2.1, Anhang D)', paragraphs: [b.sdValidation.ok ? 'Das normative Minimum der Systemdefinition (7.3.2.1 a) bis e)) ist dokumentiert.' : `Hinweis: ${b.sdValidation.findings.filter((f) => f.level === 'error').length} normative Angaben der Systemdefinition fehlen (siehe Tabelle, mit (N) markierte Felder).`], specs: [specSystemDefinition(b), specFunctions(b), specInterfaces(b), { key: 'subs', title: 'Teilsysteme', columns: [{ header: 'Teilsystem', width: 0.3 }, { header: 'Beschreibung', width: 0.7 }], rows: (b.subsystems || []).map((s) => [s.name, s.description]) }, specDocuments(b)] },
   ];
   const method = { heading: '4 Methode und Werkzeug', paragraphs: [

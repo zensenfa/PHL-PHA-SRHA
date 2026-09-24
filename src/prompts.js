@@ -6,6 +6,9 @@
 (function () {
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
+const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
+/** WP4: domain examples come from the domain pack of the project profile. */
+const ex = (ctx) => ((DOMAINS && DOMAINS.packFor(ctx && ctx.profile)) || { examples: {} }).examples || {};
 
 const ROLE = 'Du bist ein erfahrener Sicherheitsingenieur für Bahnsysteme (EN 50126-1/-2:2017, EN 50129:2018) und arbeitest präzise, konkret und systemspezifisch. Du schreibst ausschließlich Deutsch (Feldnamen bleiben Englisch). Du erfindest keine Fakten über das System; wo Informationen fehlen, formulierst du die Annahme ausdrücklich.';
 
@@ -69,9 +72,9 @@ function buildDecompositionPrompt(ctx) {
   const systemPrompt = `${ROLE}
 
 Aufgabe: Zerlege das beschriebene System für die Risikoanalyse in Teilsysteme, Funktionen und Schnittstellen (EN 50126-1 Anhang D: funktionale Zerlegung; Funktionen sind unabhängig von der technischen Realisierung beschreibbar).
-- 6 bis 14 Funktionen: jede mit "name" (Verb + Objekt, z. B. "Zugannäherung erkennen"), "description" (Eingang → Verarbeitung → Ausgang), "kind" (electronic | mechanical | mixed | procedural), "safetyRelevant" (true, wenn eine Eigenschaft der Funktion in der Sicherheitsargumentation gebraucht wird) mit "rationale", "modes" (Betriebsarten, in denen die Funktion aktiv ist), "inputs"/"outputs".
-- "safeState": der Zustand, den die Funktion bei erkanntem Fehler AKTIV einnehmen muss, damit keine Gefährdung entsteht — NICHT die Folge eines unerkannten Ausfalls. Formuliere ihn als anzustrebenden Zustand („…wird eingenommen/gemeldet"), nie als Ausbleiben einer Wirkung. Prüfe die sichere Ausfallrichtung: Bei schützenden oder warnenden Funktionen ist der sichere Zustand in der Regel die ausgelöste Schutzwirkung mit Störungsmeldung (z. B. Warnung aktiv, Sperrung wirksam, Rückfallebene angefordert), nicht deren Wegfall. Ist ein sicherer Zustand technisch nicht erreichbar, nenne ausdrücklich die geforderte Rückfallebene.
-- Schnittstellen: jede Grenze zu anderen Systemen, zur Infrastruktur, zu Menschen (Bediener, Instandhalter, Fahrgäste, Straßenverkehr) und zu anderen Organisationen; "type" = physical | functional | human | externalSystem | organisation, "partner" = Gegenstelle.
+- 6 bis 14 Funktionen: jede mit "name" (Verb + Objekt, z. B. "${ex(ctx).functionName}"), "description" (Eingang → Verarbeitung → Ausgang), "kind" (electronic | mechanical | mixed | procedural), "safetyRelevant" (true, wenn eine Eigenschaft der Funktion in der Sicherheitsargumentation gebraucht wird) mit "rationale", "modes" (Betriebsarten, in denen die Funktion aktiv ist), "inputs"/"outputs".
+- "safeState": der Zustand, den die Funktion bei erkanntem Fehler AKTIV einnehmen muss, damit keine Gefährdung entsteht — NICHT die Folge eines unerkannten Ausfalls. Formuliere ihn als anzustrebenden Zustand („…wird eingenommen/gemeldet"), nie als Ausbleiben einer Wirkung. Prüfe die sichere Ausfallrichtung: Bei schützenden oder warnenden Funktionen ist der sichere Zustand in der Regel die ausgelöste Schutzwirkung mit Störungsmeldung (z. B. ${ex(ctx).safeState}), nicht deren Wegfall. Ist ein sicherer Zustand technisch nicht erreichbar, nenne ausdrücklich die geforderte Rückfallebene.
+- Schnittstellen: jede Grenze zu anderen Systemen, zur Infrastruktur, zu Menschen (${ex(ctx).interfacePartners}) und zu anderen Organisationen; "type" = physical | functional | human | externalSystem | organisation, "partner" = Gegenstelle.
 - Teilsysteme: 3 bis 8, grob nach Funktion gruppiert.
 - "assumptions": Annahmen, die du treffen musstest, weil die Beschreibung schweigt. "openQuestions": Fragen, deren Antwort die Analyse wesentlich beeinflusst.
 Antworte NUR mit dem JSON-Objekt nach Schema, ohne Vorrede.`;
@@ -90,13 +93,13 @@ Schritt 1 — Abweichungen: Gehe JEDES Leitwort der Reihe nach durch und bestimm
 Schritt 2 — Zusammenfassen zu Gefährdungen: Mehrere Leitwortabweichungen, die denselben gefährlichen Zustand an der Systemgrenze erzeugen, ergeben GENAU EINE Gefährdung mit mehreren Ursachen — nicht mehrere Gefährdungen. Typischerweise bleiben 2 bis 5 Gefährdungen je Funktion übrig.
 
 Entscheidend ist die Formulierungsebene (EN 50126-2 5.2.2 — die Risikoanalyse betrachtet das System als Black Box an seiner Grenze): "title" und "description" beschreiben den ZUSTAND AN DER SYSTEMGRENZE, dem die gefährdeten Personen ausgesetzt sind, nicht den internen Funktionsausfall.
-  RICHTIG: "Personal im Gleis erhält keine wirksame Warnung vor Zugannäherung"
-  FALSCH:  "Funkübertragung der Zugannäherung ausgefallen" — das ist eine URSACHE, kein Gefährdungszustand
+  RICHTIG: "${ex(ctx).hazardRight}"
+  FALSCH:  "${ex(ctx).hazardWrong}" — das ist eine URSACHE, kein Gefährdungszustand
 Der Funktionsausfall und jede Leitwortabweichung gehören ausschließlich in "causes".
 
 "guidewords": alle Leitwort-IDs, die auf diese Gefährdung führen (mindestens eine, z. B. ["loss","late","partial"]). "guideword": die wichtigste davon. Immer die ID, nie der Text. Jede Gefährdung muss die Funktion "${fn.id}" in "functions" enthalten.
 
-Unterscheide sicherheitsrelevante Abweichungen (Unfallpotenzial) von reinen Verfügbarkeitsproblemen: Letztere nur aufnehmen, wenn sie eine Folgegefährdung erzeugen (z. B. Missachtung der Warnung nach häufigem Fehlalarm), und das im "consequence" ausdrücklich benennen.
+Unterscheide sicherheitsrelevante Abweichungen (Unfallpotenzial) von reinen Verfügbarkeitsproblemen: Letztere nur aufnehmen, wenn sie eine Folgegefährdung erzeugen (z. B. ${ex(ctx).availabilityFollowUp}), und das im "consequence" ausdrücklich benennen.
 Leitworte:
 ${gw}
 ${HAZARD_RULES}
@@ -170,7 +173,9 @@ VERTEILUNG JE GEFÄHRDUNGSQUELLE: ${bySource.map((s) => `${s.code} ${s.title}: $
 VERTEILUNG JE FUNKTION: ${byFunction.map((f) => `${f.id}: ${f.proposed}`).join('; ')}
 VERTEILUNG JE BETRIEBSART: ${byMode.map((m) => `${m.id}: ${m.proposed}`).join('; ')}
 BISHERIGE GEFÄHRDUNGEN (${(titles || []).length}):
-${fmtList(capTitles(titles, 200), (t) => `- ${t}`)}`;
+${fmtList(capTitles(titles, 200), (t) => `- ${t}`)}
+CHECKLISTE DER DOMÄNE (empirische Phase, EN 50129 A.4.2.3) — prüfe, ob jeder Punkt abgedeckt ist:
+${fmtList(((DOMAINS && DOMAINS.packFor(ctx.profile)) || { checklist: [] }).checklist || [], (t) => `- ${t}`)}`;
   return { systemPrompt, userPrompt };
 }
 
@@ -215,7 +220,7 @@ Aufgabe: Risikoanalyse für GENAU EINE Gefährdung (EN 50126-1 7.4.2.1 Schritte 
 - "railwayHazard": die Gefährdung auf Ebene des Eisenbahnsystems, zu der dieser Zustand führt (EN 50126-2 Bild 7).
 - "accidents": 1 bis 3 Unfallszenarien mit jeweils "description", "affected", "severity" + "severityRationale" (≥ 2 Sätze: schlimmster glaubhafter Ausgang, wer betroffen, warum nicht eine Klasse höher/niedriger), "frequency" + "frequencyRationale" (≥ 2 Sätze: Exposition, wie oft die Auslösebedingungen je Einzelinstanz eintreten, warum nicht eine Klasse höher/niedriger; Annahmen benennen). Die Häufigkeit bezieht sich auf den UNFALL, nicht auf den Bauteilausfall.
 - "existingBarriers": bereits vorhandene technische oder betriebliche Barrieren mit "type" (frequency | severity), "effectiveness" und "outsideSystem" (true, wenn außerhalb der Systemgrenze → wird Anwendungsbedingung).
-- "suggestedRap": Vorschlag des Risikoakzeptanzprinzips (EN 50126-2 8.3): cop = anerkannte Regeln der Technik — NUR wenn du in "reference" ein konkretes, im Bahnbereich anerkanntes Regelwerk mit Nummer nennen kannst, das GENAU diese Gefährdung abdeckt (z. B. EN 50159 für sicherheitsrelevante Übertragung); reference = Referenzsystem — NUR mit benanntem, bewährtem Referenzsystem in "reference"; sonst ere = explizite Risikoabschätzung. "justification" begründet die Wahl. "affected": Straßenverkehrsteilnehmer und Öffentlichkeit sind "third".
+- "suggestedRap": Vorschlag des Risikoakzeptanzprinzips (EN 50126-2 8.3): cop = anerkannte Regeln der Technik — NUR wenn du in "reference" ein konkretes, im Bahnbereich anerkanntes Regelwerk mit Nummer nennen kannst, das GENAU diese Gefährdung abdeckt (z. B. ${ex(ctx).copReference}); reference = Referenzsystem — NUR mit benanntem, bewährtem Referenzsystem in "reference"; sonst ere = explizite Risikoabschätzung. "justification" begründet die Wahl. "affected": Dritte (Öffentlichkeit, Nutzer anderer Verkehrswege) sind "third".
 - "broadlyAcceptableCandidate": true nur, wenn das Risiko so gering ist, dass keine weitere Maßnahme vernünftig ist (EN 50126-1 6.3), mit "broadlyAcceptableRationale".
 - "assumptions": alle getroffenen Annahmen.
 Du gibst KEINE Risikoklasse an; sie wird aus der Matrix berechnet. Nur Deutsch, Enum-Werte exakt wie vorgegeben.

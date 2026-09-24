@@ -182,6 +182,24 @@ async function decompose() {
 
 function render() { renderForm(); renderCompleteness(); renderFunctions(); renderInterfaces(); renderSubsystems(); renderModes(); renderDocuments(); renderDecomposition(); A.el('def-findings').classList.add('hidden'); }
 
+// WP4: templates from the domain pack of the project profile (proposals; the engineer selects).
+function openTemplates(kind) {
+  const pack = window.RHAS_DOMAINS.packFor(A.state.projectProfile);
+  const list = (pack && pack[kind]) || [];
+  const isFn = kind === 'functionTemplates';
+  const existing = new Set((isFn ? A.state.functions : A.state.interfaces).map((x) => String(x.name).toLowerCase()));
+  const rows = list.map((t, i) => `<label class="chk" style="display:flex;align-items:flex-start;gap:6px;white-space:normal"><input type="checkbox" data-tpl="${i}"${existing.has(t.name.toLowerCase()) ? ' disabled' : ' checked'}/> <span><b>${A.esc(t.name)}</b>${existing.has(t.name.toLowerCase()) ? ' <span class="hint">(bereits vorhanden)</span>' : ''}<br><span class="hint">${A.esc(t.description || `${t.type || ''} ↔ ${t.partner || ''}`)}</span></span></label>`).join('');
+  A.openDrawer(`Vorlagen: ${pack ? pack.label : 'keine'}`, list.length ? `<p class="hint">Vorlagen aus dem Domänenpaket (v${pack.version}). Sie sind Ausgangspunkte und müssen an das konkrete System angepasst werden.</p><div class="check-list compact">${rows}</div><div class="row"><button id="tpl-add" class="btn primary" type="button">Ausgewählte übernehmen</button></div>` : '<p class="hint">Für diese Domäne enthält das Paket keine Vorlagen.</p>');
+  if (!A.el('tpl-add')) return;
+  A.el('tpl-add').onclick = async () => {
+    const picked = [...document.querySelectorAll('[data-tpl]:checked')].map((el) => list[Number(el.dataset.tpl)]);
+    if (!picked.length) { A.toast('Nichts ausgewählt', 'err'); return; }
+    if (isFn) await A.createFunctions(picked.map((t) => M.makeFunction({ name: t.name, description: t.description || '', kind: t.kind || 'electronic', source: `template:${pack.id}` })));
+    else { for (const t of picked) A.state.interfaces.push({ id: A.nextInterfaceId(), name: t.name, type: t.type || 'functional', partner: t.partner || '', description: '', source: `template:${pack.id}` }); await A.saveInterfaces(); }
+    A.closeDrawer(); render(); A.refresh(); A.toast(`${picked.length} Vorlage(n) übernommen`);
+  };
+}
+
 A.stages.definition = {
   render,
   bind() {
@@ -189,6 +207,8 @@ A.stages.definition = {
     A.el('btn-def-check').onclick = () => showFindings(renderCompleteness());
     A.el('btn-decompose').onclick = decompose;
     A.el('btn-add-function').onclick = () => openFunction(null);
+    A.el('btn-fn-templates').onclick = () => openTemplates('functionTemplates');
+    A.el('btn-if-templates').onclick = () => openTemplates('interfaceTemplates');
     A.el('btn-add-interface').onclick = () => openInterface(null);
     A.el('btn-add-subsystem').onclick = async () => { A.state.subsystems.push({ name: 'Neues Teilsystem', description: '' }); await A.saveSubsystems(); renderSubsystems(); };
   },

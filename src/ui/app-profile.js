@@ -19,6 +19,14 @@ function checks(key, label, map, selected, ref) {
   return `<div class="f"><label>${A.esc(label)}${ref ? `<span class="ref">${A.esc(ref)}</span>` : ''}</label><div class="check-list compact">${Object.entries(map).map(([k, v]) => `<label><input type="checkbox" data-pfc="${key}" value="${A.esc(k)}"${sel.includes(String(k)) ? ' checked' : ''}/> ${A.esc(v)}</label>`).join('')}</div></div>`;
 }
 
+function packInfo(d) {
+  const pack = window.RHAS_DOMAINS.packFor(d);
+  if (!pack) return '';
+  return `<fieldset><legend>Domänenpaket</legend><div class="f"><label>Paket</label><div>${A.esc(pack.label)} (v${pack.version})<br><span class="hint">${pack.functionTemplates.length} Funktions- und ${pack.interfaceTemplates.length} Schnittstellenvorlagen (Stufe 1), Beispiele für die KI-Formulierung, Checkliste für die Kritikphase</span></div></div>
+<div class="f"><label>Domänenspezifische Normen</label><div>${pack.standards.map((x) => `<div><b>${A.esc(x[0])}</b> – ${A.esc(x[1])}</div>`).join('')}</div></div>
+<div class="f"><label>Checkliste (empirische Phase, EN 50129 A.4.2.3)</label><ul style="margin:0 0 0 16px;padding:0">${pack.checklist.map((x) => `<li>${A.esc(x)}</li>`).join('')}</ul></div></fieldset>`;
+}
+
 function renderForm() {
   const d = draft();
   const cals = [A.calibration()].filter(Boolean);
@@ -43,12 +51,13 @@ ${select('country', d.country)}${text('infrastructureManager', 'Infrastrukturbet
 <div class="f"><label>Security-Tiefe<span class="ref">EN 50126-1 5.5, 7.4.2.1 d); EN 50129 6.4</span></label><select data-pf="security.level">${Object.entries(P.SECURITY_LEVELS).map(([k, v]) => `<option value="${k}"${String(sec.level) === k ? ' selected' : ''}${P.IMPLEMENTED_SECURITY_LEVELS.includes(Number(k)) ? '' : ' disabled'}>${A.esc(v)}</option>`).join('')}</select></div>
 ${Number(sec.level) === 0 ? text('security.justification', 'Begründung (Stufe 0)', sec.justification, 'EN 50126-1 7.4.2.1 d)', true) : ''}
 </fieldset>
+${packInfo(d)}
 <fieldset><legend>Bericht und Daten</legend>
 <div class="f"><label>Berichtssprache</label><select data-pf="report.language"><option value="de" selected>Deutsch</option><option value="en" disabled>Englisch (in Vorbereitung)</option></select></div>
 ${select('dataClassification', d.dataClassification)}
 </fieldset>`;
   const form = A.el('profile-form');
-  form.querySelectorAll('[data-pf]').forEach((el) => { el[el.tagName === 'SELECT' ? 'onchange' : 'oninput'] = () => { const path = el.dataset.pf.split('.'); let o = d; while (path.length > 1) o = o[path.shift()]; o[path[0]] = path[0] === 'level' ? Number(el.value) : el.value; if (el.dataset.pf === 'security.level') renderForm(); renderStatus(); }; });
+  form.querySelectorAll('[data-pf]').forEach((el) => { el[el.tagName === 'SELECT' ? 'onchange' : 'oninput'] = () => { const path = el.dataset.pf.split('.'); let o = d; while (path.length > 1) o = o[path.shift()]; o[path[0]] = path[0] === 'level' ? Number(el.value) : el.value; if (el.dataset.pf === 'security.level' || el.dataset.pf === 'domain') renderForm(); renderStatus(); }; });
   form.querySelectorAll('[data-pfc]').forEach((el) => { el.onchange = () => { const key = el.dataset.pfc; const vals = [...form.querySelectorAll(`[data-pfc="${key}"]:checked`)].map((x) => (key === 'lifecyclePhases' ? Number(x.value) : x.value)); d[key] = vals; renderStatus(); }; });
 }
 

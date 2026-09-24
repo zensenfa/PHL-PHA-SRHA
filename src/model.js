@@ -23,6 +23,7 @@ function data() {
       sources: require('./data/hazard-sources.json').sources,
       guidewords: require('./data/guidewords.json').guidewords,
       modes: require('./data/modes.json').modes,
+      domains: require('./data/domains.json'),
     };
   }
   return DATA || {};

@@ -12,6 +12,7 @@
     "src/domains.js",
     "src/security.js",
     "src/threatlog.js",
+    "src/zones.js",
     "src/schemas.js",
     "src/prompts.js",
     "src/ollama.js",

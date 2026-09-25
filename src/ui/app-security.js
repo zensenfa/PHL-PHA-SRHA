@@ -16,6 +16,7 @@ function render() {
   A.el('tbl-threats').querySelector('tbody').innerHTML = th.map((t, i) => `<tr data-i="${i}" class="clickable"><td class="id">${esc(t.id)}</td><td><span class="title">${esc(t.title)}</span>${comp[i].ok ? '' : `<span class="desc">${esc(comp[i].problems[0])}</span>`}</td><td>${esc((t.threatClasses || []).map((c) => SEC.threatLabel(c)).join(', '))}</td><td class="mono">${esc((t.hazards || []).join(', '))}</td><td class="mono">${esc(t.exposure || '–')} / ${esc(t.vulnerability || '–')} / ${esc(t.likelihood || '–')}</td><td>${esc(t.impact || '–')}</td><td>${secPill(t.risk)} → ${secPill(t.residualRisk)}</td><td>${esc({ open: 'offen', treated: 'behandelt', accepted: 'akzeptiert', transferred: 'übertragen' }[t.status] || t.status)}</td></tr>`).join('') || '<tr><td colspan="8" class="hint">Noch keine Bedrohungen. „Aus Gefährdungen ableiten“ übernimmt jede vorsätzliche Ursache akzeptierter Gefährdungen.</td></tr>';
   A.el('tbl-threats').querySelectorAll('tr[data-i]').forEach((tr) => { tr.onclick = () => openThreat(Number(tr.dataset.i)); });
   renderMatrix();
+  renderZones();
 }
 
 function renderMatrix() {
@@ -94,7 +95,75 @@ ${t.sourceCause ? `<div class="audit">Abgeleitet aus vorsätzlicher Ursache: ${e
   A.el('th-del').onclick = async (e) => { if (!e.target.dataset.armed) { e.target.dataset.armed = '1'; e.target.textContent = 'Wirklich löschen?'; return; } A.state.threats.splice(i, 1); await A.saveThreats(); A.closeDrawer(); render(); A.refresh(); };
 }
 
+
+// ------------------------------------------------------ level 3 (preview) ----
+const Z = window.RHAS_ZONES;
+const saveZones = async () => { await A.saveMeta('zones', A.state.zones); await A.saveMeta('conduits', A.state.conduits); };
+function renderZones() {
+  const on = SEC.level(A.state.projectProfile) >= 3;
+  A.el('zones-section').classList.toggle('hidden', !on);
+  if (!on) return;
+  A.state.zones = A.state.zones || []; A.state.conduits = A.state.conduits || [];
+  const cal = A.secCalibration(); const sd = A.state.sd;
+  const v = Z.check({ zones: A.state.zones, conduits: A.state.conduits, functions: A.state.functions, interfaces: A.state.interfaces });
+  A.el('zone-findings').innerHTML = v.findings.length ? `<div class="findings${v.ok ? ' ok' : ''}"><ul>${v.findings.map((f) => `<li class="${f.level}">${esc(f.text)}</li>`).join('')}</ul></div>` : '<div class="findings ok">Partitionierung ohne Befund.</div>';
+  A.el('tbl-zones').querySelector('tbody').innerHTML = A.state.zones.map((z, i) => { const p = Z.proposeSlT(z, A.state.threats, sd, cal); return `<tr class="clickable" data-z="${i}"><td class="id">${esc(z.id)}</td><td>${esc(z.name)}</td><td class="mono">${esc((z.functions || []).join(', '))}</td><td class="mono">${esc((z.interfaces || []).join(', '))}</td><td>${z.slT ? `SL ${esc(z.slT)}` : '–'} <span class="hint">(${p.sl})</span></td><td>${(z.srs || []).length}</td></tr>`; }).join('') || '<tr><td colspan="6" class="hint">Noch keine Zonen.</td></tr>';
+  A.el('tbl-conduits').querySelector('tbody').innerHTML = A.state.conduits.map((c, i) => { const p = Z.proposeSlT(c, A.state.threats, sd, cal); return `<tr class="clickable" data-c="${i}"><td class="id">${esc(c.id)}</td><td>${esc(c.name)}</td><td class="mono">${esc((c.zones || []).join(' ↔ '))}</td><td class="mono">${esc((c.interfaces || []).join(', '))}</td><td>${c.slT ? `SL ${esc(c.slT)}` : '–'} <span class="hint">(${p.sl})</span></td></tr>`; }).join('') || '<tr><td colspan="5" class="hint">Noch keine Conduits.</td></tr>';
+  A.el('tbl-zones').querySelectorAll('tr[data-z]').forEach((tr) => { tr.onclick = () => openZone(Number(tr.dataset.z)); });
+  A.el('tbl-conduits').querySelectorAll('tr[data-c]').forEach((tr) => { tr.onclick = () => openConduit(Number(tr.dataset.c)); });
+  A.el('tbl-case').querySelector('tbody').innerHTML = Z.caseSkeleton({ sd, zones: A.state.zones, conduits: A.state.conduits, threats: A.state.threats, securityCalibration: A.state.securityCalibration, profile: A.state.projectProfile, requirements: A.state.requirements }).map((r) => `<tr><td>${esc(r.item)}</td><td>${esc(r.ref)}</td><td>${A.pill(r.status === 'vorhanden' ? 'accepted' : 'pending', r.status)}</td></tr>`).join('');
+}
+const slOpts = (v) => `<option value="">–</option>${Object.entries(M.data().security.securityLevels).map(([k, l]) => `<option value="${k}"${String(v) === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}`;
+const pickList = (attr, items, sel, label) => `<div class="check-list compact">${items.map((x) => `<label><input type="checkbox" data-${attr}="${esc(x.id)}"${(sel || []).includes(x.id) ? ' checked' : ''}/> ${esc(x.id)} ${esc(label(x))}</label>`).join('') || '<span class="hint">–</span>'}</div>`;
+function openZone(i) {
+  const z = A.state.zones[i]; const p = Z.proposeSlT(z, A.state.threats, A.state.sd, A.secCalibration());
+  const rules = M.data().security.partitionRules; const cat = M.data().security.srCatalogue;
+  const reqs = A.state.requirements.filter((r) => r.status !== 'rejected');
+  A.openDrawer(`${z.id} · Zone`, `
+<div class="f"><label>Name</label><input id="z-name" value="${esc(z.name)}" /></div>
+<div class="f"><label>Beschreibung</label><textarea id="z-desc" rows="2">${esc(z.description)}</textarea></div>
+<div class="row">${[['safetyRelated', 'sicherheitsrelevant'], ['wireless', 'drahtlos'], ['temporary', 'temporär verbunden'], ['externalNetwork', 'über externes Netz'], ['it', 'IT/Geschäftsassets']].map(([k, l]) => `<label class="chk"><input type="checkbox" data-zattr="${k}"${z.attributes && z.attributes[k] ? ' checked' : ''}/> ${l}</label>`).join('')}</div>
+<div class="f"><label>Funktionen</label>${pickList('zfn', A.state.functions, z.functions, (x) => x.name)}</div>
+<div class="f"><label>Schnittstellen innerhalb der Zone</label>${pickList('zif', A.state.interfaces, z.interfaces, (x) => x.name)}</div>
+<div class="f"><label>Partitionierungsnachweis (IEC 62443-3-2 ZCR 3)</label><div class="check-list compact">${rules.map((r) => `<label title="${esc(r.ref)}"><input type="checkbox" data-zpart="${r.id}"${z.partition && z.partition[r.id] ? ' checked' : ''}/> ${esc(r.id)} ${esc(r.text)} – geprüft</label>`).join('')}</div></div>
+<div class="row"><label class="fld"><span>SL-T (Vorschlag: SL ${p.sl})</span><select id="z-sl">${slOpts(z.slT)}</select></label></div>
+<div class="hint">Vorschlagsbasis: ${esc(p.basis)}</div>
+<div class="f"><label>Begründung SL-T (explizite Risikobewertung)</label><textarea id="z-slr" rows="2">${esc(z.slTRationale)}</textarea></div>
+<div class="f"><label>Systemanforderungen IEC 62443-3-3 (Kennung und Titel; Anforderungstext aus der Norm)</label>${cat.foundational.map((fr) => `<details${fr.srs.some((x) => (z.srs || []).includes(x.id)) ? ' open' : ''}><summary>${esc(fr.id)} ${esc(fr.label)} (${fr.srs.filter((x) => (z.srs || []).includes(x.id)).length}/${fr.srs.length})</summary><div class="check-list compact">${fr.srs.map((x) => `<label><input type="checkbox" data-zsr="${esc(x.id)}"${(z.srs || []).includes(x.id) ? ' checked' : ''}/> ${esc(x.id)} ${esc(x.title)}${(z.srs || []).includes(x.id) ? ` <select data-zsrreq="${esc(x.id)}"><option value="">– Anforderung –</option>${reqs.map((r) => `<option value="${esc(r.id)}"${(z.srRequirements || {})[x.id] === r.id ? ' selected' : ''}>${esc(r.id)}</option>`).join('')}</select>` : ''}</label>`).join('')}</div></details>`).join('')}<div class="hint">${esc(cat.source)}</div></div>
+<div class="sticky-actions"><button id="z-save" class="btn primary">Speichern</button><button id="z-del" class="btn danger">Löschen</button></div>`);
+  const b = A.el('drawer-body');
+  A.el('z-save').onclick = async () => {
+    Object.assign(z, { name: A.el('z-name').value.trim(), description: A.el('z-desc').value.trim(), slT: Number(A.el('z-sl').value) || null, slTRationale: A.el('z-slr').value.trim() });
+    z.attributes = {}; b.querySelectorAll('[data-zattr]').forEach((x) => { z.attributes[x.dataset.zattr] = x.checked; });
+    z.functions = [...b.querySelectorAll('[data-zfn]:checked')].map((x) => x.dataset.zfn);
+    z.interfaces = [...b.querySelectorAll('[data-zif]:checked')].map((x) => x.dataset.zif);
+    z.partition = {}; b.querySelectorAll('[data-zpart]').forEach((x) => { z.partition[x.dataset.zpart] = x.checked; });
+    z.srs = [...b.querySelectorAll('[data-zsr]:checked')].map((x) => x.dataset.zsr);
+    const map = { ...(z.srRequirements || {}) }; b.querySelectorAll('[data-zsrreq]').forEach((x) => { map[x.dataset.zsrreq] = x.value; });
+    z.srRequirements = Object.fromEntries(Object.entries(map).filter(([k, v]) => z.srs.includes(k) && v));
+    await saveZones(); A.toast('Zone gespeichert'); renderZones(); openZone(i);
+  };
+  A.el('z-del').onclick = async (e) => { if (!e.target.dataset.armed) { e.target.dataset.armed = '1'; e.target.textContent = 'Wirklich löschen?'; return; } A.state.zones.splice(i, 1); await saveZones(); A.closeDrawer(); renderZones(); };
+}
+function openConduit(i) {
+  const c = A.state.conduits[i]; const p = Z.proposeSlT(c, A.state.threats, A.state.sd, A.secCalibration());
+  const zopt = (v) => `<option value="">–</option>${A.state.zones.map((z) => `<option value="${esc(z.id)}"${z.id === v ? ' selected' : ''}>${esc(z.id)} ${esc(z.name)}</option>`).join('')}`;
+  A.openDrawer(`${c.id} · Conduit`, `
+<div class="f"><label>Name</label><input id="c-name" value="${esc(c.name)}" /></div>
+<div class="row"><label class="fld"><span>Zone A</span><select id="c-za">${zopt(c.zones[0])}</select></label><label class="fld"><span>Zone B</span><select id="c-zb">${zopt(c.zones[1])}</select></label></div>
+<div class="f"><label>Schnittstellen im Conduit</label>${pickList('cif', A.state.interfaces, c.interfaces, (x) => x.name)}</div>
+<div class="row"><label class="fld"><span>SL-T (Vorschlag: SL ${p.sl})</span><select id="c-sl">${slOpts(c.slT)}</select></label></div>
+<div class="hint">Vorschlagsbasis: ${esc(p.basis)}</div>
+<div class="f"><label>Begründung SL-T</label><textarea id="c-slr" rows="2">${esc(c.slTRationale)}</textarea></div>
+<div class="sticky-actions"><button id="c-save" class="btn primary">Speichern</button><button id="c-del" class="btn danger">Löschen</button></div>`);
+  const b = A.el('drawer-body');
+  A.el('c-save').onclick = async () => { Object.assign(c, { name: A.el('c-name').value.trim(), zones: [A.el('c-za').value, A.el('c-zb').value], slT: Number(A.el('c-sl').value) || null, slTRationale: A.el('c-slr').value.trim(), interfaces: [...b.querySelectorAll('[data-cif]:checked')].map((x) => x.dataset.cif) }); await saveZones(); A.toast('Conduit gespeichert'); renderZones(); openConduit(i); };
+  A.el('c-del').onclick = async (e) => { if (!e.target.dataset.armed) { e.target.dataset.armed = '1'; e.target.textContent = 'Wirklich löschen?'; return; } A.state.conduits.splice(i, 1); await saveZones(); A.closeDrawer(); renderZones(); };
+}
+
 function bind() {
+  A.el('btn-zone-add').onclick = async () => { A.state.zones = A.state.zones || []; A.state.zones.push(Z.makeZone({ id: Z.nextId(A.state.zones, 'Z'), name: 'Neue Zone' })); await saveZones(); renderZones(); openZone(A.state.zones.length - 1); };
+  A.el('btn-conduit-add').onclick = async () => { A.state.conduits = A.state.conduits || []; A.state.conduits.push(Z.makeConduit({ id: Z.nextId(A.state.conduits, 'C'), name: 'Neuer Conduit' })); await saveZones(); renderZones(); openConduit(A.state.conduits.length - 1); };
   A.el('btn-threat-add').onclick = async () => { A.state.threats = A.state.threats || []; A.state.threats.push(TL.makeThreat({ id: TL.nextThreatId(A.state.threats), title: 'Neue Bedrohung', createdBy: A.author() })); await A.saveThreats(); render(); openThreat(A.state.threats.length - 1); };
   A.el('btn-threat-derive').onclick = async () => {
     A.state.threats = A.state.threats || [];

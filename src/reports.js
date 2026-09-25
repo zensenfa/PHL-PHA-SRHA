@@ -11,6 +11,7 @@ const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : windo
 const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
 const SEC = typeof require !== 'undefined' ? require('./security.js') : window.RHAS_SECURITY;
 const TL = typeof require !== 'undefined' ? require('./threatlog.js') : window.RHAS_THREATLOG;
+const ZN = typeof require !== 'undefined' ? require('./zones.js') : window.RHAS_ZONES;
 
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
@@ -62,6 +63,24 @@ function specThreatLog(b) {
 }
 function specThreatTrace(b) {
   return { key: 'threattrace', title: 'Nachverfolgbarkeit Bedrohung → Gefährdung → Anforderung', columns: [{ header: 'Bedrohung', width: 0.2 }, { header: 'Gefährdungen', width: 0.4 }, { header: 'Anforderungen', width: 0.4 }], rows: TL.traceRows(b.threats, b.hazards, b.requirements).map((r) => [r.threat, join(r.hazards) || 'offen', join(r.requirements) || 'offen']) };
+}
+function specZones(b) {
+  const attrs = { safetyRelated: 'sicherheitsrelevant', wireless: 'drahtlos', temporary: 'temporär', externalNetwork: 'extern', it: 'IT' };
+  return { key: 'zones', title: 'Zonen', landscape: true, columns: [{ header: 'Zone', width: 0.06 }, { header: 'Name / Beschreibung', width: 0.22 }, { header: 'Merkmale', width: 0.12 }, { header: 'Funktionen', width: 0.16 }, { header: 'Schnittstellen', width: 0.14 }, { header: 'SL-T', width: 0.06 }, { header: 'Begründung (Vorschlag)', width: 0.24 }], rows: b.zones.map((z) => { const p = ZN.proposeSlT(z, b.threats, b.sd, b.securityCalibration); return [z.id, `${z.name}${z.description ? `\n${z.description}` : ''}`, join(Object.entries(z.attributes || {}).filter(([, v]) => v).map(([k]) => attrs[k])), join((z.functions || []).map((f) => fnName(b, f))), join((z.interfaces || []).map((i) => ifName(b, i))), z.slT ? `SL ${z.slT}` : 'offen', `${nz(z.slTRationale) || 'offen'} (Vorschlag SL ${p.sl}: ${p.basis})`]; }) };
+}
+function specConduits(b) {
+  return { key: 'conduits', title: 'Conduits', columns: [{ header: 'Conduit', width: 0.08 }, { header: 'Name', width: 0.22 }, { header: 'Verbindet', width: 0.14 }, { header: 'Schnittstellen', width: 0.22 }, { header: 'SL-T', width: 0.08 }, { header: 'Begründung', width: 0.26 }], rows: b.conduits.map((c) => [c.id, c.name, join(c.zones || [], ' ↔ '), join((c.interfaces || []).map((i) => ifName(b, i))), c.slT ? `SL ${c.slT}` : 'offen', nz(c.slTRationale) || 'offen']) };
+}
+function specZoneSrs(b) {
+  const rows = []; for (const z of b.zones) for (const sr of z.srs || []) rows.push([z.id, sr, ZN.srTitle(sr), nz((z.srRequirements || {})[sr]) || 'offen']);
+  return { key: 'zonesr', title: 'Systemanforderungen IEC 62443-3-3 je Zone (Kennung und Titel)', columns: [{ header: 'Zone', width: 0.1 }, { header: 'SR', width: 0.1 }, { header: 'Titel (IEC 62443-3-3)', width: 0.55 }, { header: 'Umsetzende Anforderung', width: 0.25 }], rows };
+}
+function specZoneFindings(b) {
+  const v = ZN.check({ zones: b.zones, conduits: b.conduits, functions: b.functions, interfaces: b.interfaces });
+  return { key: 'zonecheck', title: 'Prüfbefunde der Partitionierung', columns: [{ header: 'Stufe', width: 0.12 }, { header: 'Befund', width: 0.88 }], rows: v.findings.length ? v.findings.map((f) => [{ error: 'Fehler', warn: 'Hinweis', info: 'Info' }[f.level] || f.level, f.text]) : [['–', 'Keine Befunde.']] };
+}
+function specCase(b) {
+  return { key: 'seccase', title: 'Cybersecurity-Nachweis: Gliederung und Stand', columns: [{ header: 'Inhalt', width: 0.6 }, { header: 'Bezug', width: 0.25 }, { header: 'Stand', width: 0.15 }], rows: ZN.caseSkeleton({ sd: b.sd, zones: b.zones, conduits: b.conduits, threats: b.threats, securityCalibration: b.securityCalibration, profile: b.profile, requirements: b.requirements }).map((r) => [r.item, r.ref, r.status]) };
 }
 function specSecContext(b) {
   const sd = b.sd || {};
@@ -284,7 +303,11 @@ function sections(kind, b) {
   if (lvl >= 2) sec.push({ heading: '0 Bedrohungsprotokoll und Security-Risikobewertung (Security-Stufe 2)', paragraphs: [
     'Jede Bedrohung ist mit mindestens einer Gefährdung verknüpft. Exposition, Verwundbarkeit und Auswirkung werden vom Bearbeiter mit Begründung eingestuft; Wahrscheinlichkeit (Exposition + Verwundbarkeit − 1) und Security-Risiko werden lokal aus der Security-Risikomatrix berechnet. Das Restrisiko ergibt sich aus der wirksamsten bestätigten Gegenmaßnahme.',
     `${b.securityCalibration.title}, Version ${b.securityCalibration.version}${b.securityCalibration.approvedBy ? `, freigegeben durch ${b.securityCalibration.approvedBy}` : ' – nicht freigegeben'}. ${b.securityCalibration.source}`,
-  ], specs: [...specSecMatrix(b), specThreatLog(b), specThreatTrace(b)] });
+  ], specs: [...specSecMatrix(b), specThreatLog(b), specThreatTrace(b)] });
+  if (lvl >= 3) sec.push({ heading: '0 Zonen, Conduits und Ziel-Security-Level (Security-Stufe 3, Vorschau)', paragraphs: [
+    'Partitionierung nach dem öffentlich beschriebenen Vorgehen von IEC 62443-3-2 (ZCR 3) in der Anwendung durch CLC/TS 50701. Der SL-T je Zone und Conduit wird vom Bearbeiter mit Begründung festgelegt; der Werkzeugvorschlag leitet sich aus dem Angreiferprofil und dem schlechtesten Ausgangsrisiko der zugeordneten Bedrohungen ab.',
+    'Die Systemanforderungen sind mit Kennung und Titel nach IEC 62443-3-3 aufgeführt. Anforderungstexte, Anforderungserweiterungen und ihre Zuordnung zu Security-Levels sind der Norm zu entnehmen; diese Vorschau ersetzt keinen Cybersecurity-Nachweis nach CLC/TS 50701.',
+  ], specs: [specZones(b), specConduits(b), specZoneSrs(b), specZoneFindings(b), specCase(b)] });
   if (kind === 'hazid') return [...common, method, ...phl.slice(0, 2), ...renum(sec, 7), ...renum(phl.slice(2), 7 + sec.length)];
   if (kind === 'risk') return [...common, method, ...pha];
   if (kind === 'hazlog') return [...common, method, ...hazlog];
@@ -341,6 +364,7 @@ function buildXlsx(b) {
   add('Maßnahmen', specMeasures(b));
   add('Gefährdungsprotokoll', specHazardLog(b));
   if (SEC.level(b.profile) >= 2) add('Bedrohungsprotokoll', specThreatLog(b));
+  if (SEC.level(b.profile) >= 3) { add('Zonen', specZones(b)); add('Conduits', specConduits(b)); add('SR je Zone', specZoneSrs(b)); }
   add('Funktionen-SIL', specFunctionIntegrity(b));
   add('Anforderungen', specRequirementsAll(b));
   add('SRAC', specSrac(b));
@@ -390,7 +414,7 @@ ${body}
 }
 
 // ---------------------------------------------------------------- bundle ----
-function makeBundle({ threats, securityCalibration, profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
+function makeBundle({ zones, conduits, threats, securityCalibration, profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
   M.setCalibration(calibration); // WP3: labels and ranks from the project calibration
   const exportedAt = new Date().toISOString();
   const stats = M.projectStats({ hazards, requirements, functions, sd });
@@ -398,7 +422,7 @@ function makeBundle({ threats, securityCalibration, profile, project, docControl
   const trace = M.traceability({ hazards, requirements, functions });
   const sdValidation = M.validateSystemDefinition(sd, functions);
   const secCal = securityCalibration || TL.defaultCalibration();
-  return { threats: (threats || []).map((t) => TL.recomputeThreat(JSON.parse(JSON.stringify(t)), secCal)), securityCalibration: secCal, profile: PROFILE.migrateProfile(profile), project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
+  return { zones: zones || [], conduits: conduits || [], threats: (threats || []).map((t) => TL.recomputeThreat(JSON.parse(JSON.stringify(t)), secCal)), securityCalibration: secCal, profile: PROFILE.migrateProfile(profile), project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
 }
 
 const api = { DELIVERABLES, KIND_ALIASES, resolveKind, makeBundle, sections, buildDocx, buildXlsx, buildPrintHtml };

@@ -208,5 +208,289 @@
         "5": "secMedium"
       }
     }
-  }
+  },
+  "srCatalogue": {
+    "source": "IEC 62443-3-3:2013 – nur Kennungen und Titel der Systemanforderungen (öffentliches Inhaltsverzeichnis). Anforderungstexte, Erweiterungen (RE) und die Zuordnung zu Security-Levels erfordern die Norm.",
+    "foundational": [
+      {
+        "id": "FR1",
+        "label": "Identifikation und Authentisierung",
+        "srs": [
+          {
+            "id": "SR 1.1",
+            "title": "Human user identification and authentication"
+          },
+          {
+            "id": "SR 1.2",
+            "title": "Software process and device identification and authentication"
+          },
+          {
+            "id": "SR 1.3",
+            "title": "Account management"
+          },
+          {
+            "id": "SR 1.4",
+            "title": "Identifier management"
+          },
+          {
+            "id": "SR 1.5",
+            "title": "Authenticator management"
+          },
+          {
+            "id": "SR 1.6",
+            "title": "Wireless access management"
+          },
+          {
+            "id": "SR 1.7",
+            "title": "Strength of password-based authentication"
+          },
+          {
+            "id": "SR 1.8",
+            "title": "Public key infrastructure certificates"
+          },
+          {
+            "id": "SR 1.9",
+            "title": "Strength of public key authentication"
+          },
+          {
+            "id": "SR 1.10",
+            "title": "Authenticator feedback"
+          },
+          {
+            "id": "SR 1.11",
+            "title": "Unsuccessful login attempts"
+          },
+          {
+            "id": "SR 1.12",
+            "title": "System use notification"
+          },
+          {
+            "id": "SR 1.13",
+            "title": "Access via untrusted networks"
+          }
+        ]
+      },
+      {
+        "id": "FR2",
+        "label": "Nutzungskontrolle",
+        "srs": [
+          {
+            "id": "SR 2.1",
+            "title": "Authorization enforcement"
+          },
+          {
+            "id": "SR 2.2",
+            "title": "Wireless use control"
+          },
+          {
+            "id": "SR 2.3",
+            "title": "Use control for portable and mobile devices"
+          },
+          {
+            "id": "SR 2.4",
+            "title": "Mobile code"
+          },
+          {
+            "id": "SR 2.5",
+            "title": "Session lock"
+          },
+          {
+            "id": "SR 2.6",
+            "title": "Remote session termination"
+          },
+          {
+            "id": "SR 2.7",
+            "title": "Concurrent session control"
+          },
+          {
+            "id": "SR 2.8",
+            "title": "Auditable events"
+          },
+          {
+            "id": "SR 2.9",
+            "title": "Audit storage capacity"
+          },
+          {
+            "id": "SR 2.10",
+            "title": "Response to audit processing failures"
+          },
+          {
+            "id": "SR 2.11",
+            "title": "Timestamps"
+          },
+          {
+            "id": "SR 2.12",
+            "title": "Non-repudiation"
+          }
+        ]
+      },
+      {
+        "id": "FR3",
+        "label": "Systemintegrität",
+        "srs": [
+          {
+            "id": "SR 3.1",
+            "title": "Communication integrity"
+          },
+          {
+            "id": "SR 3.2",
+            "title": "Malicious code protection"
+          },
+          {
+            "id": "SR 3.3",
+            "title": "Security functionality verification"
+          },
+          {
+            "id": "SR 3.4",
+            "title": "Software and information integrity"
+          },
+          {
+            "id": "SR 3.5",
+            "title": "Input validation"
+          },
+          {
+            "id": "SR 3.6",
+            "title": "Deterministic output"
+          },
+          {
+            "id": "SR 3.7",
+            "title": "Error handling"
+          },
+          {
+            "id": "SR 3.8",
+            "title": "Session integrity"
+          },
+          {
+            "id": "SR 3.9",
+            "title": "Protection of audit information"
+          }
+        ]
+      },
+      {
+        "id": "FR4",
+        "label": "Vertraulichkeit der Daten",
+        "srs": [
+          {
+            "id": "SR 4.1",
+            "title": "Information confidentiality"
+          },
+          {
+            "id": "SR 4.2",
+            "title": "Information persistence"
+          },
+          {
+            "id": "SR 4.3",
+            "title": "Use of cryptography"
+          }
+        ]
+      },
+      {
+        "id": "FR5",
+        "label": "Eingeschränkter Datenfluss",
+        "srs": [
+          {
+            "id": "SR 5.1",
+            "title": "Network segmentation"
+          },
+          {
+            "id": "SR 5.2",
+            "title": "Zone boundary protection"
+          },
+          {
+            "id": "SR 5.3",
+            "title": "General purpose person-to-person communication restrictions"
+          },
+          {
+            "id": "SR 5.4",
+            "title": "Application partitioning"
+          }
+        ]
+      },
+      {
+        "id": "FR6",
+        "label": "Rechtzeitige Reaktion auf Ereignisse",
+        "srs": [
+          {
+            "id": "SR 6.1",
+            "title": "Audit log accessibility"
+          },
+          {
+            "id": "SR 6.2",
+            "title": "Continuous monitoring"
+          }
+        ]
+      },
+      {
+        "id": "FR7",
+        "label": "Verfügbarkeit der Ressourcen",
+        "srs": [
+          {
+            "id": "SR 7.1",
+            "title": "Denial of service protection"
+          },
+          {
+            "id": "SR 7.2",
+            "title": "Resource management"
+          },
+          {
+            "id": "SR 7.3",
+            "title": "Control system backup"
+          },
+          {
+            "id": "SR 7.4",
+            "title": "Control system recovery and reconstitution"
+          },
+          {
+            "id": "SR 7.5",
+            "title": "Emergency power"
+          },
+          {
+            "id": "SR 7.6",
+            "title": "Network and security configuration settings"
+          },
+          {
+            "id": "SR 7.7",
+            "title": "Least functionality"
+          },
+          {
+            "id": "SR 7.8",
+            "title": "Control system component inventory"
+          }
+        ]
+      }
+    ]
+  },
+  "securityLevels": {
+    "1": "SL 1 – Schutz gegen zufällige oder unbeabsichtigte Verletzung",
+    "2": "SL 2 – Schutz gegen absichtliche Verletzung mit einfachen Mitteln, geringen Ressourcen, allgemeinen Kenntnissen, geringer Motivation",
+    "3": "SL 3 – Schutz gegen absichtliche Verletzung mit anspruchsvollen Mitteln, mittleren Ressourcen, systemspezifischen Kenntnissen, mittlerer Motivation",
+    "4": "SL 4 – Schutz gegen absichtliche Verletzung mit anspruchsvollen Mitteln, umfangreichen Ressourcen, systemspezifischen Kenntnissen, hoher Motivation"
+  },
+  "partitionRules": [
+    {
+      "id": "3.2",
+      "text": "Geschäfts- (IT) und Steuerungs-/Betriebsassets (OT) getrennt",
+      "ref": "IEC 62443-3-2 ZCR 3.2"
+    },
+    {
+      "id": "3.3",
+      "text": "Sicherheitsrelevante Assets in eigenen Zonen",
+      "ref": "IEC 62443-3-2 ZCR 3.3"
+    },
+    {
+      "id": "3.4",
+      "text": "Temporär verbundene Geräte (z. B. Parametrier-Laptop) in eigenen Zonen",
+      "ref": "IEC 62443-3-2 ZCR 3.4"
+    },
+    {
+      "id": "3.5",
+      "text": "Drahtlose Geräte in eigenen Zonen",
+      "ref": "IEC 62443-3-2 ZCR 3.5"
+    },
+    {
+      "id": "3.6",
+      "text": "Über externe Netze verbundene Geräte in eigenen Zonen",
+      "ref": "IEC 62443-3-2 ZCR 3.6"
+    }
+  ]
 }

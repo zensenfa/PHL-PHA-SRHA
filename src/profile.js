@@ -55,9 +55,9 @@ const SECURITY_LEVELS = {
   0: 'Stufe 0 – nicht betrachtet (Begründung erforderlich)',
   1: 'Stufe 1 – Security-informierte Sicherheit (vorsätzliche Ursachen je Schnittstelle)',
   2: 'Stufe 2 – Bedrohungsprotokoll und Security-Risikobewertung',
-  3: 'Stufe 3 – Zonen, Conduits und SL-T (in Vorbereitung)',
+  3: 'Stufe 3 – Zonen, Conduits und SL-T (Vorschau)',
 };
-const IMPLEMENTED_SECURITY_LEVELS = [0, 1, 2];
+const IMPLEMENTED_SECURITY_LEVELS = [0, 1, 2, 3];
 const DEFAULT_CALIBRATION = 'en50126-1-annex-c-default';
 
 function makeProjectProfile(fields = {}) {

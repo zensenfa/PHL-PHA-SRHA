@@ -215,6 +215,15 @@
       <div class="table-wrap"><table class="grid" id="tbl-threats"><thead><tr><th class="w-id">ID</th><th>Bedrohung</th><th class="w-m">Klassen</th><th class="w-m">Gefährdungen</th><th class="w-a">E / V / W</th><th class="w-a">Auswirkung</th><th class="w-m">Risiko → Rest</th><th class="w-m">Status</th></tr></thead><tbody></tbody></table></div>
       <h3>Security-Risikomatrix</h3>
       <div id="sec-matrix" class="panel"></div>
+      <div id="zones-section" class="hidden">
+        <div class="stage-head"><div><h3>Zonen und Conduits (Security-Stufe 3, Vorschau)</h3><span class="sub">Partitionierung nach IEC 62443-3-2 (ZCR 3), SL-T je Zone und Conduit (ZCR 5.6), Systemanforderungen nach IEC 62443-3-3 (nur Kennungen und Titel).</span></div>
+        <div class="toolbar"><button id="btn-zone-add" class="btn small" type="button">+ Zone</button><button id="btn-conduit-add" class="btn small" type="button">+ Conduit</button></div></div>
+        <div id="zone-findings"></div>
+        <table class="grid" id="tbl-zones"><thead><tr><th class="w-id">Zone</th><th>Name</th><th class="w-m">Funktionen</th><th class="w-m">Schnittstellen</th><th class="w-a">SL-T (Vorschlag)</th><th class="w-m">SR</th></tr></thead><tbody></tbody></table>
+        <table class="grid" id="tbl-conduits"><thead><tr><th class="w-id">Conduit</th><th>Name</th><th class="w-m">Verbindet</th><th class="w-m">Schnittstellen</th><th class="w-a">SL-T (Vorschlag)</th></tr></thead><tbody></tbody></table>
+        <h3>Cybersecurity-Nachweis: Gliederung und Stand</h3>
+        <table class="grid" id="tbl-case"><thead><tr><th>Inhalt</th><th class="w-m">Bezug</th><th class="w-a">Stand</th></tr></thead><tbody></tbody></table>
+      </div>
     </section>
 
     <!-- Stage 4 -->

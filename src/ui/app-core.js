@@ -132,6 +132,8 @@ A.openProject = async (projectId) => {
   s.calibration = await DB.getMeta(pdb, 'calibration', null);
   s.projectProfile = PROFILE.migrateProfile(await DB.getMeta(pdb, 'projectProfile', null));
   s.threats = await DB.getMeta(pdb, 'threats', []);
+  s.zones = await DB.getMeta(pdb, 'zones', []);
+  s.conduits = await DB.getMeta(pdb, 'conduits', []);
   s.securityCalibration = await DB.getMeta(pdb, 'securityCalibration', null);
   A.calibration(); // activate the project calibration for labels and ranks
   s.identConfig = { depth: 'standard', overrides: {}, sources: null, ...(await DB.getMeta(pdb, 'identConfig', {})) };

@@ -16,7 +16,7 @@ const lvl1 = () => ({ ...snap.meta.projectProfile, security: { level: 1, standar
 test('level 1 is selectable and needs no level-0 justification', () => {
   const v = PROFILE.validateProjectProfile(lvl1());
   assert.equal(v.ok, true, JSON.stringify(v.findings));
-  assert.equal(PROFILE.validateProjectProfile({ ...lvl1(), security: { level: 3 } }).ok, false);
+  assert.equal(PROFILE.validateProjectProfile({ ...lvl1(), security: { level: 4 } }).ok, false);
 });
 
 test('level 1 plans one threat pass per interface plus the safety/security interaction check', () => {

@@ -10,6 +10,7 @@ const DOCX = typeof require !== 'undefined' ? require('./docx.js') : window.RHAS
 const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
 const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
 const SEC = typeof require !== 'undefined' ? require('./security.js') : window.RHAS_SECURITY;
+const TL = typeof require !== 'undefined' ? require('./threatlog.js') : window.RHAS_THREATLOG;
 
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
@@ -46,6 +47,21 @@ function securityNote(b) {
   const sec = (b.profile && b.profile.security) || { level: 0 };
   if (Number(sec.level) === 0) return `Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: ${sec.justification || '(fehlt)'}`;
   return `Security: ${PROFILE.label('security.level', sec.level)}. Vorsätzliche Ursachen wurden je Schnittstelle betrachtet; ihre Beherrschung erfolgt über Security-Maßnahmen, nicht über THR oder SIL (EN 50129 6.4). Eine Security-Risikobewertung nach CLC/TS 50701 ist nicht Gegenstand dieser Stufe.`;
+}
+function secCell(id, b) { const shade = { secHigh: 'FDECEB', secMedium: 'FBF0DF', secLow: 'E6F3EA' }[id]; return id ? { text: TL.levelLabel(id, b.securityCalibration), shade, bold: true } : '–'; }
+function specSecMatrix(b) {
+  const c = b.securityCalibration;
+  const scale = (title, list) => ({ key: `sec-${title}`, title, columns: [{ header: 'Stufe', width: 0.2 }, { header: 'Beschreibung', width: 0.8 }], rows: list.map((x) => [x.label, x.description]) });
+  const mx = { key: 'sec-mx', title: 'Security-Risikomatrix (Auswirkung × Wahrscheinlichkeit)', columns: [{ header: 'Auswirkung \\ Wahrscheinlichkeit', width: 0.3 }, ...[1, 2, 3, 4, 5].map((l) => ({ header: String(l), width: 0.14 }))], rows: c.impacts.map((i) => [{ text: i.label, bold: true }, ...[1, 2, 3, 4, 5].map((l) => secCell(c.matrix[i.id][String(l)], b))]), zebra: false };
+  return [scale('Auswirkung', c.impacts), scale('Exposition', c.exposure), scale('Verwundbarkeit', c.vulnerability), mx];
+}
+function specThreatLog(b) {
+  const st = { open: 'offen', treated: 'behandelt', accepted: 'akzeptiert', transferred: 'übertragen' };
+  const rows = b.threats.map((t) => [t.id, `${t.title}${t.description ? `\n${t.description}` : ''}`, join((t.threatClasses || []).map((x) => SEC.threatLabel(x))), join(t.hazards || []), `${t.exposure || '–'} / ${t.vulnerability || '–'} / ${t.likelihood || '–'}`, t.impact || '–', secCell(t.risk, b), join((t.countermeasures || []).filter((m) => m.status !== 'rejected').map((m) => `${m.id}: ${m.text}${m.status === 'accepted' ? '' : ' (vorgeschlagen)'}`)) || '–', secCell(t.residualRisk, b), st[t.status] || t.status]);
+  return { key: 'threatlog', title: 'Bedrohungsprotokoll', landscape: true, fontSize: 8, columns: [{ header: 'ID', width: 0.05 }, { header: 'Bedrohung', width: 0.2 }, { header: 'Klassen', width: 0.1 }, { header: 'Gefährdungen', width: 0.07 }, { header: 'E / V / W', width: 0.07 }, { header: 'Ausw.', width: 0.05 }, { header: 'Risiko', width: 0.07 }, { header: 'Gegenmaßnahmen', width: 0.24 }, { header: 'Rest', width: 0.07 }, { header: 'Status', width: 0.08 }], rows };
+}
+function specThreatTrace(b) {
+  return { key: 'threattrace', title: 'Nachverfolgbarkeit Bedrohung → Gefährdung → Anforderung', columns: [{ header: 'Bedrohung', width: 0.2 }, { header: 'Gefährdungen', width: 0.4 }, { header: 'Anforderungen', width: 0.4 }], rows: TL.traceRows(b.threats, b.hazards, b.requirements).map((r) => [r.threat, join(r.hazards) || 'offen', join(r.requirements) || 'offen']) };
 }
 function specSecContext(b) {
   const sd = b.sd || {};
@@ -265,6 +281,10 @@ function sections(kind, b) {
     'Vorsätzliche Ursachen werden nicht über THR oder SIL beherrscht (EN 50129 6.4, Anm. 2), sondern über Security-Maßnahmen und security-bezogene Anwendungsbedingungen. Diese Stufe ist keine Security-Risikobewertung nach CLC/TS 50701 (Stufen 2 und 3).',
     `Grundlage: ${M.data().security.basis}`,
   ], specs: [specSecContext(b), specSecHazards(b), specSecCoverage(b), specSecRequirements(b)] }] : [];
+  if (lvl >= 2) sec.push({ heading: '0 Bedrohungsprotokoll und Security-Risikobewertung (Security-Stufe 2)', paragraphs: [
+    'Jede Bedrohung ist mit mindestens einer Gefährdung verknüpft. Exposition, Verwundbarkeit und Auswirkung werden vom Bearbeiter mit Begründung eingestuft; Wahrscheinlichkeit (Exposition + Verwundbarkeit − 1) und Security-Risiko werden lokal aus der Security-Risikomatrix berechnet. Das Restrisiko ergibt sich aus der wirksamsten bestätigten Gegenmaßnahme.',
+    `${b.securityCalibration.title}, Version ${b.securityCalibration.version}${b.securityCalibration.approvedBy ? `, freigegeben durch ${b.securityCalibration.approvedBy}` : ' – nicht freigegeben'}. ${b.securityCalibration.source}`,
+  ], specs: [...specSecMatrix(b), specThreatLog(b), specThreatTrace(b)] });
   if (kind === 'hazid') return [...common, method, ...phl.slice(0, 2), ...renum(sec, 7), ...renum(phl.slice(2), 7 + sec.length)];
   if (kind === 'risk') return [...common, method, ...pha];
   if (kind === 'hazlog') return [...common, method, ...hazlog];
@@ -320,6 +340,7 @@ function buildXlsx(b) {
   add('Risikoanalyse', specPhaFlat(b));
   add('Maßnahmen', specMeasures(b));
   add('Gefährdungsprotokoll', specHazardLog(b));
+  if (SEC.level(b.profile) >= 2) add('Bedrohungsprotokoll', specThreatLog(b));
   add('Funktionen-SIL', specFunctionIntegrity(b));
   add('Anforderungen', specRequirementsAll(b));
   add('SRAC', specSrac(b));
@@ -369,14 +390,15 @@ ${body}
 }
 
 // ---------------------------------------------------------------- bundle ----
-function makeBundle({ profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
+function makeBundle({ threats, securityCalibration, profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
   M.setCalibration(calibration); // WP3: labels and ranks from the project calibration
   const exportedAt = new Date().toISOString();
   const stats = M.projectStats({ hazards, requirements, functions, sd });
   const coverage = M.coverage({ hazards, functions, interfaces, sources: data.sources, guidewords: data.guidewords, modes: data.modes.filter((m) => (sd.modes || []).includes(m.id)), runs });
   const trace = M.traceability({ hazards, requirements, functions });
   const sdValidation = M.validateSystemDefinition(sd, functions);
-  return { profile: PROFILE.migrateProfile(profile), project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
+  const secCal = securityCalibration || TL.defaultCalibration();
+  return { threats: (threats || []).map((t) => TL.recomputeThreat(JSON.parse(JSON.stringify(t)), secCal)), securityCalibration: secCal, profile: PROFILE.migrateProfile(profile), project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, sources: data.sources, guidewords: data.guidewords, modes: data.modes, version, exportedAt, stats, coverage, trace, sdValidation };
 }
 
 const api = { DELIVERABLES, KIND_ALIASES, resolveKind, makeBundle, sections, buildDocx, buildXlsx, buildPrintHtml };

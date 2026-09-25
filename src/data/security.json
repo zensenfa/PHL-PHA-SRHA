@@ -90,5 +90,123 @@
     "1": "Kategorie 1 – geschlossenes Übertragungssystem",
     "2": "Kategorie 2 – offen, unbefugter Zugriff ausschließbar",
     "3": "Kategorie 3 – offen, unbefugter Zugriff nicht ausschließbar (kryptografische Abwehr)"
+  },
+  "riskCalibration": {
+    "id": "rhas-security-default",
+    "version": 1,
+    "title": "Security-Risikomatrix (RHAS-Vorschlag, vom Betreiber festzulegen)",
+    "source": "Struktur nach der öffentlich beschriebenen Vorgehensweise von CLC/TS 50701:2023 (Auswirkung A–D, Wahrscheinlichkeit aus Exposition und Verwundbarkeit). Stufenbeschreibungen und Matrixwerte sind ein RHAS-Vorschlag, keine Normwerte.",
+    "approvedBy": "",
+    "approvedAt": "",
+    "impacts": [
+      {
+        "id": "A",
+        "label": "A – sehr hoch",
+        "description": "Angriff kann einen Unfall mit Todesfällen oder schwersten Verletzungen herbeiführen oder den Bahnbetrieb großflächig lahmlegen."
+      },
+      {
+        "id": "B",
+        "label": "B – hoch",
+        "description": "Angriff kann schwere Verletzungen oder einen erheblichen Betriebsausfall verursachen."
+      },
+      {
+        "id": "C",
+        "label": "C – mittel",
+        "description": "Angriff kann leichte Verletzungen oder eine begrenzte Betriebsstörung verursachen."
+      },
+      {
+        "id": "D",
+        "label": "D – gering",
+        "description": "Geringe Auswirkungen auf Sicherheit und Betrieb."
+      }
+    ],
+    "exposure": [
+      {
+        "id": 1,
+        "label": "1 – gering",
+        "description": "Nur mit physischem Zugang in einem kontrollierten Bereich oder über ein geschlossenes Netz erreichbar."
+      },
+      {
+        "id": 2,
+        "label": "2 – mittel",
+        "description": "Aus einem angrenzenden Netz oder mit Aufwand im öffentlich zugänglichen Bereich erreichbar."
+      },
+      {
+        "id": 3,
+        "label": "3 – hoch",
+        "description": "Offen erreichbar, z. B. über lizenzfreien Funk im öffentlichen Raum oder aus öffentlichen Netzen."
+      }
+    ],
+    "vulnerability": [
+      {
+        "id": 1,
+        "label": "1 – gering",
+        "description": "Wirksamer, nachgewiesener Schutz gegen diese Bedrohung vorhanden."
+      },
+      {
+        "id": 2,
+        "label": "2 – mittel",
+        "description": "Teilweiser oder nicht nachgewiesener Schutz."
+      },
+      {
+        "id": 3,
+        "label": "3 – hoch",
+        "description": "Kein oder schwacher Schutz bekannt."
+      }
+    ],
+    "likelihoodFormula": "Wahrscheinlichkeit = Exposition + Verwundbarkeit − 1 (1 = sehr unwahrscheinlich … 5 = sehr wahrscheinlich)",
+    "levels": [
+      {
+        "id": "secHigh",
+        "label": "Hoch",
+        "action": "Nicht akzeptabel: Gegenmaßnahmen erforderlich.",
+        "rank": 3,
+        "mustReduce": true
+      },
+      {
+        "id": "secMedium",
+        "label": "Mittel",
+        "action": "Reduzieren oder mit Begründung akzeptieren.",
+        "rank": 2,
+        "mustReduce": false
+      },
+      {
+        "id": "secLow",
+        "label": "Niedrig",
+        "action": "Akzeptabel bei Überwachung.",
+        "rank": 1,
+        "mustReduce": false
+      }
+    ],
+    "matrix": {
+      "A": {
+        "1": "secMedium",
+        "2": "secHigh",
+        "3": "secHigh",
+        "4": "secHigh",
+        "5": "secHigh"
+      },
+      "B": {
+        "1": "secLow",
+        "2": "secMedium",
+        "3": "secHigh",
+        "4": "secHigh",
+        "5": "secHigh"
+      },
+      "C": {
+        "1": "secLow",
+        "2": "secLow",
+        "3": "secMedium",
+        "4": "secMedium",
+        "5": "secHigh"
+      },
+      "D": {
+        "1": "secLow",
+        "2": "secLow",
+        "3": "secLow",
+        "4": "secLow",
+        "5": "secMedium"
+      }
+    }
   }
 }

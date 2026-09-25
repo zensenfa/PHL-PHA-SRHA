@@ -11,6 +11,7 @@
     "src/calibration.js",
     "src/domains.js",
     "src/security.js",
+    "src/threatlog.js",
     "src/schemas.js",
     "src/prompts.js",
     "src/ollama.js",
@@ -28,6 +29,7 @@
     "src/ui/app-definition.js",
     "src/ui/app-identification.js",
     "src/ui/app-analysis.js",
+    "src/ui/app-security.js",
     "src/ui/app-requirements.js",
     "src/ui/app-reports.js",
     "src/ui/app-main.js"

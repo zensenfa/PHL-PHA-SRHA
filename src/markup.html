@@ -37,6 +37,7 @@
       <button class="rail-btn" data-stage="definition"><span class="n">1</span><span class="t">Systemdefinition<small>EN 50126-1 7.3</small></span><span class="pct" id="pct-definition"></span></button>
       <button class="rail-btn" data-stage="identification"><span class="n">2</span><span class="t">Gefährdungsidentifikation<small>EN 50126-1 7.4.2.1</small></span><span class="pct" id="pct-identification"></span></button>
       <button class="rail-btn" data-stage="analysis"><span class="n">3</span><span class="t">Risikoanalyse &amp; -bewertung<small>EN 50126-1 7.4, EN 50126-2 8</small></span><span class="pct" id="pct-analysis"></span></button>
+      <button class="rail-btn hidden" data-stage="security" id="rail-security"><span class="n">3b</span><span class="t">Bedrohungsprotokoll<small>Security-Stufe 2 · EN 50129 6.4</small></span><span class="pct" id="pct-security"></span></button>
       <button class="rail-btn" data-stage="requirements"><span class="n">4</span><span class="t">Sicherheitsanforderungen<small>EN 50126-1 7.5, EN 50129 5.3.7</small></span><span class="pct" id="pct-requirements"></span></button>
       <button class="rail-btn" data-stage="reports"><span class="n">5</span><span class="t">Berichte &amp; Export<small>DOCX · XLSX · PDF</small></span><span class="pct" id="pct-reports"></span></button>
     </nav>
@@ -202,6 +203,18 @@
       <div class="table-wrap">
         <table class="grid rows" id="tbl-analysis"><thead><tr><th class="w-id">ID</th><th>Gefährdung</th><th class="w-s">Ursachen</th><th class="w-s">Szenarien</th><th class="w-m">Schadensausmaß</th><th class="w-m">Häufigkeit</th><th class="w-m">Risikoklasse</th><th class="w-s">RAP</th><th class="w-s">Maßn.</th><th class="w-m">Restrisiko</th><th class="w-m">Stand</th></tr></thead><tbody></tbody></table>
       </div>
+    </section>
+
+    <!-- Stage 3b (security level >= 2) -->
+    <section id="stage-security" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Bedrohungsprotokoll und Security-Risikobewertung</h2><span class="sub">Bedrohungen mit Exposition, Verwundbarkeit und Auswirkung; das Security-Risiko wird lokal aus der Matrix berechnet. Vorsätzliche Ursachen werden über Gegenmaßnahmen beherrscht, nicht über THR oder SIL (EN 50129 6.4).</span></div>
+        <div class="toolbar"><button id="btn-threat-derive" class="btn" type="button">Aus Gefährdungen ableiten</button><button id="btn-threat-add" class="btn primary" type="button">+ Bedrohung</button></div>
+      </div>
+      <div id="threat-kpis"></div>
+      <div class="table-wrap"><table class="grid" id="tbl-threats"><thead><tr><th class="w-id">ID</th><th>Bedrohung</th><th class="w-m">Klassen</th><th class="w-m">Gefährdungen</th><th class="w-a">E / V / W</th><th class="w-a">Auswirkung</th><th class="w-m">Risiko → Rest</th><th class="w-m">Status</th></tr></thead><tbody></tbody></table></div>
+      <h3>Security-Risikomatrix</h3>
+      <div id="sec-matrix" class="panel"></div>
     </section>
 
     <!-- Stage 4 -->

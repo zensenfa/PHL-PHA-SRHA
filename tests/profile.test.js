@@ -20,7 +20,7 @@ test('security level 0 requires a justification (EN 50126-1 7.4.2.1 d))', () => 
 });
 
 test('security levels not yet implemented cannot be selected', () => {
-  const p = valid(); p.security.level = 2;
+  const p = valid(); p.security.level = 3;
   assert.equal(P.validateProjectProfile(p).ok, false);
 });
 

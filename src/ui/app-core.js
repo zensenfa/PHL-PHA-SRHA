@@ -87,6 +87,8 @@ function bindSettings() {
 
 // ------------------------------------------------------------- persistence ----
 A.ctx = () => ({ profile: A.state.projectProfile, sd: A.state.sd, functions: A.state.functions, interfaces: A.state.interfaces, documents: A.state.sd.documents || [], calibration: A.calibration() });
+A.secCalibration = () => (A.state && A.state.securityCalibration) || window.RHAS_THREATLOG.defaultCalibration();
+A.saveThreats = async () => { await DB.setMeta(A.state.pdb, 'threats', A.state.threats); await DB.touchProject(A.state.project.projectId); };
 A.calibration = () => { const c = (A.state && A.state.calibration) || DATA.calibration; M.setCalibration(c); return c; };
 
 A.saveMeta = async (key, value) => { A.state[key === 'systemDefinition' ? 'sd' : key] = value; await DB.setMeta(A.state.pdb, key, value); await DB.touchProject(A.state.project.projectId); };
@@ -129,6 +131,8 @@ A.openProject = async (projectId) => {
   s.docControl = { docId: '', revision: 'A', date: A.today(), author: '', verifier: '', validator: '', dutyHolder: '', supplier: '', purpose: '', ...(await DB.getMeta(pdb, 'docControl', {})) };
   s.calibration = await DB.getMeta(pdb, 'calibration', null);
   s.projectProfile = PROFILE.migrateProfile(await DB.getMeta(pdb, 'projectProfile', null));
+  s.threats = await DB.getMeta(pdb, 'threats', []);
+  s.securityCalibration = await DB.getMeta(pdb, 'securityCalibration', null);
   A.calibration(); // activate the project calibration for labels and ranks
   s.identConfig = { depth: 'standard', overrides: {}, sources: null, ...(await DB.getMeta(pdb, 'identConfig', {})) };
   localStorage.setItem('rhas_last_project', projectId);
@@ -182,6 +186,11 @@ A.refresh = () => {
   A.state.stats = st;
   const prof = A.state.projectProfile || {};
   A.el('pct-profile').textContent = prof.confirmedAt ? '✓' : 'offen';
+  // WP5: threat log stage only from security level 2.
+  const secOn = window.RHAS_SECURITY.level(prof) >= 2;
+  A.el('rail-security').classList.toggle('hidden', !secOn);
+  if (secOn) { const th = A.state.threats || []; const TL = window.RHAS_THREATLOG; A.el('pct-security').textContent = th.length ? `${th.filter((t) => TL.threatCompleteness(t, A.secCalibration(), A.state.requirements).ok).length}/${th.length}` : ''; }
+  if (!secOn && A.state.stage === 'security') A.state.stage = 'analysis';
   const banner = A.el('profile-banner');
   banner.classList.toggle('hidden', !!prof.confirmedAt);
   banner.innerHTML = prof.confirmedAt ? '' : `Projektprofil ${prof.origin === 'migrated' ? 'aus einem älteren Projektstand übernommen' : 'noch nicht bestätigt'} – bitte prüfen und bestätigen. <button class="btn link" type="button" onclick="window.RHAS_APP.show('profile')">zum Projektprofil</button>`;

@@ -8,6 +8,7 @@
 // and the engineer stays the single place that decides.
 (function () {
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
+const SEC = typeof require !== 'undefined' ? require('./security.js') : window.RHAS_SECURITY;
 const S = typeof require !== 'undefined' ? require('./schemas.js') : window.RHAS_SCHEMAS;
 const P = typeof require !== 'undefined' ? require('./prompts.js') : window.RHAS_PROMPTS;
 const PIPE = typeof require !== 'undefined' ? require('./llm-pipeline.js') : window.RHAS_LLM_PIPELINE;
@@ -136,15 +137,17 @@ function normalizeHazardItem(raw, { pass, runId, modelName, functions, interface
     method: pass.kind === 'function' && guideword ? 'guideword' : pass.kind,
     guideword, guidewords: gwList,
     functions: mapIds(raw.functions, functions, pass.kind === 'function' ? [pass.unit] : []),
-    interfaces: mapIds(raw.interfaces, interfaces, pass.kind === 'interface' ? [pass.unit] : []),
+    interfaces: mapIds(raw.interfaces, interfaces, pass.kind === 'interface' || pass.kind === 'threat' ? [pass.unit] : []),
     modes: [...new Set([...strList(raw.modes).filter((m) => S.MODES.includes(m)), ...(pass.kind === 'mode' ? [pass.unit] : [])])],
-    causes: normalizeCauses(raw.causes),
+    causes: ((cs) => (pass.kind === 'threat' && cs.length && !cs.some((c) => c.kind === 'intentional') ? cs.map((c, k) => (k === 0 ? { ...c, kind: 'intentional' } : c)) : cs))(normalizeCauses(raw.causes)),
     triggeringEvent: str(hoist(raw, 'triggeringEvent')),
     enablingConditions: strList(hoist(raw, 'enablingConditions')),
     accidents: consequence ? [M.makeAccident({ id: 'A1', description: consequence, affected })] : [],
     reasoning: { whyIdentified: str(raw.reasoning && raw.reasoning.whyIdentified), sourcesUsed: str(raw.reasoning && raw.reasoning.sourcesUsed), decisionRationale: str(raw.reasoning && raw.reasoning.decisionRationale) },
     provenance: { runId, pass: pass.label, passKind: pass.kind, unit: pass.unit, model: modelName },
     review: { decision: 'pending', by: '', at: '', rationale: '' },
+    threats: pass.kind === 'threat' ? strList(raw.threats).filter((t) => SEC.threatIds().includes(t)) : [],
+    existingHazardId: pass.kind === 'threat' ? str(raw.existingHazardId) : '',
   });
 }
 
@@ -219,18 +222,21 @@ const DEPTHS = {
   maximal: { label: 'Maximal', passes: { function: true, source: true, interface: true, mode: true, interaction: true, critique: true, iterate: true }, description: 'Wie Gründlich, plus zweite Iteration je Funktion gegen die dann vorliegende Liste.' },
 };
 
-function planIdentification({ depth = 'standard', overrides = {}, functions = [], interfaces = [], modes = [], sources = [], maxGapFills = 6 }) {
+function planIdentification({ depth = 'standard', overrides = {}, functions = [], interfaces = [], modes = [], sources = [], maxGapFills = 6, securityLevel = 0 }) {
   const cfg = { ...DEPTHS[depth].passes, ...overrides };
   const passes = [];
   if (cfg.function) for (const f of functions) passes.push({ kind: 'function', unit: f.id, label: `Funktion ${f.id} ${f.name}` });
   if (cfg.interface) for (const i of interfaces) passes.push({ kind: 'interface', unit: i.id, label: `Schnittstelle ${i.id} ${i.name}` });
   if (cfg.mode) for (const m of modes) passes.push({ kind: 'mode', unit: m.id, label: `Betriebsart ${m.label}` });
   if (cfg.source) for (const s of sources) passes.push({ kind: 'source', unit: s.id, label: `Gefährdungsquelle ${s.code} ${s.title}` });
+  // WP5 level 1: deliberate causes per interface, then the safety/security interaction check.
+  if (securityLevel >= 1) for (const i of interfaces) passes.push({ kind: 'threat', unit: i.id, label: `Security ${i.id} ${i.name}` });
+  if (securityLevel >= 1) passes.push({ kind: 'coeng', unit: '*', label: 'Wechselwirkung Safety ↔ Security' });
   if (cfg.interaction) passes.push({ kind: 'interaction', unit: '*', label: 'Interaktionsanalyse' });
   if (cfg.critique) passes.push({ kind: 'critique', unit: '*', label: 'Kritikphase' });
   if (cfg.iterate && cfg.function) for (const f of functions) passes.push({ kind: 'function', unit: f.id, label: `Funktion ${f.id} ${f.name} (2. Iteration)`, iteration: 2 });
   const estimatedCalls = passes.length + (cfg.critique ? maxGapFills : 0);
-  return { depth, passes, estimatedCalls, maxGapFills, config: cfg };
+  return { depth, passes, estimatedCalls, maxGapFills, config: cfg, securityLevel };
 }
 
 // ------------------------------------------------------------------- runs ----
@@ -291,6 +297,8 @@ async function runIdentification({ plan, ctx, existingHazards, provider, setting
     else if (pass.kind === 'interface') { const it = ctx.interfaces.find((x) => x.id === pass.unit); query = `${it.name} ${it.description} ${it.partner}`; prompt = P.buildInterfacePrompt({ ...c, docs: retrieve(chunks, query) }, it, titles()); }
     else if (pass.kind === 'mode') { const m = modes.find((x) => x.id === pass.unit); query = `${m.label} ${m.description}`; prompt = P.buildModePrompt({ ...c, docs: retrieve(chunks, query) }, m, titles()); }
     else if (pass.kind === 'source') { const s = sources.find((x) => x.id === pass.unit); query = `${s.title} ${s.description}`; prompt = P.buildSourcePrompt({ ...c, docs: retrieve(chunks, query) }, s, titles()); }
+    else if (pass.kind === 'threat') { const it = ctx.interfaces.find((x) => x.id === pass.unit); query = `${it.name} ${it.description} ${it.partner} Funk Zugang Manipulation`; const open = known.filter((h) => !h.review || h.review.decision !== 'rejected'); prompt = P.buildThreatPrompt({ ...c, docs: retrieve(chunks, query) }, it, open.filter((h) => h.id), titles()); schema = S.threatSchema(hazardSchema, SEC.threatIds(), open.map((h) => h.id).filter(Boolean)); }
+    else if (pass.kind === 'coeng') { prompt = P.buildCoEngineeringPrompt({ ...c, docs: retrieve(chunks, 'Authentisierung Verschlüsselung Update Zugriff Wartung', 3000) }, titles()); }
     else if (pass.kind === 'interaction') { prompt = P.buildInteractionPrompt({ ...c, docs: retrieve(chunks, ctx.sd.description, 4000) }, titles()); }
     else if (pass.kind === 'gapfill') { query = `${pass.gap.title} ${pass.gap.why}`; prompt = P.buildGapFillPrompt({ ...c, docs: retrieve(chunks, query) }, pass.gap, titles()); }
     else if (pass.kind === 'critique') {
@@ -318,6 +326,8 @@ async function runIdentification({ plan, ctx, existingHazards, provider, setting
     }
     const items = (parsed.hazards || []).map((raw) => normalizeHazardItem(raw, { pass, runId, modelName, functions: ctx.functions, interfaces: ctx.interfaces })).filter((h) => h.description && h.title);
     const { kept, dropped } = dedupBatch(items, known);
+    // WP5: the model names the existing hazard an attack leads to; that link beats text similarity.
+    for (const h of kept) if (h.existingHazardId && known.some((k) => k.id === h.existingHazardId && (!k.review || k.review.decision !== 'rejected'))) h.duplicateOf = h.existingHazardId;
     const stored = onBatch ? (await onBatch(kept, pass)) || kept : kept;
     known.push(...stored);
     results.push({ ...pass, ok: true, durationMs, proposed: kept.length, merged: dropped, duplicatesFlagged: kept.filter((h) => h.duplicateOf).length });

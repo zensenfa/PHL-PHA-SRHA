@@ -24,6 +24,7 @@ function data() {
       guidewords: require('./data/guidewords.json').guidewords,
       modes: require('./data/modes.json').modes,
       domains: require('./data/domains.json'),
+      security: require('./data/security.json'),
     };
   }
   return DATA || {};
@@ -36,8 +37,8 @@ const LABELS = {
   riskClass: { Intolerable: 'Untragbar', Undesirable: 'Unerwünscht', Tolerable: 'Tragbar', Negligible: 'Vernachlässigbar' },
   hazardStatus: { identified: 'Identifiziert', analysed: 'Analysiert', evaluated: 'Bewertet', controlled: 'Beherrscht', transferred: 'Übertragen', closed: 'Geschlossen', rejected: 'Verworfen' },
   hazardLevel: { boundary: 'Systemgrenze (System under consideration)', railway: 'Eisenbahnsystem', design: 'Entwurfsebene (Verfeinerung)' },
-  method: { function: 'Funktionsanalyse', guideword: 'Leitwort (HAZOP-artig)', interface: 'Schnittstellenanalyse', mode: 'Betriebsart / Szenario', source: 'Gefährdungsquelle (EN 50126-1 7.4.2.1)', interaction: 'Interaktionsanalyse', gapfill: 'Lückenfüllung nach Kritik', manual: 'Manuell erfasst', import: 'Import', seed: 'Beispieldaten' },
-  causeKind: { systematic: 'Systematisch', random: 'Zufällig', human: 'Menschlich', external: 'Extern' },
+  method: { function: 'Funktionsanalyse', guideword: 'Leitwort (HAZOP-artig)', interface: 'Schnittstellenanalyse', mode: 'Betriebsart / Szenario', source: 'Gefährdungsquelle (EN 50126-1 7.4.2.1)', interaction: 'Interaktionsanalyse', threat: 'Security: Bedrohung je Schnittstelle', coeng: 'Wechselwirkung Safety/Security', gapfill: 'Lückenfüllung nach Kritik', manual: 'Manuell erfasst', import: 'Import', seed: 'Beispieldaten' },
+  causeKind: { systematic: 'Systematisch', random: 'Zufällig', human: 'Menschlich', external: 'Extern', intentional: 'Vorsätzlich (Angriff)' },
   barrierType: { frequency: 'Häufigkeitsmindernd', severity: 'Schadensmindernd' },
   measureType: { elimination: 'Gefährdung vermeiden', frequencyReduction: 'Häufigkeit der Gefährdung senken', propagationReduction: 'Übergang Gefährdung → Unfall verhindern', severityMitigation: 'Schadensausmaß mindern' },
   // EN 50126-1:2017 5.9.2 a) to c): steps of the risk reduction strategy (replaces an earlier design/protective/warning/procedural scale).
@@ -297,7 +298,7 @@ function makeFunction(fields = {}) {
 
 function makeHazard(fields = {}) {
   return {
-    id: '', title: '', description: '', level: 'boundary', sourceCategory: '', domain: '', method: 'manual', guideword: '', guidewords: [],
+    id: '', title: '', description: '', level: 'boundary', sourceCategory: '', domain: '', method: 'manual', threats: [], guideword: '', guidewords: [],
     functions: [], interfaces: [], modes: [], lifecyclePhase: '',
     causes: [], triggeringEvent: '', enablingConditions: [], railwayHazard: '',
     accidents: [], riskClass: null, residualRiskClass: null,
@@ -318,7 +319,7 @@ function makeAccident(fields = {}) {
 }
 
 function makeMeasure(fields = {}) {
-  return { id: '', text: '', type: 'frequencyReduction', hierarchy: 'additionalSafety', residualSeverity: '', residualFrequency: '', residualRiskClass: null, rationale: '', status: 'proposed', becomesSrac: false, ...fields };
+  return { id: '', text: '', type: 'frequencyReduction', hierarchy: 'additionalSafety', residualSeverity: '', residualFrequency: '', residualRiskClass: null, rationale: '', status: 'proposed', becomesSrac: false, securityRelated: false, ...fields };
 }
 
 function makeRequirement(fields = {}) {
@@ -326,7 +327,7 @@ function makeRequirement(fields = {}) {
     id: '', text: '', title: '', category: 'functional', hazards: [], functions: [], measures: [],
     integrity: { tffr: null, level: 'undetermined', applicabilityNote: '' },
     safeState: '', timeToSafeState: '', detection: '', allocation: '', verificationMethod: 'test', verificationNote: '',
-    rationale: '', status: 'draft',
+    rationale: '', status: 'draft', securityRelated: false,
     srac: { receiver: '', origin: '', verification: '' },
     source: 'manual', provenance: { runId: '', pass: '', model: '' },
     createdAt: nowIso(), createdBy: '', updatedAt: nowIso(), updatedBy: '', ...fields,
@@ -388,6 +389,8 @@ function hazardCompleteness(h) {
     const needsMeasures = !!(h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures);
     if (needsMeasures && isBlank((h.measures || []).filter((m) => m.status !== 'rejected'))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
     const must = (c) => !!(c && (classMeta(c) || {}).mustReduce);
+    // WP5: deliberate causes are controlled by security measures, never by THR/SIL (EN 50129 6.4, NOTE 2).
+    if ((h.causes || []).some((c) => c.kind === 'intentional') && !(h.measures || []).some((m) => m.status !== 'rejected' && m.securityRelated)) ctrlProblems.push('Vorsätzliche Ursache ohne Security-Maßnahme (EN 50129 6.4)');
     if (must(h.riskClass) && (!h.residualRiskClass || must(h.residualRiskClass))) ctrlProblems.push('Nicht akzeptables Risiko ohne wirksame Reduktion (EN 50126-1 Tabelle C.8 bzw. Projektkalibrierung)');
     if ((h.measures || []).filter((m) => m.status !== 'rejected').some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
   }

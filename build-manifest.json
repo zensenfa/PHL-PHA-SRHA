@@ -10,6 +10,7 @@
     "src/profile.js",
     "src/calibration.js",
     "src/domains.js",
+    "src/security.js",
     "src/schemas.js",
     "src/prompts.js",
     "src/ollama.js",

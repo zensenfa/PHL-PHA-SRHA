@@ -9,6 +9,7 @@ const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_M
 const DOCX = typeof require !== 'undefined' ? require('./docx.js') : window.RHAS_DOCX;
 const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
 const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
+const SEC = typeof require !== 'undefined' ? require('./security.js') : window.RHAS_SECURITY;
 
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
@@ -44,7 +45,21 @@ const resolveKind = (kind) => KIND_ALIASES[kind] || kind;
 function securityNote(b) {
   const sec = (b.profile && b.profile.security) || { level: 0 };
   if (Number(sec.level) === 0) return `Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: ${sec.justification || '(fehlt)'}`;
-  return `Security: ${PROFILE.label('security.level', sec.level)}.`;
+  return `Security: ${PROFILE.label('security.level', sec.level)}. Vorsätzliche Ursachen wurden je Schnittstelle betrachtet; ihre Beherrschung erfolgt über Security-Maßnahmen, nicht über THR oder SIL (EN 50129 6.4). Eine Security-Risikobewertung nach CLC/TS 50701 ist nicht Gegenstand dieser Stufe.`;
+}
+function specSecContext(b) {
+  const sd = b.sd || {};
+  return { key: 'secCtx', title: 'Security-Kontext', columns: [{ header: 'Merkmal', width: 0.3 }, { header: 'Festlegung', width: 0.5 }, { header: 'Bezug', width: 0.2 }], rows: SEC.CONTEXT_FIELDS.map((f) => [f.label, nz(f.options ? (f.options()[sd[f.key]] || sd[f.key]) : sd[f.key]) || 'offen', f.ref]) };
+}
+function specSecHazards(b) {
+  const rows = acceptedHazards(b).filter((h) => SEC.hazardSecurity(h).intentional).map((h) => { const s = SEC.hazardSecurity(h); return [h.id, h.title, join(s.causes.map((c) => c.text)), join(s.threats.map((t) => SEC.threatLabel(t))), join((h.interfaces || []).map((i) => ifName(b, i))), join(s.measures.map((m) => `${m.id ? m.id + ': ' : ''}${m.text}`)) || 'offen']; });
+  return { key: 'secHz', title: 'Gefährdungen mit vorsätzlichen Ursachen', landscape: true, columns: [{ header: 'ID', width: 0.06 }, { header: 'Gefährdung', width: 0.2 }, { header: 'Vorsätzliche Ursachen', width: 0.24 }, { header: 'Bedrohungen', width: 0.14 }, { header: 'Schnittstellen', width: 0.14 }, { header: 'Security-Maßnahmen', width: 0.22 }], rows };
+}
+function specSecCoverage(b) {
+  return { key: 'secCov', title: 'Abdeckung: Bedrohungsanalyse je Schnittstelle', columns: [{ header: 'Schnittstelle', width: 0.5 }, { header: 'Analysiert', width: 0.2 }, { header: 'Gefährdungen mit vorsätzlicher Ursache', width: 0.3 }], rows: SEC.coverage(b.interfaces, b.runs, b.hazards).map((c) => [`${c.id} ${c.name}`, c.analysed ? 'ja' : 'nein', String(c.hazards)]) };
+}
+function specSecRequirements(b) {
+  return { key: 'secReq', title: 'Security-bezogene Anforderungen und Anwendungsbedingungen', columns: [{ header: 'ID', width: 0.08 }, { header: 'Kategorie', width: 0.14 }, { header: 'Anforderung', width: 0.5 }, { header: 'Gefährdungen', width: 0.14 }, { header: 'Empfänger (SRAC)', width: 0.14 }], rows: (b.requirements || []).filter((r) => r.securityRelated && r.status !== 'rejected').map((r) => [r.id, L('reqCategory', r.category), r.text, join(r.hazards || []), r.category === 'srac' ? nz(r.srac && r.srac.receiver) : '–']) };
 }
 function specDomainStandards(b) {
   const pack = DOMAINS.packFor(b.profile);
@@ -243,11 +258,18 @@ function sections(kind, b) {
     ], specs: [specHazardLog(b)] },
     { heading: '6 Annahmen und offene Punkte', specs: [specAssumptions(b), specOpenPoints(b)] },
   ];
-  if (kind === 'hazid') return [...common, method, ...phl];
+  // WP5: security section for level >= 1.
+  const lvl = SEC.level(b.profile);
+  const sec = lvl >= 1 ? [{ heading: '0 Security-informierte Sicherheit (EN 50129 6.4; Security-Stufe 1)', paragraphs: [
+    'EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus; EN 50129 6.4 verlangt, physische und IT-Bedrohungen dennoch zu betrachten. Deshalb wurde je Schnittstelle geprüft, ob ein Angreifer einen gefährlichen Zustand an der Systemgrenze herbeiführen kann (Bedrohungen nach EN 50159 sowie Blockade, Abhören, physische Manipulation, manipulierte Parametrierung und Software). Zusätzlich wurde geprüft, ob Security-Maßnahmen sicherheitsrelevante Funktionen beeinträchtigen.',
+    'Vorsätzliche Ursachen werden nicht über THR oder SIL beherrscht (EN 50129 6.4, Anm. 2), sondern über Security-Maßnahmen und security-bezogene Anwendungsbedingungen. Diese Stufe ist keine Security-Risikobewertung nach CLC/TS 50701 (Stufen 2 und 3).',
+    `Grundlage: ${M.data().security.basis}`,
+  ], specs: [specSecContext(b), specSecHazards(b), specSecCoverage(b), specSecRequirements(b)] }] : [];
+  if (kind === 'hazid') return [...common, method, ...phl.slice(0, 2), ...renum(sec, 7), ...renum(phl.slice(2), 7 + sec.length)];
   if (kind === 'risk') return [...common, method, ...pha];
   if (kind === 'hazlog') return [...common, method, ...hazlog];
   if (kind === 'srs') return [...common, method, ...srs];
-  return [...common, method, ...renum(phl.slice(0, 2), 5), ...renum(pha.slice(0, 4), 7), ...renum(hazlog.slice(0, 1), 11), ...renum(srs, 12)];
+  return [...common, method, ...renum(phl.slice(0, 2), 5), ...renum(pha.slice(0, 4), 7), ...renum(hazlog.slice(0, 1), 11), ...renum(sec, 12), ...renum(srs, 12 + sec.length)];
 }
 
 // ------------------------------------------------------------------ DOCX ----

@@ -16,7 +16,10 @@ function renderForm() {
   const sd = A.state.sd;
   const form = A.el('def-form');
   form.innerHTML = GROUPS.map((g) => `<fieldset><legend>${g.title}</legend>${g.keys.map((k) => { const f = M.SYSTEM_DEFINITION_FIELDS.find((x) => x.key === k); const val = sd[k] || ''; return `<div class="f${f.norm === 'N' && !val.trim() ? ' missing' : ''}"><label for="sd-${k}">${A.esc(f.label)}<span class="ref">${f.norm === 'N' ? '<span class="norm">N</span> ' : ''}${A.esc(f.ref)}</span></label>${SHORT.has(k) ? `<input id="sd-${k}" data-key="${k}" value="${A.esc(val)}" />` : `<textarea id="sd-${k}" data-key="${k}" rows="${val.length > 160 ? 4 : 2}">${A.esc(val)}</textarea>`}</div>`; }).join('')}</fieldset>`).join('');
-  form.querySelectorAll('[data-key]').forEach((inp) => { inp.onchange = async () => { sd[inp.dataset.key] = inp.value; await A.saveSd(); inp.closest('.f').classList.toggle('missing', M.SYSTEM_DEFINITION_FIELDS.find((x) => x.key === inp.dataset.key).norm === 'N' && !inp.value.trim()); renderCompleteness(); A.refresh(); }; });
+  // WP5: security context (level >= 1), stored in the system definition, not counted in the 25 EN 50126-1 fields.
+  const SEC = window.RHAS_SECURITY; const lvl = SEC.level(A.state.projectProfile);
+  if (lvl >= 1) form.insertAdjacentHTML('beforeend', `<fieldset><legend>Security-Kontext (Stufe ${lvl})</legend>${SEC.CONTEXT_FIELDS.map((f) => { const val = sd[f.key] || ''; const inp = f.type === 'select' ? `<select data-key="${f.key}"><option value="">– wählen –</option>${Object.entries(f.options()).map(([k, v]) => `<option value="${A.esc(k)}"${String(val) === k ? ' selected' : ''}>${A.esc(v)}</option>`).join('')}</select>` : `<textarea data-key="${f.key}" rows="2">${A.esc(val)}</textarea>`; return `<div class="f${String(val).trim() ? '' : ' missing'}"><label>${A.esc(f.label)}<span class="ref">${A.esc(f.ref)}</span></label>${inp}</div>`; }).join('')}</fieldset>`);
+  form.querySelectorAll('[data-key]').forEach((inp) => { inp.onchange = async () => { sd[inp.dataset.key] = inp.value; await A.saveSd(); inp.closest('.f').classList.toggle('missing', (M.SYSTEM_DEFINITION_FIELDS.find((x) => x.key === inp.dataset.key) || { norm: 'N' }).norm === 'N' && !inp.value.trim()); renderCompleteness(); A.refresh(); }; });
 }
 
 function renderCompleteness() {

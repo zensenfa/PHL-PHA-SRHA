@@ -7,6 +7,7 @@
 const M = typeof require !== 'undefined' ? require('./model.js') : window.RHAS_MODEL;
 const PROFILE = typeof require !== 'undefined' ? require('./profile.js') : window.RHAS_PROFILE;
 const DOMAINS = typeof require !== 'undefined' ? require('./domains.js') : window.RHAS_DOMAINS;
+const SEC = typeof require !== 'undefined' ? require('./security.js') : window.RHAS_SECURITY;
 /** WP4: domain examples come from the domain pack of the project profile. */
 const ex = (ctx) => ((DOMAINS && DOMAINS.packFor(ctx && ctx.profile)) || { examples: {} }).examples || {};
 
@@ -79,6 +80,65 @@ Aufgabe: Zerlege das beschriebene System für die Risikoanalyse in Teilsysteme, 
 - "assumptions": Annahmen, die du treffen musstest, weil die Beschreibung schweigt. "openQuestions": Fragen, deren Antwort die Analyse wesentlich beeinflusst.
 Antworte NUR mit dem JSON-Objekt nach Schema, ohne Vorrede.`;
   return { systemPrompt, userPrompt: contextBlock(ctx) };
+}
+
+// ------------------------------------------------------------ security (WP5) ----
+/** Level 1: deliberate causes at ONE interface (security-informed safety). */
+function buildThreatPrompt(ctx, iface, knownHazards, titles) {
+  const th = SEC.threats().map((t) => `- ${t.id}: ${t.label} — ${t.question}`).join('\n');
+  const known = (knownHazards || []).map((h) => `- ${h.id}: ${h.title}`).join('\n') || '- (noch keine)';
+  const systemPrompt = `${ROLE}
+
+Aufgabe: Security-informierte Gefährdungsanalyse für GENAU EINE Schnittstelle. EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus; EN 50129 6.4 verlangt, dass physische und IT-Bedrohungen dennoch betrachtet werden. Prüfe für jede der folgenden Bedrohungen, ob ein ANGREIFER über diese Schnittstelle einen gefährlichen Zustand an der Systemgrenze herbeiführen kann:
+${th}
+
+Regeln:
+- Betrachte nur Angriffe mit SICHERHEITSFOLGE (Unfallpotenzial). Reine Vertraulichkeits- oder Verfügbarkeitsfolgen nur, wenn sie eine Gefährdung nach sich ziehen, und dann im "consequence" benennen.
+- Führt ein Angriff zu einer BEREITS BEKANNTEN Gefährdung, lege KEINE neue an: gib "existingHazardId" mit deren ID an, übernimm deren Titel und beschreibe in "causes" nur die vorsätzliche Ursache.
+- Jede Ursache eines Angriffs hat "kind": "intentional". "threats": die zutreffenden Bedrohungs-IDs aus der Liste.
+- Berücksichtige das angenommene Angreiferprofil und die Übertragungskategorie aus dem Security-Kontext; Angriffe, die dort ausgeschlossen sind, nicht aufnehmen.
+- Keine Risikoeinstufung und keine Aussage über THR oder SIL: vorsätzliche Ursachen werden nicht über Ausfallraten beherrscht (EN 50129 6.4).
+- Jede Gefährdung enthält "${iface.id}" in "interfaces".
+${HAZARD_RULES}
+Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
+  const userPrompt = `${contextBlock(ctx)}
+SECURITY-KONTEXT:
+${SEC.contextLines(ctx.sd)}
+
+ZU ANALYSIERENDE SCHNITTSTELLE: ${iface.id} ${iface.name} (${iface.type}${iface.partner ? `, Gegenstelle: ${iface.partner}` : ''})
+Beschreibung: ${iface.description || '-'}
+
+BEKANNTE GEFÄHRDUNGEN (für "existingHazardId"):
+${known}
+
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
+  return { systemPrompt, userPrompt };
+}
+
+/** Level 1: co-engineering check — can a security measure impair a safety function (EN 50716 scope, IEC 62443-3-3 essential functions)? */
+function buildCoEngineeringPrompt(ctx, titles) {
+  const fns = (ctx.functions || []).filter((f) => f.safetyRelated !== false).map((f) => `- ${f.id} ${f.name}: sicherer Zustand ${f.safeState || '-'}`).join('\n');
+  const systemPrompt = `${ROLE}
+
+Aufgabe: Wechselwirkungsprüfung Safety ↔ Security. Security-Maßnahmen dürfen die sicherheitsrelevanten Funktionen nicht beeinträchtigen. Prüfe, welche GEFÄHRDUNGEN durch typische oder vorhandene Security-Maßnahmen entstehen können, insbesondere:
+- zusätzliche Latenz durch Authentisierung oder Verschlüsselung gegenüber zeitkritischen Sicherheitsfunktionen,
+- Sperren von Konten, Geräten oder Verbindungen nach Fehlversuchen, die eine sicherheitsrelevante Funktion blockieren,
+- Sicherheitsupdates und Patches ohne erneute Validierung der sicherheitsrelevanten Software (EN 50716),
+- Schlüssel- oder Zertifikatsablauf im Betrieb,
+- Security-Überwachung, die Ressourcen der Sicherheitsfunktion verbraucht,
+- Notfall- und Rückfallverfahren, die durch Zugriffsschutz erschwert werden.
+Nur konkrete, für DIESES System plausible Gefährdungen; jede mit mindestens einer betroffenen Funktion in "functions". Ursachen sind "systematic" oder "human", nicht "intentional".
+${HAZARD_RULES}
+Antworte NUR mit dem JSON-Objekt {"hazards":[...]} nach Schema.`;
+  const userPrompt = `${contextBlock(ctx)}
+SECURITY-KONTEXT:
+${SEC.contextLines(ctx.sd)}
+
+SICHERHEITSRELEVANTE FUNKTIONEN:
+${fns || '- (keine)'}
+
+${alreadyBlock(titles, ctx.rejectedTitles)}`;
+  return { systemPrompt, userPrompt };
 }
 
 // ---------------------------------------------------------- identification ----
@@ -263,7 +323,7 @@ ${measures || '(keine — leite Anforderungen aus den bestehenden Barrieren und 
   return { systemPrompt, userPrompt };
 }
 
-const api = { ROLE, contextBlock, capTitles, buildDecompositionPrompt, buildFunctionPrompt, buildInterfacePrompt, buildModePrompt, buildSourcePrompt, buildInteractionPrompt, buildCritiquePrompt, buildGapFillPrompt, buildRiskAnalysisPrompt, buildMeasuresPrompt, buildRequirementsPrompt };
+const api = { buildThreatPrompt, buildCoEngineeringPrompt, ROLE, contextBlock, capTitles, buildDecompositionPrompt, buildFunctionPrompt, buildInterfacePrompt, buildModePrompt, buildSourcePrompt, buildInteractionPrompt, buildCritiquePrompt, buildGapFillPrompt, buildRiskAnalysisPrompt, buildMeasuresPrompt, buildRequirementsPrompt };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_PROMPTS = api;
 })();
 

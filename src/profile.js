@@ -53,11 +53,11 @@ const RAP = { cop: 'Anerkannte Regeln der Technik (CoP)', reference: 'Referenzsy
 const PHASES = { 1: 'Phase 1 Konzept', 2: 'Phase 2 Systemdefinition', 3: 'Phase 3 Risikoanalyse und -bewertung', 4: 'Phase 4 Systemanforderungen' };
 const SECURITY_LEVELS = {
   0: 'Stufe 0 – nicht betrachtet (Begründung erforderlich)',
-  1: 'Stufe 1 – Security-informierte Sicherheit (in Vorbereitung)',
+  1: 'Stufe 1 – Security-informierte Sicherheit (vorsätzliche Ursachen je Schnittstelle)',
   2: 'Stufe 2 – Bedrohungsprotokoll und Security-Risiko (in Vorbereitung)',
   3: 'Stufe 3 – Zonen, Conduits und SL-T (in Vorbereitung)',
 };
-const IMPLEMENTED_SECURITY_LEVELS = [0];
+const IMPLEMENTED_SECURITY_LEVELS = [0, 1];
 const DEFAULT_CALIBRATION = 'en50126-1-annex-c-default';
 
 function makeProjectProfile(fields = {}) {

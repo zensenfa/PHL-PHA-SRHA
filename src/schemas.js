@@ -7,7 +7,7 @@
 const SEVERITIES = ['catastrophic', 'critical', 'marginal', 'insignificant'];
 const FREQUENCIES = ['frequent', 'probable', 'occasional', 'rare', 'improbable', 'highlyImprobable'];
 const AFFECTED = ['passengers', 'staff', 'maintenance', 'third', 'environment', 'property'];
-const CAUSE_KINDS = ['systematic', 'random', 'human', 'external'];
+const CAUSE_KINDS = ['systematic', 'random', 'human', 'external', 'intentional'];
 const SOURCE_IDS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
 const GUIDEWORDS = ['loss', 'unintended', 'early', 'late', 'partial', 'wrongValue', 'falseSafe', 'stuck', 'degradedResponse', ''];
 const MODES = ['normal', 'degraded', 'transition', 'maintenance', 'emergency', 'commissioning', 'decommissioning'];
@@ -157,6 +157,15 @@ function withEnums(schema, { functionIds = [], interfaceIds = [], guidewordRequi
   return s;
 }
 
+/** WP5: hazard list for threat passes (existingHazardId, threat ids). */
+function threatSchema(base, threatIds, hazardIds) {
+  const s = JSON.parse(JSON.stringify(base));
+  const item = s.properties.hazards.items;
+  item.properties.threats = { type: 'array', minItems: 1, items: { type: 'string', enum: threatIds } };
+  item.properties.existingHazardId = hazardIds && hazardIds.length ? { type: 'string', enum: ['', ...hazardIds] } : { type: 'string' };
+  item.required = [...(item.required || []), 'threats'];
+  return s;
+}
 /** WP3: replace frequency/severity enums with the project calibration's category ids. */
 function withCalibration(schema, cal) {
   if (!cal) return schema;
@@ -174,7 +183,7 @@ function withCalibration(schema, cal) {
   };
   return walk(schema);
 }
-const api = { withCalibration, SEVERITIES, FREQUENCIES, AFFECTED, CAUSE_KINDS, SOURCE_IDS, GUIDEWORDS, MODES, DECOMPOSITION_SCHEMA, HAZARD_LIST_SCHEMA, CRITIQUE_SCHEMA, RISK_ANALYSIS_SCHEMA, MEASURES_SCHEMA, REQUIREMENTS_SCHEMA, withEnums };
+const api = { threatSchema, withCalibration, SEVERITIES, FREQUENCIES, AFFECTED, CAUSE_KINDS, SOURCE_IDS, GUIDEWORDS, MODES, DECOMPOSITION_SCHEMA, HAZARD_LIST_SCHEMA, CRITIQUE_SCHEMA, RISK_ANALYSIS_SCHEMA, MEASURES_SCHEMA, REQUIREMENTS_SCHEMA, withEnums };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_SCHEMAS = api;
 })();
 

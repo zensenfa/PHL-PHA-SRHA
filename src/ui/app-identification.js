@@ -9,7 +9,7 @@ let cachedRows = [];
 // ---------------------------------------------------------- run config ----
 function scopedSources() { const sel = A.state.identConfig.sources; return DATA.sources.filter((s) => !sel || sel.includes(s.id)); }
 function scopedModes() { return DATA.modes.filter((m) => (A.state.sd.modes || []).includes(m.id)); }
-function currentPlan() { return E.planIdentification({ depth: A.state.identConfig.depth, overrides: A.state.identConfig.overrides, functions: A.state.functions, interfaces: A.state.interfaces, modes: scopedModes(), sources: scopedSources() }); }
+function currentPlan() { return E.planIdentification({ securityLevel: window.RHAS_SECURITY.level(A.state.projectProfile), depth: A.state.identConfig.depth, overrides: A.state.identConfig.overrides, functions: A.state.functions, interfaces: A.state.interfaces, modes: scopedModes(), sources: scopedSources() }); }
 /**
  * Seconds per call for the run estimate. A cloud model is roughly an order of
  * magnitude faster than a local one, so an estimate taken from a run with a
@@ -119,6 +119,17 @@ async function accept(id, rationale = '') {
   await A.saveHazard(h); renderTable(); A.refresh();
   if (A.state.drawer && A.state.drawer.id === id) openHazard(id);
 }
+/** WP5: fold a suggestion (typically an attack path) into the existing hazard it leads to; keep the evidence, reject the duplicate. */
+async function mergeIntoExisting(id) {
+  const h = A.state.hazards.find((x) => x.id === id); const target = h && A.state.hazards.find((x) => x.id === h.duplicateOf);
+  if (!h || !target) return;
+  E.mergeInto(target, h);
+  target.threats = [...new Set([...(target.threats || []), ...(h.threats || [])])];
+  delete target.mergedCount; delete target.mergedTitles;
+  await A.saveHazard(target);
+  await reject(id, `Zusammengeführt in ${target.id}: Ursachen und Bedrohungen übernommen.`);
+  A.toast(`Ursachen in ${target.id} übernommen`);
+}
 async function reject(id, rationale = '') {
   const h = A.state.hazards.find((x) => x.id === id); if (!h) return;
   h.review = { decision: 'rejected', by: A.author(), at: M.nowIso(), rationale };
@@ -136,7 +147,8 @@ function openHazard(id) {
   const r = h.reasoning || {};
   const dupTitle = h.duplicateOf ? A.hzTitle(h.duplicateOf) : '';
   A.openDrawer(`${h.id} · ${M.label('review', h.review.decision)}`, `
-${h.duplicateOf ? `<div class="warn">Möglicherweise Duplikat von <b>${A.esc(dupTitle)}</b>. <button class="btn link" id="hz-goto-dup">öffnen</button></div>` : ''}
+${h.duplicateOf ? `<div class="warn">Möglicherweise Duplikat von <b>${A.esc(dupTitle)}</b>. <button class="btn link" id="hz-goto-dup">öffnen</button>${h.review.decision === 'pending' ? ` <button class="btn small" id="hz-merge-dup" title="Ursachen, Bedrohungen, Funktionen und Schnittstellen in die bestehende Gefährdung übernehmen und diesen Vorschlag verwerfen">Ursachen in ${A.esc(h.duplicateOf)} übernehmen</button>` : ''}</div>` : ''}
+${(h.threats || []).length ? `<div class="hint">Bedrohungen: ${A.esc(h.threats.map((t) => window.RHAS_SECURITY.threatLabel(t)).join(', '))}</div>` : ''}
 ${h.previouslyRejected ? `<div class="warn">Ähnelt der bereits verworfenen Gefährdung <b>${A.esc(A.hzTitle(h.previouslyRejected))}</b> (${A.esc(h.previouslyRejected)}).</div>` : ''}
 ${(h.mergedTitles || []).length ? `<div class="hint">Zusammengeführt aus ${h.mergedCount} Vorschlägen: ${A.esc(h.mergedTitles.join(' · '))}</div>` : ''}
 <div class="f"><label>Titel</label><input id="hz-title" value="${A.esc(h.title)}" /></div>
@@ -162,6 +174,7 @@ ${r.whyIdentified ? `<div class="reason"><b>Warum identifiziert:</b> ${A.esc(r.w
   A.el('hz-delete').onclick = (e) => { if (e.target.dataset.armed) { A.deleteHazard(id).then(() => { A.closeDrawer(); renderTable(); A.refresh(); }); return; } e.target.dataset.armed = '1'; e.target.textContent = 'Wirklich löschen?'; };
   if (A.el('hz-to-analysis')) A.el('hz-to-analysis').onclick = () => { A.show('analysis'); A.stages.analysis.open(id); };
   if (A.el('hz-goto-dup')) A.el('hz-goto-dup').onclick = () => { A.el('hz-f-status').value = ''; renderTable(); openHazard(h.duplicateOf); };
+  if (A.el('hz-merge-dup')) A.el('hz-merge-dup').onclick = () => mergeIntoExisting(id);
   A.el('hz-prev').onclick = () => { if (idx > 0) { focusIdx = idx - 1; openHazard(cachedRows[idx - 1].id); } };
   A.el('hz-next').onclick = () => { if (idx < cachedRows.length - 1) { focusIdx = idx + 1; openHazard(cachedRows[idx + 1].id); } };
 }

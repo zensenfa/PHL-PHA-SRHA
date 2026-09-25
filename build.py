@@ -32,6 +32,7 @@ def data_json():
         'modes': load('modes.json')['modes'],
         'demo': load('demo-project.json'),
         'domains': load('domains.json'),
+        'security': load('security.json'),
     }
     return json.dumps(data, ensure_ascii=False).encode('utf-8')
 

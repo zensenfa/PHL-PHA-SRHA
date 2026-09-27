@@ -1,8 +1,8 @@
 {
- "date": "2026-09-27 10:45 UTC",
- "version": "2026-09-27-wp8",
- "commit": "a8e4313",
- "build_sha256": "a09126bf5633d919b566f4d163d2740266321a885b3c5c2385b522acd3e6e1d1",
+ "date": "2026-09-27 11:15 UTC",
+ "version": "2026-09-27-wp9",
+ "commit": "9140264",
+ "build_sha256": "b7d8cffa52c1fda45c6e21cac8b8ad14ecce875a02e18c405eb6f63ff610bf14",
  "build_ok": true,
  "node": "v22.22.2",
  "python": "3.12.3",
@@ -96,6 +96,48 @@
    },
    {
     "name": "prompts list rejected hazards so the model does not re-propose them",
+    "status": "passed"
+   }
+  ],
+  "local-providers.test.js": [
+   {
+    "name": "Ollama: num_ctx, keep_alive, think are sent; answer in content is returned",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: think &quot;auto&quot; leaves the model default",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: answer only in the thinking field is recovered",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: prompt longer than num_ctx is refused before sending",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: silent truncation is detected from prompt_eval_count",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama preflight reports context length, capabilities and warnings",
+    "status": "passed"
+   },
+   {
+    "name": "OpenAI-compatible server: SSE streaming, json_schema with fallback to json_object",
+    "status": "passed"
+   },
+   {
+    "name": "pipeline dispatches to the OpenAI-compatible provider",
+    "status": "passed"
+   },
+   {
+    "name": "confidential projects: local or private-network servers allowed, cloud or public hosts blocked",
+    "status": "passed"
+   },
+   {
+    "name": "guideword split plans two function passes per function",
     "status": "passed"
    }
   ],
@@ -425,17 +467,29 @@
    ]
   },
   {
+   "script": "smoke_local.py",
+   "status": "passed",
+   "output": [
+    "file:// warning visible: True | provider options: 3",
+    "launcher warning visible: False | origin: http://127.0.0.1:8766",
+    "confidential + openai-compat http://127.0.0.1:1234: allowed=True",
+    "confidential + openai-compat https://api.example.com: allowed=False",
+    "confidential + mistral-api : allowed=False",
+    "errors: []"
+   ]
+  },
+  {
    "script": "smoke_profile.py",
    "status": "passed",
    "output": [
     "confirm disabled: True",
     "confirm disabled after fill: False",
     "toast1: Projektprofil bestätigt ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']",
-    "status: bestätigt 27.09.2026, 10:45 | rail: ✓",
+    "status: bestätigt 27.09.2026, 11:15 | rail: ✓",
     "apply btn: Änderungen übernehmen (1)",
     "log rows: 2",
     "banner hidden: True",
-    "toast: Projekt ist als vertraulich klassifiziert: nur lokale KI (Ollama) zulässig. Anbieter unter „KI“ umstellen oder Klassifizierung im Projektprofil begründet ändern.",
+    "toast: Projekt ist als vertraulich klassifiziert: nur lokale KI (Ollama oder lokaler Server im eigenen Netz) zulässig. Anbieter unter „KI“ umstellen oder Klassifizierung im Projektprofil begründet ändern.",
     "demo banner hidden: True | rail: ✓",
     "cards: ['GI – Gefährdungsidentifikation', 'RB – Risikoanalyse und Risikobewertung', 'GP – Gefährdungsprotokoll (Hazard Log)', 'SAS – Sicherheitsanforderungen und sicherheitsbezogene Anwendungsbedingungen', 'SA – Sicherheitsanalyse (EN 50126-1 Phasen 3 und 4)', 'Excel-Arbeitsmappe']",
     "download: SA-LYNX-RS-001_RevA_Minimel_Lynx_ATWS_Baustellenwarnung_Gleiserneuerung_Gleis_2_.docx",

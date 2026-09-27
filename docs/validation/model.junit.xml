@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="risk class reproduces EN 50126-1 Table C.9 for all 24 cells" time="0.002397" classname="test"/>
-	<testcase name="risk class rejects unknown categories instead of mapping silently" time="0.000476" classname="test"/>
-	<testcase name="frequency bands follow EN 50126-1 Table C.1 (per hour, 24 h/day)" time="0.000774" classname="test"/>
-	<testcase name="SIL from TFFR follows EN 50126-2 Table 2 with half-open bands" time="0.000344" classname="test"/>
-	<testcase name="TFFR exactly 1e-5 is Basic Integrity and flagged for confirmation" time="0.000129" classname="test"/>
-	<testcase name="SIL is not applied to mechanical/procedural or non-safety functions (EN 50126-2 10.2.1, 10.3)" time="0.000153" classname="test"/>
-	<testcase name="no &amp;quot;SIL 0&amp;quot; label exists (EN 50129 A.5.1)" time="0.000330" classname="test"/>
-	<testcase name="parseRate accepts common engineering notations" time="0.000547" classname="test"/>
-	<testcase name="OR-sum check (EN 50129 A.4.3.4 NOTE 1)" time="0.000409" classname="test"/>
-	<testcase name="AND credit only with a CCA record proving random and systematic independence" time="0.000649" classname="test"/>
-	<testcase name="THR on a hazard without function is an error (EN 50129 A.4.3.2)" time="0.000174" classname="test"/>
-	<testcase name="rejected measures neither lower the residual risk nor count as control (PATCH-2)" time="0.000863" classname="test"/>
-	<testcase name="hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to-many model)" time="0.000180" classname="test"/>
-	<testcase name="hazard sources are EN 50126-1 7.4.2.1 a) to n) in order" time="0.000104" classname="test"/>
-	<testcase name="measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated" time="0.000214" classname="test"/>
-	<testcase name="assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)" time="0.000087" classname="test"/>
-	<testcase name="cause kinds: schema, labels and editors agree (no silent re-classification on save)" time="0.001420" classname="test"/>
+	<testcase name="risk class reproduces EN 50126-1 Table C.9 for all 24 cells" time="0.002002" classname="test"/>
+	<testcase name="risk class rejects unknown categories instead of mapping silently" time="0.000433" classname="test"/>
+	<testcase name="frequency bands follow EN 50126-1 Table C.1 (per hour, 24 h/day)" time="0.000659" classname="test"/>
+	<testcase name="SIL from TFFR follows EN 50126-2 Table 2 with half-open bands" time="0.000342" classname="test"/>
+	<testcase name="TFFR exactly 1e-5 is Basic Integrity and flagged for confirmation" time="0.000119" classname="test"/>
+	<testcase name="SIL is not applied to mechanical/procedural or non-safety functions (EN 50126-2 10.2.1, 10.3)" time="0.000152" classname="test"/>
+	<testcase name="no &amp;quot;SIL 0&amp;quot; label exists (EN 50129 A.5.1)" time="0.000314" classname="test"/>
+	<testcase name="parseRate accepts common engineering notations" time="0.000403" classname="test"/>
+	<testcase name="OR-sum check (EN 50129 A.4.3.4 NOTE 1)" time="0.000350" classname="test"/>
+	<testcase name="AND credit only with a CCA record proving random and systematic independence" time="0.000620" classname="test"/>
+	<testcase name="THR on a hazard without function is an error (EN 50129 A.4.3.2)" time="0.000171" classname="test"/>
+	<testcase name="rejected measures neither lower the residual risk nor count as control (PATCH-2)" time="0.000811" classname="test"/>
+	<testcase name="hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to-many model)" time="0.000148" classname="test"/>
+	<testcase name="hazard sources are EN 50126-1 7.4.2.1 a) to n) in order" time="0.000090" classname="test"/>
+	<testcase name="measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated" time="0.000184" classname="test"/>
+	<testcase name="assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)" time="0.000117" classname="test"/>
+	<testcase name="cause kinds: schema, labels and editors agree (no silent re-classification on save)" time="0.001156" classname="test"/>
 	<!-- tests 17 -->
 	<!-- suites 0 -->
 	<!-- pass 17 -->
@@ -24,5 +24,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 237.639874 -->
+	<!-- duration_ms 220.325071 -->
 </testsuites>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="likelihood = exposure + vulnerability - 1, only for valid scales" time="0.000908" classname="test"/>
-	<testcase name="default security matrix is complete and monotonic, but not approved" time="0.000551" classname="test"/>
-	<testcase name="risk and residual risk are computed from the matrix; only accepted countermeasures count" time="0.000493" classname="test"/>
-	<testcase name="impact floor follows the worst linked safety severity (proposal)" time="0.000277" classname="test"/>
-	<testcase name="derive: one threat per deliberate cause of an accepted hazard, no duplicates" time="0.001232" classname="test"/>
-	<testcase name="completeness: rationale, hazard link, high risk needs countermeasure, countermeasure needs requirement" time="0.000409" classname="test"/>
-	<testcase name="level 2 report: matrix, threat log, trace; XLSX sheet" time="0.176724" classname="test"/>
+	<testcase name="likelihood = exposure + vulnerability - 1, only for valid scales" time="0.000658" classname="test"/>
+	<testcase name="default security matrix is complete and monotonic, but not approved" time="0.000485" classname="test"/>
+	<testcase name="risk and residual risk are computed from the matrix; only accepted countermeasures count" time="0.000511" classname="test"/>
+	<testcase name="impact floor follows the worst linked safety severity (proposal)" time="0.000244" classname="test"/>
+	<testcase name="derive: one threat per deliberate cause of an accepted hazard, no duplicates" time="0.001067" classname="test"/>
+	<testcase name="completeness: rationale, hazard link, high risk needs countermeasure, countermeasure needs requirement" time="0.000363" classname="test"/>
+	<testcase name="level 2 report: matrix, threat log, trace; XLSX sheet" time="0.161266" classname="test"/>
 	<!-- tests 7 -->
 	<!-- suites 0 -->
 	<!-- pass 7 -->
@@ -14,5 +14,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 385.168356 -->
+	<!-- duration_ms 350.504108 -->
 </testsuites>

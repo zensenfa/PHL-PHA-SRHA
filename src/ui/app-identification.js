@@ -9,7 +9,7 @@ let cachedRows = [];
 // ---------------------------------------------------------- run config ----
 function scopedSources() { const sel = A.state.identConfig.sources; return DATA.sources.filter((s) => !sel || sel.includes(s.id)); }
 function scopedModes() { return DATA.modes.filter((m) => (A.state.sd.modes || []).includes(m.id)); }
-function currentPlan() { return E.planIdentification({ securityLevel: window.RHAS_SECURITY.level(A.state.projectProfile), depth: A.state.identConfig.depth, overrides: A.state.identConfig.overrides, functions: A.state.functions, interfaces: A.state.interfaces, modes: scopedModes(), sources: scopedSources() }); }
+function currentPlan() { return E.planIdentification({ splitGuidewords: A.settings.splitGuidewords === 'on', securityLevel: window.RHAS_SECURITY.level(A.state.projectProfile), depth: A.state.identConfig.depth, overrides: A.state.identConfig.overrides, functions: A.state.functions, interfaces: A.state.interfaces, modes: scopedModes(), sources: scopedSources() }); }
 /**
  * Seconds per call for the run estimate. A cloud model is roughly an order of
  * magnitude faster than a local one, so an estimate taken from a run with a

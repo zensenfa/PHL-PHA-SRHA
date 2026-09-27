@@ -222,10 +222,11 @@ const DEPTHS = {
   maximal: { label: 'Maximal', passes: { function: true, source: true, interface: true, mode: true, interaction: true, critique: true, iterate: true }, description: 'Wie Gründlich, plus zweite Iteration je Funktion gegen die dann vorliegende Liste.' },
 };
 
-function planIdentification({ depth = 'standard', overrides = {}, functions = [], interfaces = [], modes = [], sources = [], maxGapFills = 6, securityLevel = 0 }) {
+function planIdentification({ depth = 'standard', overrides = {}, functions = [], interfaces = [], modes = [], sources = [], maxGapFills = 6, securityLevel = 0, splitGuidewords = false }) {
   const cfg = { ...DEPTHS[depth].passes, ...overrides };
   const passes = [];
-  if (cfg.function) for (const f of functions) passes.push({ kind: 'function', unit: f.id, label: `Funktion ${f.id} ${f.name}` });
+  // Plan B: small local models handle fewer guidewords per call better.
+  if (cfg.function) for (const f of functions) { if (splitGuidewords) { passes.push({ kind: 'function', unit: f.id, gwPart: 1, label: `Funktion ${f.id} ${f.name} (Leitworte 1/2)` }); passes.push({ kind: 'function', unit: f.id, gwPart: 2, label: `Funktion ${f.id} ${f.name} (Leitworte 2/2)` }); } else passes.push({ kind: 'function', unit: f.id, label: `Funktion ${f.id} ${f.name}` }); }
   if (cfg.interface) for (const i of interfaces) passes.push({ kind: 'interface', unit: i.id, label: `Schnittstelle ${i.id} ${i.name}` });
   if (cfg.mode) for (const m of modes) passes.push({ kind: 'mode', unit: m.id, label: `Betriebsart ${m.label}` });
   if (cfg.source) for (const s of sources) passes.push({ kind: 'source', unit: s.id, label: `Gefährdungsquelle ${s.code} ${s.title}` });
@@ -293,7 +294,7 @@ async function runIdentification({ plan, ctx, existingHazards, provider, setting
     const started = Date.now();
     let prompt; let schema = hazardSchema; let query = '';
     const c = { ...ctx, modes, rejectedTitles: rejectedTitles() };
-    if (pass.kind === 'function') { const f = ctx.functions.find((x) => x.id === pass.unit); query = `${f.name} ${f.description} ${f.inputs} ${f.outputs}`; prompt = P.buildFunctionPrompt({ ...c, docs: retrieve(chunks, query) }, f, guidewords, titles()); schema = functionSchema; }
+    if (pass.kind === 'function') { const f = ctx.functions.find((x) => x.id === pass.unit); query = `${f.name} ${f.description} ${f.inputs} ${f.outputs}`; const half = Math.ceil(guidewords.length / 2); const gws = pass.gwPart === 1 ? guidewords.slice(0, half) : pass.gwPart === 2 ? guidewords.slice(half) : guidewords; prompt = P.buildFunctionPrompt({ ...c, docs: retrieve(chunks, query) }, f, gws, titles()); schema = functionSchema; }
     else if (pass.kind === 'interface') { const it = ctx.interfaces.find((x) => x.id === pass.unit); query = `${it.name} ${it.description} ${it.partner}`; prompt = P.buildInterfacePrompt({ ...c, docs: retrieve(chunks, query) }, it, titles()); }
     else if (pass.kind === 'mode') { const m = modes.find((x) => x.id === pass.unit); query = `${m.label} ${m.description}`; prompt = P.buildModePrompt({ ...c, docs: retrieve(chunks, query) }, m, titles()); }
     else if (pass.kind === 'source') { const s = sources.find((x) => x.id === pass.unit); query = `${s.title} ${s.description}`; prompt = P.buildSourcePrompt({ ...c, docs: retrieve(chunks, query) }, s, titles()); }

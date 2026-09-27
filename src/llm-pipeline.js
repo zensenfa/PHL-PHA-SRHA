@@ -4,6 +4,7 @@
 (function () {
 const OLLAMA = typeof require !== 'undefined' ? require('./ollama.js') : window.RHAS_OLLAMA;
 const MISTRAL = typeof require !== 'undefined' ? require('./mistral.js') : window.RHAS_MISTRAL;
+const COMPAT = typeof require !== 'undefined' ? require('./openai-compat.js') : window.RHAS_OPENAI_COMPAT;
 
 // Configurable defaults, not requirements: stamped into the run log so a
 // reviewer sees what was actually used. To be recalibrated on measured
@@ -112,7 +113,8 @@ async function callLlm({ provider, settings, systemPrompt, userPrompt, schema, s
   if (provider === 'mistral-api') {
     return MISTRAL.callMistral({ systemPrompt, userPrompt, apiKey: settings.mistralApiKey, model: settings.mistralModel, signal, schema, onToken });
   }
-  return OLLAMA.callOllama({ systemPrompt, userPrompt, ollamaUrl: settings.ollamaUrl, model: settings.ollamaModel, signal, schema, onToken });
+  if (provider === 'openai-compat') return COMPAT.callOpenAiCompat({ systemPrompt, userPrompt, baseUrl: settings.compatUrl, model: settings.compatModel, apiKey: settings.compatApiKey, signal, schema, onToken });
+  return OLLAMA.callOllama({ systemPrompt, userPrompt, ollamaUrl: settings.ollamaUrl, model: settings.ollamaModel, signal, schema, onToken, numCtx: Number(settings.ollamaNumCtx) || 32768, think: settings.ollamaThink === 'on' ? true : settings.ollamaThink === 'off' ? false : 'auto', keepAlive: settings.ollamaKeepAlive || '30m' });
 }
 
 /**
@@ -187,7 +189,18 @@ async function preflightMistral(apiKey, model) {
 
 async function preflight(provider, settings) {
   if (provider === 'mistral-api') return preflightMistral(settings.mistralApiKey, settings.mistralModel);
-  return preflightOllama(settings.ollamaUrl, settings.ollamaModel);
+  if (provider === 'openai-compat') return COMPAT.preflightOpenAiCompat(settings.compatUrl, settings.compatModel, settings.compatApiKey);
+  const r = await preflightOllama(settings.ollamaUrl, settings.ollamaModel);
+  if (!r.ok) return r;
+  // Plan B: model details — warn if the configured context exceeds what the model supports.
+  try {
+    const info = await OLLAMA.modelInfo(settings.ollamaUrl, settings.ollamaModel);
+    const numCtx = Number(settings.ollamaNumCtx) || 32768;
+    const warnings = [];
+    if (info.contextLength && info.contextLength < numCtx) warnings.push(`Modell unterstützt nur ${info.contextLength} Token Kontext (eingestellt ${numCtx}).`);
+    if (info.capabilities.includes('thinking') && (settings.ollamaThink || 'auto') === 'auto') warnings.push('Modell mit Denkmodus: bei leeren oder unstrukturierten Antworten „Denkmodus“ auf „aus“ oder „an“ stellen und testen.');
+    return { ...r, info, warnings };
+  } catch { return r; }
 }
 
 /**

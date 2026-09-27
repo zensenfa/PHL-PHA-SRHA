@@ -55,11 +55,11 @@ A.tabs = (containerId) => {
 
 // --------------------------------------------------------------- settings ----
 const SETTINGS_KEY = 'rhas_settings';
-A.loadSettings = () => { try { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300 }; } };
+A.loadSettings = () => { try { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ollamaNumCtx: 32768, ollamaThink: 'auto', ollamaKeepAlive: '30m', compatUrl: 'http://127.0.0.1:1234', compatModel: '', compatApiKey: '', splitGuidewords: 'off', ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ollamaNumCtx: 32768, ollamaThink: 'auto', ollamaKeepAlive: '30m', compatUrl: 'http://127.0.0.1:1234', compatModel: '', compatApiKey: '', splitGuidewords: 'off' }; } };
 A.saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(A.settings));
-A.provider = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider); return { provider: A.settings.provider, settings: { ...A.settings, blockedReason: g.ok ? '' : g.reason } }; };
+A.provider = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider, A.settings); return { provider: A.settings.provider, settings: { ...A.settings, blockedReason: g.ok ? '' : g.reason } }; };
 /** WP2: confidential projects may only use a local model; call before starting any AI action. */
-A.aiAllowed = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider); if (!g.ok) A.toast(g.reason, 'err'); return g.ok; };
+A.aiAllowed = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider, A.settings); if (!g.ok) A.toast(g.reason, 'err'); return g.ok; };
 A.runState = () => PIPE.createRunState({ softCapCalls: Number(A.settings.softCapCalls) || 80, hardCapCalls: Number(A.settings.hardCapCalls) || 300 });
 
 A.checkProvider = async () => {
@@ -67,21 +67,23 @@ A.checkProvider = async () => {
   dot.className = 'dot'; lab.textContent = 'KI: prüfe…';
   try {
     const r = await PIPE.preflight(A.settings.provider, A.settings);
-    if (r.ok) { dot.classList.add('ok'); lab.textContent = `KI: ${A.settings.provider === 'ollama' ? A.settings.ollamaModel : A.settings.mistralModel}`; A.el('btn-provider').title = 'Verbindung OK'; }
+    if (r.ok) { dot.classList.add('ok'); lab.textContent = `KI: ${A.settings.provider === 'ollama' ? A.settings.ollamaModel : A.settings.provider === 'openai-compat' ? (A.settings.compatModel || 'lokaler Server') : A.settings.mistralModel}${A.settings.provider === 'mistral-api' ? '' : ' · offline'}`; A.el('btn-provider').title = 'Verbindung OK'; }
     else { dot.classList.add('err'); lab.textContent = 'KI: Fehler'; A.el('btn-provider').title = r.error || r.message || 'Fehler'; }
     if (r.models && A.el('ollama-models')) A.el('ollama-models').innerHTML = r.models.map((m) => `<option value="${A.esc(m)}">`).join('');
+    if (r.models && A.el('compat-models')) A.el('compat-models').innerHTML = r.models.map((m) => `<option value="${A.esc(m)}">`).join('');
+    if (!r.ok && location.protocol === 'file:' && A.settings.provider !== 'mistral-api') r.message = `${r.message || ''} Hinweis: Aufruf aus file:// wird von Ollama ohne passende OLLAMA_ORIGINS abgelehnt – Anwendung über den Starter (http://127.0.0.1:8765) öffnen.`;
     return r;
   } catch (e) { dot.classList.add('err'); lab.textContent = 'KI: Fehler'; A.el('btn-provider').title = e.message; return { ok: false, error: e.message }; }
 };
 
 function bindSettings() {
   const p = A.el('settings-panel');
-  const fill = () => { A.el('set-provider').value = A.settings.provider; A.el('set-ollama-url').value = A.settings.ollamaUrl; A.el('set-ollama-model').value = A.settings.ollamaModel; A.el('set-mistral-model').value = A.settings.mistralModel; A.el('set-mistral-key').value = A.settings.mistralApiKey; A.el('set-soft-calls').value = A.settings.softCapCalls; A.el('set-hard-calls').value = A.settings.hardCapCalls; A.el('cloud-warning').classList.toggle('hidden', A.settings.provider !== 'mistral-api'); };
-  const read = () => { A.settings = { ...A.settings, provider: A.el('set-provider').value, ollamaUrl: A.el('set-ollama-url').value.trim(), ollamaModel: A.el('set-ollama-model').value.trim(), mistralModel: A.el('set-mistral-model').value.trim(), mistralApiKey: A.el('set-mistral-key').value.trim(), softCapCalls: Number(A.el('set-soft-calls').value) || 80, hardCapCalls: Number(A.el('set-hard-calls').value) || 300 }; };
+  const fill = () => { A.el('set-provider').value = A.settings.provider; A.el('set-ollama-url').value = A.settings.ollamaUrl; A.el('set-ollama-model').value = A.settings.ollamaModel; A.el('set-mistral-model').value = A.settings.mistralModel; A.el('set-mistral-key').value = A.settings.mistralApiKey; A.el('set-soft-calls').value = A.settings.softCapCalls; A.el('set-hard-calls').value = A.settings.hardCapCalls; A.el('set-ollama-ctx').value = A.settings.ollamaNumCtx; A.el('set-ollama-think').value = A.settings.ollamaThink; A.el('set-ollama-keep').value = A.settings.ollamaKeepAlive; A.el('set-compat-url').value = A.settings.compatUrl; A.el('set-compat-model').value = A.settings.compatModel; A.el('set-compat-key').value = A.settings.compatApiKey; A.el('set-split-gw').value = A.settings.splitGuidewords; A.el('file-origin-warning').classList.toggle('hidden', !(location.protocol === 'file:' && A.settings.provider !== 'mistral-api')); A.el('cloud-warning').classList.toggle('hidden', A.settings.provider !== 'mistral-api'); };
+  const read = () => { A.settings = { ...A.settings, provider: A.el('set-provider').value, ollamaUrl: A.el('set-ollama-url').value.trim(), ollamaModel: A.el('set-ollama-model').value.trim(), mistralModel: A.el('set-mistral-model').value.trim(), mistralApiKey: A.el('set-mistral-key').value.trim(), softCapCalls: Number(A.el('set-soft-calls').value) || 80, hardCapCalls: Number(A.el('set-hard-calls').value) || 300, ollamaNumCtx: Number(A.el('set-ollama-ctx').value) || 32768, ollamaThink: A.el('set-ollama-think').value, ollamaKeepAlive: A.el('set-ollama-keep').value.trim() || '30m', compatUrl: A.el('set-compat-url').value.trim(), compatModel: A.el('set-compat-model').value.trim(), compatApiKey: A.el('set-compat-key').value.trim(), splitGuidewords: A.el('set-split-gw').value }; };
   A.el('btn-provider').onclick = () => { fill(); p.classList.remove('hidden'); };
   A.el('settings-close').onclick = () => p.classList.add('hidden');
-  A.el('set-provider').onchange = () => A.el('cloud-warning').classList.toggle('hidden', A.el('set-provider').value !== 'mistral-api');
-  A.el('btn-settings-test').onclick = async () => { read(); A.el('settings-status').textContent = 'Prüfe…'; const r = await A.checkProvider(); A.el('settings-status').textContent = r.ok ? `OK${r.models ? ` — verfügbare Modelle: ${r.models.join(', ')}` : ''}` : `Fehler: ${r.error || r.message || 'unbekannt'}`; };
+  A.el('set-provider').onchange = () => { const v = A.el('set-provider').value; A.el('cloud-warning').classList.toggle('hidden', v !== 'mistral-api'); A.el('file-origin-warning').classList.toggle('hidden', !(location.protocol === 'file:' && v !== 'mistral-api')); };
+  A.el('btn-settings-test').onclick = async () => { read(); A.el('settings-status').textContent = 'Prüfe…'; const r = await A.checkProvider(); A.el('settings-status').textContent = r.ok ? `OK${r.info ? ` — Kontext des Modells: ${r.info.contextLength || '?'} Token, Fähigkeiten: ${(r.info.capabilities || []).join(', ') || '–'}${r.info.parameterSize ? `, ${r.info.parameterSize} ${r.info.quantization}` : ''}` : ''}${r.models ? ` — verfügbare Modelle: ${r.models.join(', ')}` : ''}${(r.warnings || []).length ? ` — Hinweise: ${r.warnings.join(' ')}` : ''}` : `Fehler: ${r.error || r.message || 'unbekannt'}`; };
   A.el('btn-settings-save').onclick = async () => { read(); A.saveSettings(); p.classList.add('hidden'); A.toast('Einstellungen gespeichert'); A.checkProvider(); };
 }
 

@@ -153,12 +153,20 @@ function promptLine(p) {
 }
 
 /** Confidential projects may only use a local model. */
-function aiProviderAllowed(p, provider) {
-  if (p && p.dataClassification === 'confidential' && provider !== 'ollama') return { ok: false, reason: 'Projekt ist als vertraulich klassifiziert: nur lokale KI (Ollama) zulässig. Anbieter unter „KI“ umstellen oder Klassifizierung im Projektprofil begründet ändern.' };
-  return { ok: true, reason: '' };
+/** Host on this machine or in a private network (on-premise server). */
+function isLocalUrl(url) {
+  let h; try { h = new URL(url).hostname.replace(/^\[|\]$/g, ''); } catch { return false; }
+  return h === 'localhost' || h === '::1' || /^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) || /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /\.local$/.test(h) || /^0\.0\.0\.0$/.test(h);
+}
+/** Confidential projects may only use a local or on-premise model. */
+function aiProviderAllowed(p, provider, settings = {}) {
+  if (!(p && p.dataClassification === 'confidential')) return { ok: true, reason: '' };
+  const url = provider === 'ollama' ? (settings.ollamaUrl || 'http://localhost:11434') : provider === 'openai-compat' ? settings.compatUrl : '';
+  if ((provider === 'ollama' || provider === 'openai-compat') && isLocalUrl(url)) return { ok: true, reason: '' };
+  return { ok: false, reason: 'Projekt ist als vertraulich klassifiziert: nur lokale KI (Ollama oder lokaler Server im eigenen Netz) zulässig. Anbieter unter „KI“ umstellen oder Klassifizierung im Projektprofil begründet ändern.' };
 }
 
-const api = { OPTIONS, RAP, PHASES, SECURITY_LEVELS, IMPLEMENTED_SECURITY_LEVELS, DEFAULT_CALIBRATION, makeProjectProfile, migrateProfile, validateProjectProfile, diffProfile, applyProfileChange, label, summaryRows, promptLine, aiProviderAllowed };
+const api = { OPTIONS, RAP, PHASES, SECURITY_LEVELS, IMPLEMENTED_SECURITY_LEVELS, DEFAULT_CALIBRATION, makeProjectProfile, migrateProfile, validateProjectProfile, diffProfile, applyProfileChange, label, summaryRows, promptLine, aiProviderAllowed, isLocalUrl };
 if (typeof module !== 'undefined' && module.exports) module.exports = api;
 if (typeof window !== 'undefined') window.RHAS_PROFILE = api;
 })();

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="level 1 is selectable and needs no level-0 justification" time="0.001012" classname="test"/>
-	<testcase name="level 1 plans one threat pass per interface plus the safety/security interaction check" time="0.000380" classname="test"/>
-	<testcase name="threat prompt: EN 50159 threats, existing hazards, security context, no THR/SIL" time="0.005208" classname="test"/>
-	<testcase name="threat pass: link to existing hazard, intentional causes, threat ids filtered, interface set" time="0.004786" classname="test"/>
-	<testcase name="deliberate cause without security measure is not controlled; SIL/THR are not credit" time="0.000895" classname="test"/>
-	<testcase name="level 1 report: security section with context, hazards, coverage, requirements; level 0 unchanged" time="0.069729" classname="test"/>
+	<testcase name="level 1 is selectable and needs no level-0 justification" time="0.000857" classname="test"/>
+	<testcase name="level 1 plans one threat pass per interface plus the safety/security interaction check" time="0.000317" classname="test"/>
+	<testcase name="threat prompt: EN 50159 threats, existing hazards, security context, no THR/SIL" time="0.003957" classname="test"/>
+	<testcase name="threat pass: link to existing hazard, intentional causes, threat ids filtered, interface set" time="0.004192" classname="test"/>
+	<testcase name="deliberate cause without security measure is not controlled; SIL/THR are not credit" time="0.000867" classname="test"/>
+	<testcase name="level 1 report: security section with context, hazards, coverage, requirements; level 0 unchanged" time="0.073712" classname="test"/>
 	<!-- tests 6 -->
 	<!-- suites 0 -->
 	<!-- pass 6 -->
@@ -13,5 +13,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 306.406639 -->
+	<!-- duration_ms 272.361257 -->
 </testsuites>

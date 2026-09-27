@@ -38,8 +38,15 @@ function extractAndParseJSON(text) {
  * per-chunk stale timer to detect a genuinely dead connection, and
  * cooperative cancellation via `signal`.
  */
-async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperature = 0.3, onToken, signal: externalSignal, schema }) {
+/** Conservative token estimate for German prompts (about 3 characters per token). */
+function estimatePromptTokens(...texts) { return Math.ceil(texts.join('').length / 3); }
+const OUTPUT_RESERVE = 4096; // tokens kept free for the answer
+
+async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperature = 0.3, onToken, signal: externalSignal, schema, numCtx = 32768, think = 'auto', keepAlive = '30m' }) {
   const url = (ollamaUrl || DEFAULT_OLLAMA_URL).replace(/\/$/, '') + '/api/chat';
+  // Plan B: Ollama silently drops the start of a prompt that exceeds num_ctx. Refuse instead.
+  const estimate = estimatePromptTokens(systemPrompt || '', userPrompt || '');
+  if (estimate + OUTPUT_RESERVE > numCtx) throw new Error(`Prompt zu lang für den eingestellten Kontext (geschätzt ${estimate} Token + ${OUTPUT_RESERVE} für die Antwort > num_ctx ${numCtx}). Kontextlänge in den KI-Einstellungen erhöhen oder Dokumente kürzen.`);
   const ctrl = new AbortController();
   let userCancelled = false;
   if (externalSignal) {
@@ -58,8 +65,11 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
     // Ollama 0.5+: a JSON Schema here enforces the structure via constrained
     // decoding. Without a schema, fall back to plain JSON mode.
     format: schema || 'json',
-    options: { temperature, num_ctx: 32768 },
+    options: { temperature, num_ctx: numCtx },
+    keep_alive: keepAlive,
   };
+  // Thinking models: 'auto' leaves the model default; true/false set it explicitly.
+  if (think === true || think === false) body.think = think;
 
   let staleTimer = null;
   let firstChunkSeen = false;
@@ -83,6 +93,8 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
     const reader = resp.body.getReader();
     let buf = '';
     let content = '';
+    let thinking = '';
+    let promptEvalCount = null;
     let tokenCount = 0;
     let streamDone = false;
     resetStale();
@@ -114,7 +126,9 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
             tokenCount++;
             if (onToken) onToken({ content, tokenCount });
           }
+          if (obj.message && obj.message.thinking) thinking += obj.message.thinking;
           if (obj.done) {
+            if (typeof obj.prompt_eval_count === 'number') promptEvalCount = obj.prompt_eval_count;
             streamDone = true;
             break;
           }
@@ -123,8 +137,14 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
     } finally {
       reader.cancel().catch(() => {});
     }
+    // Some thinking models put the whole answer into the thinking field.
+    if (!content.trim() && thinking.includes('{')) content = thinking.slice(thinking.indexOf('{'));
     if (!content) throw new Error('Ollama returned an empty response. Check that the model is loaded.');
-    return { content, tokenCount };
+    // Truncation check: far fewer evaluated prompt tokens than estimated, or the context completely filled.
+    if (promptEvalCount != null && (promptEvalCount < estimate * 0.5 || promptEvalCount >= numCtx - 8)) {
+      throw new Error(`Kontext möglicherweise gekürzt: Ollama hat ${promptEvalCount} Prompt-Token verarbeitet, erwartet etwa ${estimate} (num_ctx ${numCtx}). Kontextlänge prüfen.`);
+    }
+    return { content, tokenCount, promptEvalCount, estimate };
   } catch (e) {
     if (e.name === 'AbortError') {
       if (userCancelled) throw new Error('Generation was cancelled.');
@@ -142,7 +162,18 @@ async function callOllama({ systemPrompt, userPrompt, model, ollamaUrl, temperat
   }
 }
 
-const api = { DEFAULT_OLLAMA_URL, DEFAULT_MODEL, promptHash, extractAndParseJSON, callOllama };
+/** Model details from /api/show: context length and capabilities (e.g. 'thinking'). */
+async function modelInfo(ollamaUrl, model) {
+  const base = (ollamaUrl || DEFAULT_OLLAMA_URL).replace(/\/$/, '');
+  const r = await fetch(`${base}/api/show`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: model || DEFAULT_MODEL }) });
+  if (!r.ok) throw new Error(`api/show ${r.status}`);
+  const d = await r.json();
+  const mi = d.model_info || {};
+  const key = Object.keys(mi).find((k) => k.endsWith('.context_length'));
+  return { contextLength: key ? Number(mi[key]) : null, capabilities: d.capabilities || [], parameterSize: (d.details || {}).parameter_size || '', quantization: (d.details || {}).quantization_level || '' };
+}
+
+const api = { DEFAULT_OLLAMA_URL, DEFAULT_MODEL, OUTPUT_RESERVE, estimatePromptTokens, promptHash, extractAndParseJSON, callOllama, modelInfo };
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;

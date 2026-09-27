@@ -307,15 +307,23 @@
   <div class="modal-card">
     <div class="modal-head"><strong>KI-Anbieter</strong><span class="spacer"></span><button id="settings-close" class="btn small" type="button">Schließen</button></div>
     <div class="form-grid">
-      <label class="fld"><span>Anbieter</span><select id="set-provider"><option value="ollama">Ollama (lokal, offline)</option><option value="mistral-api">Mistral API (Cloud)</option></select></label>
+      <label class="fld"><span>Anbieter</span><select id="set-provider"><option value="ollama">Ollama (lokal, offline)</option><option value="openai-compat">Lokaler Server, OpenAI-kompatibel (LM Studio, llama-server, vLLM)</option><option value="mistral-api">Mistral API (Cloud)</option></select></label>
       <label class="fld"><span>Ollama-URL</span><input id="set-ollama-url" /></label>
       <label class="fld"><span>Ollama-Modell</span><input id="set-ollama-model" list="ollama-models" /><datalist id="ollama-models"></datalist></label>
+      <label class="fld"><span>Ollama: Kontextlänge (num_ctx)</span><input id="set-ollama-ctx" type="number" min="4096" step="1024" /></label>
+      <label class="fld"><span>Ollama: Denkmodus</span><select id="set-ollama-think"><option value="auto">Modellstandard</option><option value="off">aus</option><option value="on">an</option></select></label>
+      <label class="fld"><span>Ollama: Modell geladen halten</span><input id="set-ollama-keep" placeholder="30m" /></label>
+      <label class="fld"><span>Lokaler Server: URL</span><input id="set-compat-url" placeholder="http://127.0.0.1:1234" /></label>
+      <label class="fld"><span>Lokaler Server: Modell</span><input id="set-compat-model" list="compat-models" /><datalist id="compat-models"></datalist></label>
+      <label class="fld"><span>Lokaler Server: Schlüssel (optional)</span><input id="set-compat-key" type="password" autocomplete="off" /></label>
+      <label class="fld"><span>Kleine Modelle: Leitworte je Funktion in 2 Aufrufe teilen</span><select id="set-split-gw"><option value="off">nein</option><option value="on">ja</option></select></label>
       <label class="fld"><span>Mistral-Modell</span><input id="set-mistral-model" /></label>
       <label class="fld"><span>Mistral-API-Schlüssel</span><input id="set-mistral-key" type="password" autocomplete="off" /></label>
       <label class="fld"><span>Weiche Obergrenze (Aufrufe)</span><input id="set-soft-calls" type="number" min="1" /></label>
       <label class="fld"><span>Harte Obergrenze (Aufrufe)</span><input id="set-hard-calls" type="number" min="1" /></label>
     </div>
     <div id="cloud-warning" class="warn hidden">Cloud-Anbieter: Systembeschreibung, Dokumentauszüge und Gefährdungen verlassen das Gerät. Der Schlüssel wird nur lokal im Browser gespeichert und niemals exportiert.</div>
+    <div id="file-origin-warning" class="warn hidden">Die Anwendung ist als Datei (file://) geöffnet. Der Browser sendet dann die Herkunft „null“, die Ollama standardmäßig ablehnt. Empfohlen: mit dem Starter (start-rhas) unter http://127.0.0.1:8765 öffnen. Alternativ OLLAMA_ORIGINS gezielt setzen – niemals „*“, sonst kann jede besuchte Webseite das lokale Modell nutzen. Hinweis: Projekte sind je Herkunft gespeichert; beim Wechsel per JSON exportieren und importieren.</div>
     <div id="settings-status" class="hint"></div>
     <div class="row"><button id="btn-settings-test" class="btn" type="button">Verbindung prüfen</button><button id="btn-settings-save" class="btn primary" type="button">Speichern</button></div>
   </div>

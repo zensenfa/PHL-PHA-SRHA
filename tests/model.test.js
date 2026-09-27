@@ -138,3 +138,13 @@ test('assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)', () => {
   const f = M.SYSTEM_DEFINITION_FIELDS.find((x) => x.key === 'assumptions');
   assert.equal(f.ref, '7.3.2.1 d)');
 });
+
+test('cause kinds: schema, labels and editors agree (no silent re-classification on save)', () => {
+  const S = require('../src/schemas.js');
+  const fs = require('fs'); const path = require('path');
+  assert.deepEqual([...S.CAUSE_KINDS].sort(), Object.keys(M.LABELS.causeKind).sort());
+  for (const f of ['ui/app-analysis.js', 'ui/app-identification.js']) {
+    const src = fs.readFileSync(path.join(__dirname, '../src', f), 'utf8');
+    assert.ok(!/\['systematic', 'random', 'human', 'external'\]/.test(src), `${f}: hard-coded cause kind list`);
+  }
+});

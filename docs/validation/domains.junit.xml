@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="every profile domain resolves to a pack; unknown domains fall back to generic" time="0.002192" classname="test"/>
+	<testcase name="packs are complete and use valid enums" time="0.000348" classname="test"/>
+	<testcase name="prompts contain no hard-coded domain wording (source check)" time="0.000422" classname="test"/>
+	<testcase name="function and decomposition prompts use the examples of the project domain" time="0.000670" classname="test"/>
+	<testcase name="critique prompt carries the domain checklist" time="0.000296" classname="test"/>
+	<testcase name="reports list the domain standards of the project pack" time="0.052487" classname="test"/>
+	<testcase name="the embedded demo is the Lynx project with a confirmed profile and all five stages populated" time="0.014999" classname="test"/>
+	<testcase name="demo carries prepared security data for levels 1-3 (hidden at level 0)" time="0.069914" classname="test"/>
+	<!-- tests 8 -->
+	<!-- suites 0 -->
+	<!-- pass 8 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 346.917362 -->
+</testsuites>

@@ -65,3 +65,17 @@ test('the embedded demo is the Lynx project with a confirmed profile and all fiv
   assert.ok(demo.hazards.length >= 2 && demo.requirements.length >= 3 && demo.ccas.length >= 1);
   assert.equal(demo.meta.systemDefinition.documents.length, 5);
 });
+
+test('demo carries prepared security data for levels 1-3 (hidden at level 0)', () => {
+  const demo = JSON.parse(fs.readFileSync(path.join(__dirname, '../src/data/demo-project.json'), 'utf8'));
+  const Z = require('../src/zones.js');
+  assert.equal(demo.meta.projectProfile.security.level, 0);
+  assert.equal(demo.meta.threats.length, 3);
+  assert.equal(demo.meta.zones.length, 3);
+  assert.equal(Z.check({ zones: demo.meta.zones, conduits: demo.meta.conduits, functions: demo.functions, interfaces: demo.meta.interfaces }).ok, true);
+  const s3 = structuredClone(demo); s3.meta.projectProfile.security = { level: 3, standard: 'ts50701-2023', justification: '' };
+  const txt = docxText(R.buildDocx('full', bundleFrom(s3)));
+  for (const t of ['Replay einer Ausschaltmeldung', 'Warnkette an der Strecke', 'Authentisierte Funkmeldungen']) assert.ok(txt.includes(t), t);
+  const t0 = docxText(R.buildDocx('full', bundleFrom(demo)));
+  for (const t of ['Replay einer Ausschaltmeldung', 'Angreifer spielt', 'Nachrichtenauthentisierung', 'Authentisierte Funkmeldungen']) assert.ok(!t0.includes(t), `hidden at level 0: ${t}`);
+});

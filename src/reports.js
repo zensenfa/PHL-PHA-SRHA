@@ -59,7 +59,7 @@ function specSecMatrix(b) {
 function specThreatLog(b) {
   const st = { open: 'offen', treated: 'behandelt', accepted: 'akzeptiert', transferred: 'übertragen' };
   const rows = b.threats.map((t) => [t.id, `${t.title}${t.description ? `\n${t.description}` : ''}`, join((t.threatClasses || []).map((x) => SEC.threatLabel(x))), join(t.hazards || []), `${t.exposure || '–'} / ${t.vulnerability || '–'} / ${t.likelihood || '–'}`, t.impact || '–', secCell(t.risk, b), join((t.countermeasures || []).filter((m) => m.status !== 'rejected').map((m) => `${m.id}: ${m.text}${m.status === 'accepted' ? '' : ' (vorgeschlagen)'}`)) || '–', secCell(t.residualRisk, b), st[t.status] || t.status]);
-  return { key: 'threatlog', title: 'Bedrohungsprotokoll', landscape: true, fontSize: 8, columns: [{ header: 'ID', width: 0.05 }, { header: 'Bedrohung', width: 0.2 }, { header: 'Klassen', width: 0.1 }, { header: 'Gefährdungen', width: 0.07 }, { header: 'E / V / W', width: 0.07 }, { header: 'Ausw.', width: 0.05 }, { header: 'Risiko', width: 0.07 }, { header: 'Gegenmaßnahmen', width: 0.24 }, { header: 'Rest', width: 0.07 }, { header: 'Status', width: 0.08 }], rows };
+  return { key: 'threatlog', title: 'Bedrohungsprotokoll', landscape: true, fontSize: 8, columns: [{ header: 'ID', width: 0.05 }, { header: 'Bedrohung', width: 0.18 }, { header: 'Klassen', width: 0.1 }, { header: 'Gefährdung', width: 0.09 }, { header: 'E / V / W', width: 0.07 }, { header: 'Ausw.', width: 0.05 }, { header: 'Risiko', width: 0.07 }, { header: 'Gegenmaßnahmen', width: 0.24 }, { header: 'Rest', width: 0.07 }, { header: 'Status', width: 0.08 }], rows };
 }
 function specThreatTrace(b) {
   return { key: 'threattrace', title: 'Nachverfolgbarkeit Bedrohung → Gefährdung → Anforderung', columns: [{ header: 'Bedrohung', width: 0.2 }, { header: 'Gefährdungen', width: 0.4 }, { header: 'Anforderungen', width: 0.4 }], rows: TL.traceRows(b.threats, b.hazards, b.requirements).map((r) => [r.threat, join(r.hazards) || 'offen', join(r.requirements) || 'offen']) };
@@ -415,6 +415,11 @@ ${body}
 
 // ---------------------------------------------------------------- bundle ----
 function makeBundle({ zones, conduits, threats, securityCalibration, profile, project, docControl, sd, functions, interfaces, subsystems, hazards, requirements, ccas, runs, calibration, data, version }) {
+  // Security level 0: data prepared for higher levels stays stored but is not reported (the report states that deliberate acts are not considered).
+  if (SEC.level(PROFILE.migrateProfile(profile)) === 0) {
+    hazards = (hazards || []).map((h) => ({ ...h, causes: (h.causes || []).filter((c) => c.kind !== 'intentional'), measures: (h.measures || []).filter((m) => !m.securityRelated), threats: [] }));
+    requirements = (requirements || []).filter((r) => !r.securityRelated);
+  }
   M.setCalibration(calibration); // WP3: labels and ranks from the project calibration
   const exportedAt = new Date().toISOString();
   const stats = M.projectStats({ hazards, requirements, functions, sd });

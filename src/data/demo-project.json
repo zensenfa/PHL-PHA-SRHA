@@ -3,7 +3,7 @@
   "exportedAt": "2026-09-24T08:00:00.000Z",
   "project": {
     "name": "Beispiel: Minimel Lynx ATWS – Gleiserneuerung Reiden Süd (fiktiv)",
-    "description": "Fiktives Demonstrationsprojekt mit Systemdefinition, zwei Leitgefährdungen, Anforderungen, SRAC und CCA — keine realen Projektdaten."
+    "description": "Fiktives Demonstrationsprojekt mit Systemdefinition, zwei Leitgefährdungen, Anforderungen, SRAC und CCA sowie vorbereiteten Security-Daten für die Stufen 1–3 — keine realen Projekt- oder Produktdaten."
   },
   "meta": {
     "systemDefinition": {
@@ -72,7 +72,13 @@
           "note": "",
           "addedAt": "2026-09-22T08:00:00.000Z"
         }
-      ]
+      ],
+      "secAttacker": "sophisticated",
+      "secTransmission": "3",
+      "secAccess": "Einschaltstellen, Funkwarngeräte und Zentrale stehen ungeschützt im öffentlich zugänglichen Gleisumfeld; Diebstahl und Manipulation während der Bauzeit möglich.",
+      "secMaintenance": "Parametrierung und Diagnose über einen Service-Laptop mit Kabelverbindung zur Zentrale; Laptop wird zwischen Baustellen transportiert.",
+      "secUpdate": "Firmware-Aktualisierung durch den Hersteller in der Werkstatt; im Feld keine Aktualisierung vorgesehen (Annahme, zu bestätigen).",
+      "secKeys": "Schlüssel- und Berechtigungskonzept für Funk und Parametrierung unbekannt – offene Frage an den Hersteller."
     },
     "interfaces": [
       {
@@ -260,7 +266,294 @@
           "changes": []
         }
       ]
-    }
+    },
+    "threats": [
+      {
+        "id": "T-0001",
+        "title": "Replay einer Ausschaltmeldung",
+        "description": "Aufgezeichnete Ausschaltmeldung wird erneut eingespielt; die Zentrale beendet die Warnung, obwohl ein Zug naht.",
+        "threatClasses": [
+          "repetition",
+          "masquerade"
+        ],
+        "actor": "",
+        "interfaces": [
+          "IF-0003"
+        ],
+        "functions": [
+          "F-0008"
+        ],
+        "hazards": [
+          "H-0002"
+        ],
+        "sourceCause": "Angreifer spielt eine aufgezeichnete Ausschaltmeldung erneut ein und beendet die Warnung vorzeitig",
+        "cia": {
+          "c": false,
+          "i": true,
+          "a": false
+        },
+        "exposure": 3,
+        "exposureRationale": "Lizenzfreier Funk im öffentlichen Raum, Aufzeichnung mit handelsüblichem SDR möglich.",
+        "vulnerability": 2,
+        "vulnerabilityRationale": "Schutz durch Authentisierung nicht nachgewiesen (offene Frage an den Hersteller).",
+        "impact": "B",
+        "impactRationale": "Führt zu H-0002 mit Schadensausmaß kritisch.",
+        "likelihood": 4,
+        "risk": "secHigh",
+        "residualRisk": "secHigh",
+        "countermeasures": [
+          {
+            "id": "G1",
+            "text": "Nachrichtenauthentisierung mit Sequenznummer und Zeitstempel",
+            "status": "accepted",
+            "residualExposure": 3,
+            "residualVulnerability": 1,
+            "requirements": [
+              "R-0004"
+            ],
+            "rationale": ""
+          }
+        ],
+        "status": "open",
+        "owner": "Hersteller",
+        "notes": "",
+        "createdAt": "2026-09-24T08:00:00.000Z",
+        "createdBy": "Demo",
+        "updatedAt": "2026-09-24T08:00:00.000Z",
+        "updatedBy": "Demo"
+      },
+      {
+        "id": "T-0002",
+        "title": "Manipulierte Projektierung über den Service-Laptop",
+        "description": "Einschaltdistanz oder Sektorzuordnung werden über den Parametrierzugang böswillig verändert.",
+        "threatClasses": [
+          "maliciousConfiguration"
+        ],
+        "actor": "",
+        "interfaces": [
+          "IF-0012"
+        ],
+        "functions": [
+          "F-0012"
+        ],
+        "hazards": [
+          "H-0001"
+        ],
+        "sourceCause": "Manipulierte Projektierungsdaten der Einschaltstellen über den Service-Laptop",
+        "cia": {
+          "c": false,
+          "i": true,
+          "a": false
+        },
+        "exposure": 1,
+        "exposureRationale": "Nur mit physischem Zugriff auf Laptop und Zentrale.",
+        "vulnerability": 2,
+        "vulnerabilityRationale": "Keine Signatur der Konfigurationsdateien bekannt.",
+        "impact": "B",
+        "impactRationale": "Führt zu H-0001 mit Schadensausmaß kritisch.",
+        "likelihood": 2,
+        "risk": "secMedium",
+        "residualRisk": "secLow",
+        "countermeasures": [
+          {
+            "id": "G1",
+            "text": "Signierte Konfigurationsdateien, Vier-Augen-Freigabe, Laptop unter Verschluss",
+            "status": "accepted",
+            "residualExposure": 1,
+            "residualVulnerability": 1,
+            "requirements": [
+              "R-0005"
+            ],
+            "rationale": ""
+          }
+        ],
+        "status": "treated",
+        "owner": "Anwender",
+        "notes": "",
+        "createdAt": "2026-09-24T08:00:00.000Z",
+        "createdBy": "Demo",
+        "updatedAt": "2026-09-24T08:00:00.000Z",
+        "updatedBy": "Demo"
+      },
+      {
+        "id": "T-0003",
+        "title": "Gezielte Funkstörung",
+        "description": "Störsender blockiert die Funkstrecken.",
+        "threatClasses": [
+          "jamming"
+        ],
+        "actor": "",
+        "interfaces": [
+          "IF-0003"
+        ],
+        "functions": [
+          "F-0002",
+          "F-0010"
+        ],
+        "hazards": [
+          "H-0002"
+        ],
+        "sourceCause": "Gezielte Funkstörung unterdrückt Einschaltmeldungen",
+        "cia": {
+          "c": false,
+          "i": false,
+          "a": true
+        },
+        "exposure": 3,
+        "exposureRationale": "Störsender im öffentlichen Raum einfach einsetzbar.",
+        "vulnerability": 3,
+        "vulnerabilityRationale": "Funkstörung lässt sich nicht verhindern.",
+        "impact": "D",
+        "impactRationale": "Lebenszeichenüberwachung führt in die Störungswarnung (sicherer Zustand); Folge ist Verfügbarkeitsverlust, kein Unfall.",
+        "likelihood": 5,
+        "risk": "secMedium",
+        "residualRisk": "secMedium",
+        "countermeasures": [],
+        "status": "accepted",
+        "owner": "Anwender",
+        "notes": "Restrisiko akzeptiert: sicherer Zustand gewährleistet (H-0002/M3).",
+        "createdAt": "2026-09-24T08:00:00.000Z",
+        "createdBy": "Demo",
+        "updatedAt": "2026-09-24T08:00:00.000Z",
+        "updatedBy": "Demo"
+      }
+    ],
+    "zones": [
+      {
+        "id": "Z-01",
+        "name": "Warnkette an der Strecke",
+        "description": "Einschaltstellen, Zentrale, Warneinheiten",
+        "functions": [
+          "F-0001",
+          "F-0002",
+          "F-0003",
+          "F-0004",
+          "F-0005",
+          "F-0008",
+          "F-0009",
+          "F-0010",
+          "F-0011"
+        ],
+        "interfaces": [
+          "IF-0001",
+          "IF-0002",
+          "IF-0004",
+          "IF-0005",
+          "IF-0007",
+          "IF-0010"
+        ],
+        "subsystems": [],
+        "attributes": {
+          "safetyRelated": true,
+          "wireless": true
+        },
+        "partition": {
+          "3.2": true,
+          "3.3": true,
+          "3.5": true
+        },
+        "slT": 3,
+        "slTRationale": "Lizenzfreier Funk, angenommener Angreifer mit bahnspezifischen Kenntnissen; T-0001 mit hohem Ausgangsrisiko.",
+        "srs": [
+          "SR 1.2",
+          "SR 3.1",
+          "SR 3.8",
+          "SR 7.1"
+        ],
+        "srRequirements": {
+          "SR 3.1": "R-0004",
+          "SR 3.8": "R-0004"
+        },
+        "notes": ""
+      },
+      {
+        "id": "Z-02",
+        "name": "Personen- und Maschinenwarngeräte",
+        "description": "EPW, MWK",
+        "functions": [
+          "F-0006",
+          "F-0007"
+        ],
+        "interfaces": [
+          "IF-0006"
+        ],
+        "subsystems": [],
+        "attributes": {
+          "safetyRelated": true,
+          "wireless": true
+        },
+        "partition": {
+          "3.3": true,
+          "3.5": true
+        },
+        "slT": 3,
+        "slTRationale": "Wie Z-01; empfängt sicherheitsrelevante Funkmeldungen.",
+        "srs": [
+          "SR 1.2",
+          "SR 3.1"
+        ],
+        "srRequirements": {
+          "SR 3.1": "R-0004"
+        },
+        "notes": ""
+      },
+      {
+        "id": "Z-03",
+        "name": "Parametrierung und Service",
+        "description": "Service-Laptop, temporär verbunden",
+        "functions": [
+          "F-0012"
+        ],
+        "interfaces": [
+          "IF-0012"
+        ],
+        "subsystems": [],
+        "attributes": {
+          "temporary": true
+        },
+        "partition": {
+          "3.4": true
+        },
+        "slT": 2,
+        "slTRationale": "Physischer Zugang erforderlich; T-0002 nach Gegenmaßnahme niedrig.",
+        "srs": [
+          "SR 2.3",
+          "SR 3.4"
+        ],
+        "srRequirements": {
+          "SR 3.4": "R-0005"
+        },
+        "notes": ""
+      }
+    ],
+    "conduits": [
+      {
+        "id": "C-01",
+        "name": "Funkstrecken",
+        "description": "",
+        "zones": [
+          "Z-01",
+          "Z-02"
+        ],
+        "interfaces": [
+          "IF-0003"
+        ],
+        "slT": 3,
+        "slTRationale": "Offene Übertragung (EN 50159 Kategorie 3)."
+      },
+      {
+        "id": "C-02",
+        "name": "Parametrierzugang",
+        "description": "",
+        "zones": [
+          "Z-03",
+          "Z-01"
+        ],
+        "interfaces": [],
+        "slT": 3,
+        "slTRationale": "Führt in die sicherheitsrelevante Zone Z-01."
+      }
+    ]
   },
   "functions": [
     {
@@ -280,7 +573,7 @@
       "inputs": "Radüberfahrt Schienenkontakte",
       "outputs": "Zugmeldung je Fahrtrichtung",
       "safeState": "Bei erkanntem Fehler eines Schienenkontakts wird eine Störung an die EZE-L gemeldet und die Störungswarnung ausgelöst.",
-      "tffr": 1e-08,
+      "tffr": 1e-8,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -304,7 +597,7 @@
       "inputs": "Zugmeldung, Lebenszeichen",
       "outputs": "Einschaltmeldung in der EZE-L",
       "safeState": "Ausbleibende Lebenszeichen oder gestörte Funkstrecke werden erkannt und führen zur Störungswarnung.",
-      "tffr": 1e-08,
+      "tffr": 1e-8,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -329,7 +622,7 @@
       "inputs": "Einschaltmeldungen, Ausschaltmeldungen, Handauslösung",
       "outputs": "Warnbefehl je Sektor, Störungsmeldung",
       "safeState": "Warnung bleibt aktiv bzw. Störungswarnung wird ausgelöst; Rücknahme nur durch Ausschaltung oder Quittierung des Sicherheitschefs.",
-      "tffr": 1e-08,
+      "tffr": 1e-8,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -353,7 +646,7 @@
       "inputs": "Warnbefehl",
       "outputs": "Akustisches und optisches Warnsignal",
       "safeState": "Ausfall oder fehlendes Lebenszeichen einer Warneinheit wird erkannt und führt zur Störungswarnung.",
-      "tffr": 1.5e-08,
+      "tffr": 1.5e-8,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -376,7 +669,7 @@
       "inputs": "Umgebungspegel am Horn",
       "outputs": "Geregelter Warnpegel",
       "safeState": "Bei Fehler der Pegelregelung wird mit maximalem Pegel (126 dB) gewarnt.",
-      "tffr": 1e-07,
+      "tffr": 1e-7,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -400,7 +693,7 @@
       "inputs": "Warnbefehl",
       "outputs": "Warnung am EPW und im Führerstand",
       "safeState": "Verbindungsverlust wird am EPW bzw. im Führerstand und an der EZE-L angezeigt.",
-      "tffr": 1e-07,
+      "tffr": 1e-7,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -424,7 +717,7 @@
       "inputs": "Maschinenstandort, Sektorgrenze",
       "outputs": "Sektorzuordnung der MWK",
       "safeState": "Bei unklarer Sektorzuordnung erhält die MWK die Warnungen beider Sektoren.",
-      "tffr": 1e-07,
+      "tffr": 1e-7,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -448,7 +741,7 @@
       "inputs": "Radüberfahrt Ausschaltkontakt",
       "outputs": "Ausschaltmeldung je Fahrtrichtung",
       "safeState": "Bei Fehler oder fehlender Ausschaltung bleibt die Warnung bestehen, bis der Sicherheitschef nach Sichtkontrolle quittiert.",
-      "tffr": 1e-08,
+      "tffr": 1e-8,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -473,7 +766,7 @@
       "inputs": "Handauslösung, Quittierung",
       "outputs": "Warnbefehl, Quittierung",
       "safeState": "Quittierung nur bei freiem Gleis nach Sichtkontrolle; bei Fehler bleibt die Warnung aktiv.",
-      "tffr": 1e-07,
+      "tffr": 1e-7,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -498,7 +791,7 @@
       "inputs": "Lebenszeichen, Kabelüberwachung, Akkuzustand",
       "outputs": "Störungswarnung, Störungsanzeige",
       "safeState": "Störungswarnung aktiv; Personal verlässt den Gefahrenbereich.",
-      "tffr": 1e-07,
+      "tffr": 1e-7,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -523,7 +816,7 @@
       "inputs": "Baustrom, Akkus",
       "outputs": "Versorgungsspannung, Unterspannungsmeldung",
       "safeState": "Unterspannung bzw. niedriger Akkustand wird rechtzeitig gemeldet und führt zur Störungswarnung.",
-      "tffr": 1e-05,
+      "tffr": 0.00001,
       "tffrRationale": "",
       "source": "manual",
       "createdAt": "2026-09-22T08:00:00.000Z",
@@ -573,7 +866,8 @@
         "F-0012"
       ],
       "interfaces": [
-        "IF-0008"
+        "IF-0008",
+        "IF-0012"
       ],
       "modes": [
         "normal",
@@ -592,6 +886,10 @@
         {
           "text": "Projektierung der Einschaltstelle ohne Berücksichtigung des Spurwechsels",
           "kind": "systematic"
+        },
+        {
+          "text": "Manipulierte Projektierungsdaten der Einschaltstellen über den Service-Laptop",
+          "kind": "intentional"
         }
       ],
       "triggeringEvent": "Zugfahrt von Gleis 2 über W 12/13 auf Gleis 1 in Richtung Baustelle",
@@ -698,6 +996,19 @@
           "rationale": "",
           "status": "rejected",
           "becomesSrac": false
+        },
+        {
+          "id": "M5",
+          "text": "Parametrierung nur mit signierten Konfigurationsdateien und Vier-Augen-Freigabe; Service-Laptop ohne Netzanbindung",
+          "type": "frequencyReduction",
+          "hierarchy": "safetyInformation",
+          "residualSeverity": "critical",
+          "residualFrequency": "rare",
+          "residualRiskClass": "Undesirable",
+          "rationale": "",
+          "status": "accepted",
+          "becomesSrac": false,
+          "securityRelated": true
         }
       ],
       "thr": {
@@ -726,7 +1037,10 @@
       "createdAt": "2026-09-24T08:00:00.000Z",
       "createdBy": "Referenzprojekt",
       "updatedAt": "2026-09-24T08:00:00.000Z",
-      "updatedBy": "Referenzprojekt"
+      "updatedBy": "Referenzprojekt",
+      "threats": [
+        "maliciousConfiguration"
+      ]
     },
     {
       "id": "H-0002",
@@ -744,7 +1058,9 @@
         "F-0003",
         "F-0004"
       ],
-      "interfaces": [],
+      "interfaces": [
+        "IF-0003"
+      ],
       "modes": [],
       "lifecyclePhase": "",
       "causes": [
@@ -759,6 +1075,14 @@
         {
           "text": "Softwarefehler in der Warnlogik der EZE-L",
           "kind": "systematic"
+        },
+        {
+          "text": "Angreifer spielt eine aufgezeichnete Ausschaltmeldung erneut ein und beendet die Warnung vorzeitig",
+          "kind": "intentional"
+        },
+        {
+          "text": "Gezielte Funkstörung unterdrückt Einschaltmeldungen",
+          "kind": "intentional"
         }
       ],
       "triggeringEvent": "Zugfahrt auf Gleis 1 bei unerkanntem Fehler der Warnkette",
@@ -807,10 +1131,36 @@
           "rationale": "",
           "status": "accepted",
           "becomesSrac": false
+        },
+        {
+          "id": "M2",
+          "text": "Nachrichtenauthentisierung mit Sequenznummer und Zeitstempel für alle Funkmeldungen (EN 50159 Kategorie 3)",
+          "type": "frequencyReduction",
+          "hierarchy": "additionalSafety",
+          "residualSeverity": "critical",
+          "residualFrequency": "highlyImprobable",
+          "residualRiskClass": "Negligible",
+          "rationale": "",
+          "status": "accepted",
+          "becomesSrac": false,
+          "securityRelated": true
+        },
+        {
+          "id": "M3",
+          "text": "Lebenszeichenüberwachung löst bei Funkausfall die Störungswarnung aus (sicherer Zustand)",
+          "type": "propagationReduction",
+          "hierarchy": "additionalSafety",
+          "residualSeverity": "critical",
+          "residualFrequency": "highlyImprobable",
+          "residualRiskClass": "Negligible",
+          "rationale": "",
+          "status": "accepted",
+          "becomesSrac": false,
+          "securityRelated": true
         }
       ],
       "thr": {
-        "valuePerHour": 5e-08,
+        "valuePerHour": 5e-8,
         "origin": "dutyHolder",
         "justification": "Vorgabe IB-02 (IB-LH-05)"
       },
@@ -835,7 +1185,12 @@
       "createdAt": "2026-09-24T08:00:00.000Z",
       "createdBy": "Referenzprojekt",
       "updatedAt": "2026-09-24T08:00:00.000Z",
-      "updatedBy": "Referenzprojekt"
+      "updatedBy": "Referenzprojekt",
+      "threats": [
+        "repetition",
+        "masquerade",
+        "jamming"
+      ]
     },
     {
       "id": "H-0003",
@@ -1028,6 +1383,93 @@
       "createdBy": "Referenzprojekt",
       "updatedAt": "2026-09-24T08:00:00.000Z",
       "updatedBy": "Referenzprojekt"
+    },
+    {
+      "id": "R-0004",
+      "text": "Die Anlage muss jede sicherheitsrelevante Funkmeldung mit Nachrichtenauthentisierung, Sequenznummer und Zeitstempel sichern und nicht authentische, wiederholte oder verspätete Meldungen verwerfen.",
+      "title": "Authentisierte Funkmeldungen",
+      "category": "technical",
+      "hazards": [
+        "H-0002"
+      ],
+      "functions": [
+        "F-0002",
+        "F-0008"
+      ],
+      "measures": [
+        "H-0002/M2"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "",
+      "verificationMethod": "test",
+      "verificationNote": "Replay- und Manipulationstest im Labor",
+      "rationale": "",
+      "status": "draft",
+      "securityRelated": true,
+      "srac": {
+        "receiver": "",
+        "origin": "",
+        "verification": ""
+      },
+      "source": "manual",
+      "provenance": {
+        "runId": "",
+        "pass": "",
+        "model": ""
+      },
+      "createdAt": "2026-09-24T08:00:00.000Z",
+      "createdBy": "Demo",
+      "updatedAt": "2026-09-24T08:00:00.000Z",
+      "updatedBy": "Demo"
+    },
+    {
+      "id": "R-0005",
+      "text": "Der Anwender muss den Service-Laptop unter Verschluss halten, ohne Netzanbindung betreiben und jede Parametrierung im Vier-Augen-Prinzip freigeben.",
+      "title": "Verwahrung und Freigabe des Service-Laptops",
+      "category": "srac",
+      "hazards": [
+        "H-0001"
+      ],
+      "functions": [],
+      "measures": [
+        "H-0001/M5"
+      ],
+      "integrity": {
+        "tffr": null,
+        "level": "undetermined",
+        "applicabilityNote": ""
+      },
+      "safeState": "",
+      "timeToSafeState": "",
+      "detection": "",
+      "allocation": "",
+      "verificationMethod": "inspection",
+      "verificationNote": "",
+      "rationale": "",
+      "status": "draft",
+      "securityRelated": true,
+      "srac": {
+        "receiver": "Anwender – Sicherheitschef / M2S-Service",
+        "origin": "Massnahme H-0001/M5",
+        "verification": "Freigabeprotokoll der Parametrierung"
+      },
+      "source": "manual",
+      "provenance": {
+        "runId": "",
+        "pass": "",
+        "model": ""
+      },
+      "createdAt": "2026-09-24T08:00:00.000Z",
+      "createdBy": "Demo",
+      "updatedAt": "2026-09-24T08:00:00.000Z",
+      "updatedBy": "Demo"
     }
   ],
   "ccas": [

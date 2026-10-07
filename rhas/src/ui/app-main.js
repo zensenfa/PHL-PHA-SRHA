@@ -3,6 +3,7 @@
 const A = window.RHAS_APP;
 async function main() {
   A.bindCore();
+  A.bindA11y();
   for (const s of Object.values(A.stages)) if (s.bind) s.bind();
   await A.loadProjects();
   const last = localStorage.getItem('rhas_last_project');

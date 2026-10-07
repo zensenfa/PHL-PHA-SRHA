@@ -36,7 +36,7 @@ A.download = (bytes, filename, mime) => { const blob = bytes instanceof Blob ? b
 A.slug = (s) => String(s || 'projekt').replace(/[^\wäöüÄÖÜß-]+/g, '_').slice(0, 60);
 
 let toastTimer = null;
-A.toast = (msg, kind = '') => { const t = A.el('toast'); t.textContent = msg; t.className = `toast ${kind}`; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add('hidden'), kind === 'err' ? 6000 : 3000); };
+A.toast = (msg, kind = '') => { const t = A.el('toast'); t.textContent = msg; t.className = `toast ${kind}`; t.setAttribute('aria-live', kind === 'err' ? 'assertive' : 'polite'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add('hidden'), kind === 'err' ? 6000 : 3000); };
 
 /** Arm-then-confirm: first click shows the confirm button with a label, second click runs. */
 A.arm = (armBtn, confirmBtn, cancelBtn, label, onConfirm) => {

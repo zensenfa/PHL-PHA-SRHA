@@ -34,6 +34,7 @@
     "src/ui/app-security.js",
     "src/ui/app-requirements.js",
     "src/ui/app-reports.js",
+    "src/ui/app-a11y.js",
     "src/ui/app-main.js"
   ]
 }

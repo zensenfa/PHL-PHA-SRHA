@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="a new profile is incomplete until the wizard is filled" time="0.001287" classname="test"/>
-	<testcase name="security level 0 requires a justification (EN 50126-1 7.4.2.1 d))" time="0.000268" classname="test"/>
-	<testcase name="security levels not yet implemented cannot be selected" time="0.000144" classname="test"/>
-	<testcase name="first confirmation needs no reason; later changes need one and are logged" time="0.004025" classname="test"/>
-	<testcase name="invalid profiles are not accepted" time="0.000344" classname="test"/>
-	<testcase name="projects without a profile are migrated with defaults and marked" time="0.000254" classname="test"/>
-	<testcase name="confidential projects may only use the local model" time="0.000513" classname="test"/>
-	<testcase name="the pipeline refuses a blocked call before contacting any provider" time="0.003362" classname="test"/>
-	<testcase name="prompts carry the project profile" time="0.000756" classname="test"/>
-	<testcase name="reports show the profile, its change log and the security statement" time="0.056297" classname="test"/>
+	<testcase name="a new profile is incomplete until the wizard is filled" time="0.001335" classname="test"/>
+	<testcase name="security level 0 requires a justification (EN 50126-1 7.4.2.1 d))" time="0.000344" classname="test"/>
+	<testcase name="security levels not yet implemented cannot be selected" time="0.000154" classname="test"/>
+	<testcase name="first confirmation needs no reason; later changes need one and are logged" time="0.002419" classname="test"/>
+	<testcase name="invalid profiles are not accepted" time="0.000252" classname="test"/>
+	<testcase name="projects without a profile are migrated with defaults and marked" time="0.000221" classname="test"/>
+	<testcase name="confidential projects may only use the local model" time="0.000548" classname="test"/>
+	<testcase name="the pipeline refuses a blocked call before contacting any provider" time="0.002173" classname="test"/>
+	<testcase name="prompts carry the project profile" time="0.000760" classname="test"/>
+	<testcase name="reports show the profile, its change log and the security statement" time="0.065028" classname="test"/>
 	<!-- tests 10 -->
 	<!-- suites 0 -->
 	<!-- pass 10 -->
@@ -17,5 +17,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 308.348044 -->
+	<!-- duration_ms 365.814914 -->
 </testsuites>

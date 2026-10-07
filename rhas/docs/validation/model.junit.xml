@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="risk class reproduces EN 50126-1 Table C.9 for all 24 cells" time="0.004739" classname="test"/>
-	<testcase name="risk class rejects unknown categories instead of mapping silently" time="0.000958" classname="test"/>
-	<testcase name="frequency bands follow EN 50126-1 Table C.1 (per hour, 24 h/day)" time="0.002619" classname="test"/>
-	<testcase name="SIL from TFFR follows EN 50126-2 Table 2 with half-open bands" time="0.000597" classname="test"/>
-	<testcase name="TFFR exactly 1e-5 is Basic Integrity and flagged for confirmation" time="0.000322" classname="test"/>
-	<testcase name="SIL is not applied to mechanical/procedural or non-safety functions (EN 50126-2 10.2.1, 10.3)" time="0.000321" classname="test"/>
-	<testcase name="no &amp;quot;SIL 0&amp;quot; label exists (EN 50129 A.5.1)" time="0.000642" classname="test"/>
-	<testcase name="parseRate accepts common engineering notations" time="0.000880" classname="test"/>
-	<testcase name="OR-sum check (EN 50129 A.4.3.4 NOTE 1)" time="0.000864" classname="test"/>
-	<testcase name="AND credit only with a CCA record proving random and systematic independence" time="0.001203" classname="test"/>
-	<testcase name="THR on a hazard without function is an error (EN 50129 A.4.3.2)" time="0.000364" classname="test"/>
-	<testcase name="rejected measures neither lower the residual risk nor count as control (PATCH-2)" time="0.001593" classname="test"/>
-	<testcase name="hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to-many model)" time="0.000361" classname="test"/>
-	<testcase name="hazard sources are EN 50126-1 7.4.2.1 a) to n) in order" time="0.000224" classname="test"/>
-	<testcase name="measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated" time="0.000413" classname="test"/>
-	<testcase name="assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)" time="0.000235" classname="test"/>
-	<testcase name="cause kinds: schema, labels and editors agree (no silent re-classification on save)" time="0.002397" classname="test"/>
-	<testcase name="proposed (unconfirmed) measures do not lower residual risk or count as control" time="0.000503" classname="test"/>
-	<testcase name="a measure cannot leave the hazard with a residual risk worse than the initial risk" time="0.000365" classname="test"/>
-	<testcase name="&amp;quot;broadly acceptable&amp;quot; on a class that needs measures requires a reasoned deviation" time="0.000373" classname="test"/>
+	<testcase name="risk class reproduces EN 50126-1 Table C.9 for all 24 cells" time="0.003025" classname="test"/>
+	<testcase name="risk class rejects unknown categories instead of mapping silently" time="0.000559" classname="test"/>
+	<testcase name="frequency bands follow EN 50126-1 Table C.1 (per hour, 24 h/day)" time="0.001667" classname="test"/>
+	<testcase name="SIL from TFFR follows EN 50126-2 Table 2 with half-open bands" time="0.000340" classname="test"/>
+	<testcase name="TFFR exactly 1e-5 is Basic Integrity and flagged for confirmation" time="0.000139" classname="test"/>
+	<testcase name="SIL is not applied to mechanical/procedural or non-safety functions (EN 50126-2 10.2.1, 10.3)" time="0.000172" classname="test"/>
+	<testcase name="no &amp;quot;SIL 0&amp;quot; label exists (EN 50129 A.5.1)" time="0.000358" classname="test"/>
+	<testcase name="parseRate accepts common engineering notations" time="0.000479" classname="test"/>
+	<testcase name="OR-sum check (EN 50129 A.4.3.4 NOTE 1)" time="0.000411" classname="test"/>
+	<testcase name="AND credit only with a CCA record proving random and systematic independence" time="0.000844" classname="test"/>
+	<testcase name="THR on a hazard without function is an error (EN 50129 A.4.3.2)" time="0.000191" classname="test"/>
+	<testcase name="rejected measures neither lower the residual risk nor count as control (PATCH-2)" time="0.001029" classname="test"/>
+	<testcase name="hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to-many model)" time="0.000175" classname="test"/>
+	<testcase name="hazard sources are EN 50126-1 7.4.2.1 a) to n) in order" time="0.000184" classname="test"/>
+	<testcase name="measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated" time="0.000248" classname="test"/>
+	<testcase name="assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)" time="0.000098" classname="test"/>
+	<testcase name="cause kinds: schema, labels and editors agree (no silent re-classification on save)" time="0.001550" classname="test"/>
+	<testcase name="proposed (unconfirmed) measures do not lower residual risk or count as control" time="0.000293" classname="test"/>
+	<testcase name="a measure cannot leave the hazard with a residual risk worse than the initial risk" time="0.000218" classname="test"/>
+	<testcase name="&amp;quot;broadly acceptable&amp;quot; on a class that needs measures requires a reasoned deviation" time="0.000208" classname="test"/>
 	<!-- tests 20 -->
 	<!-- suites 0 -->
 	<!-- pass 20 -->
@@ -27,5 +27,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 309.736712 -->
+	<!-- duration_ms 320.381967 -->
 </testsuites>

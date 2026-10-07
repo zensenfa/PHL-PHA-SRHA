@@ -1,8 +1,8 @@
 {
- "date": "2026-10-07 09:05 UTC",
- "version": "2026-10-07-wp10",
- "commit": "7b5a601",
- "build_sha256": "aef2ec147b77db306ff2c1ce6ca43432adca325e749bd763af2ee1955c385245",
+ "date": "2026-10-07 09:13 UTC",
+ "version": "2026-10-07-wp11",
+ "commit": "463d301",
+ "build_sha256": "ea466c05fd1321b5d750c2d7be5a19318a60411c8c71089bc4d3f84e4c9fc511",
  "build_ok": true,
  "node": "v22.22.0",
  "python": "3.13.16",
@@ -520,6 +520,14 @@
    ]
   },
   {
+   "script": "smoke_a11y.py",
+   "status": "passed",
+   "output": [
+    "a11y checks passed",
+    "errors: []"
+   ]
+  },
+  {
    "script": "smoke_calibration.py",
    "status": "passed",
    "output": [
@@ -570,7 +578,7 @@
     "confirm disabled: True",
     "confirm disabled after fill: False",
     "toast1: Projektprofil bestätigt ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']",
-    "status: bestätigt 07.10.2026, 09:04 | rail: ✓",
+    "status: bestätigt 07.10.2026, 09:13 | rail: ✓",
     "apply btn: Änderungen übernehmen (1)",
     "log rows: 2",
     "banner hidden: True",

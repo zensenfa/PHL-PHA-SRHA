@@ -31,7 +31,7 @@ This tree was recovered from `Railway_Hazard_Analysis_Suite_patched.html`
 (version 2026-09-20-p1, PATCH-1 to PATCH-4 included). `python3 build.py`
 reproduces that file byte for byte (verified with `cmp`).
 
-## Known open items (tracked as tests)
+## Known open items
 
-- `reports contain no MIL-STD-882E reference` is marked `todo` until WP1
-  (normative cleanup) removes the references.
+See `docs/werkzeugnachweis` (section 9, open items) and `docs/verification-matrix.md`.
+The former `todo` test (no MIL-STD-882E reference in reports) has been a normal test since WP1.

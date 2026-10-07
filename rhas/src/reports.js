@@ -365,8 +365,11 @@ function buildXlsx(b) {
   add('Risikoanalyse', specPhaFlat(b));
   add('Maßnahmen', specMeasures(b));
   add('Gefährdungsprotokoll', specHazardLog(b));
-  if (SEC.level(b.profile) >= 2) add('Bedrohungsprotokoll', specThreatLog(b));
-  if (SEC.level(b.profile) >= 3) { add('Zonen', specZones(b)); add('Conduits', specConduits(b)); add('SR je Zone', specZoneSrs(b)); }
+  // Security sheets mirror the sections of the Word report (same specs, same level gating).
+  const lvl = SEC.level(b.profile);
+  if (lvl >= 1) { add('Security-Kontext', specSecContext(b)); add('Security-Gefährdungen', specSecHazards(b)); add('Security-Abdeckung', specSecCoverage(b)); add('Security-Anforderungen', specSecRequirements(b)); }
+  if (lvl >= 2) { for (const sp of specSecMatrix(b)) add(`Sec-${sp.title.split(' (')[0].replace(/^Security-/, '')}`.slice(0, 31), sp); add('Bedrohungsprotokoll', specThreatLog(b)); add('Bedrohungen-Trace', specThreatTrace(b)); }
+  if (lvl >= 3) { add('Zonen', specZones(b)); add('Conduits', specConduits(b)); add('SR je Zone', specZoneSrs(b)); add('Zonen-Befunde', specZoneFindings(b)); add('Security-Nachweis', specCase(b)); }
   add('Funktionen-SIL', specFunctionIntegrity(b));
   add('Anforderungen', specRequirementsAll(b));
   add('SRAC', specSrac(b));

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="likelihood = exposure + vulnerability - 1, only for valid scales" time="0.000877" classname="test"/>
+	<testcase name="default security matrix is complete and monotonic, but not approved" time="0.000575" classname="test"/>
+	<testcase name="risk and residual risk are computed from the matrix; only accepted countermeasures count" time="0.000589" classname="test"/>
+	<testcase name="impact floor follows the worst linked safety severity (proposal)" time="0.000401" classname="test"/>
+	<testcase name="derive: one threat per deliberate cause of an accepted hazard, no duplicates" time="0.001841" classname="test"/>
+	<testcase name="completeness: rationale, hazard link, high risk needs countermeasure, countermeasure needs requirement" time="0.000452" classname="test"/>
+	<testcase name="level 2 report: matrix, threat log, trace; XLSX sheet" time="0.169754" classname="test"/>
+	<!-- tests 7 -->
+	<!-- suites 0 -->
+	<!-- pass 7 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 444.283983 -->
+</testsuites>

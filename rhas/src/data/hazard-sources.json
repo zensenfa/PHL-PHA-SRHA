@@ -1,0 +1,88 @@
+{
+  "sources": [
+    {
+      "id": "a",
+      "code": "GQ-a",
+      "title": "Normalbetrieb",
+      "description": "Gefährdungen, die im regulären, fehlerfreien Betrieb entstehen (Betriebsabläufe, Zeitbedingungen, Verkehr, Fahrgast- und Personalinteraktion)."
+    },
+    {
+      "id": "b",
+      "code": "GQ-b",
+      "title": "Fehlerzustände",
+      "description": "Gefährdungen aus Ausfällen und Fehlern von Funktionen, Teilsystemen und Komponenten, einschließlich Mehrfach- und Folgefehlern."
+    },
+    {
+      "id": "c",
+      "code": "GQ-c",
+      "title": "Notbetrieb",
+      "description": "Gefährdungen in Notfallsituationen, bei Notfallverfahren, Evakuierung und Störungsbeseitigung."
+    },
+    {
+      "id": "d",
+      "code": "GQ-d",
+      "title": "Vorhersehbarer Fehlgebrauch",
+      "description": "Vorhersehbare, nicht vorsätzliche Fehlbedienung oder Fehlnutzung durch Personal, Fahrgäste oder Dritte (ohne vorsätzlichen Missbrauch)."
+    },
+    {
+      "id": "e",
+      "code": "GQ-e",
+      "title": "Schnittstellen",
+      "description": "Gefährdungen an Schnittstellen zu anderen technischen Systemen, zur Infrastruktur, zu anderen Betreibern und zu Menschen; falsche, fehlende, verspätete oder unverträgliche Informationen und Annahmen."
+    },
+    {
+      "id": "f",
+      "code": "GQ-f",
+      "title": "Funktionalität",
+      "description": "Gefährdungen aus dem funktionalen Verhalten selbst: unvollständige oder mehrdeutige Spezifikation, unbeabsichtigte Funktionsausführung, falsche Reaktion auf Eingaben."
+    },
+    {
+      "id": "g",
+      "code": "GQ-g",
+      "title": "Konfigurationsparameter",
+      "description": "Gefährdungen durch fehlerhafte, unvollständige oder nicht validierte Parametrierung, Projektierungsdaten und Versionsstände."
+    },
+    {
+      "id": "h",
+      "code": "GQ-h",
+      "title": "Betrieb, Instandhaltung und Unterstützung",
+      "description": "Gefährdungen aus Betriebsführung, Wartung, Inspektion, Reparatur, Ersatzteilen, Werkzeugen, Logistik und Schulung."
+    },
+    {
+      "id": "i",
+      "code": "GQ-i",
+      "title": "Entsorgung / Rückbau",
+      "description": "Gefährdungen bei Außerbetriebnahme, Demontage, Entsorgung und Recycling."
+    },
+    {
+      "id": "j",
+      "code": "GQ-j",
+      "title": "Menschliche Faktoren",
+      "description": "Gefährdungen durch Fehlhandlungen, Arbeitsbelastung, Ermüdung, Gestaltung der Mensch-Maschine-Schnittstelle, Qualifikation und Kommunikation."
+    },
+    {
+      "id": "k",
+      "code": "GQ-k",
+      "title": "Arbeitsschutz",
+      "description": "Gefährdungen für Personal bei Errichtung, Betrieb und Instandhaltung (Absturz, Quetschung, elektrischer Schlag, Lärm, Gefahrstoffe)."
+    },
+    {
+      "id": "l",
+      "code": "GQ-l",
+      "title": "Mechanische Umgebung",
+      "description": "Gefährdungen durch Vibration, Stoß, Verschleiß, Ermüdung, mechanische Beschädigung und Fremdkörpereinwirkung."
+    },
+    {
+      "id": "m",
+      "code": "GQ-m",
+      "title": "Elektrische Umgebung",
+      "description": "Gefährdungen durch Netzausfall, Überspannung, Erdung, elektromagnetische Beeinflussung, Blitzschlag und Streuströme."
+    },
+    {
+      "id": "n",
+      "code": "GQ-n",
+      "title": "Natürliche Umgebung",
+      "description": "Gefährdungen durch Schnee, Eis, Hochwasser, Sturm, Regen, Hitze, Erdrutsch, Vegetation und Tiere."
+    }
+  ]
+}

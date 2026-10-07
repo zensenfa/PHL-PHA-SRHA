@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+	<testcase name="tokenize lower-cases, strips punctuation and drops words of two letters or fewer" time="0.002243" classname="test"/>
+	<testcase name="jaccard is 1 for identical sets, 0 for disjoint or empty, symmetric otherwise" time="0.000519" classname="test"/>
+	<!-- tests 2 -->
+	<!-- suites 0 -->
+	<!-- pass 2 -->
+	<!-- fail 0 -->
+	<!-- cancelled 0 -->
+	<!-- skipped 0 -->
+	<!-- todo 0 -->
+	<!-- duration_ms 86.037546 -->
+</testsuites>

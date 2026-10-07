@@ -1,0 +1,983 @@
+Risikoanalyse und Risikobewertung
+Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) – Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation
+Dokument
+ | RB – Risikoanalyse und Risikobewertung
+ | Dokument-ID
+ | SA-LYNX-RS-001
+ | Revision
+ | A
+ | Datum
+ | 22.09.2026
+ | System
+ | Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) (Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation)
+ | Projekt
+ | Referenzprojekt Minimel Lynx (Regressionsbasis)
+ | Ersteller (Designer)
+ | –
+ | Prüfer (Verifier)
+ | –
+ | Validierer (Validator)
+ | –
+ | Eisenbahnbetreiber (Duty holder)
+ | –
+ | Lieferant
+ | Schweizer Electronic AG, Reiden
+ | Werkzeug
+ | Railway Hazard Analysis Suite test
+ | Kalibrierung
+ | en50126-1-annex-c-default v1
+ | Exportiert
+ | 24.09.2026 10:00
+ |
+Revisionshistorie
+Revision
+ | Datum
+ | Bearbeiter
+ | Änderung
+ | A
+ | 22.09.2026
+ |
+ | Erstellung aus der Railway Hazard Analysis Suite
+ |
+Dieses Dokument ist ein Werkzeug-Export. Freigabe, Verifikation und Validierung erfolgen nach dem Sicherheitsplan des Projekts (EN 50126-1 6.6, 6.7; EN 50129 5.3.4).
+Inhaltsverzeichnis
+ TOC \o "1-3" \h \z \u Inhaltsverzeichnis wird beim Öffnen in Word aktualisiert (F9).
+1 Zweck und Geltungsbereich
+Ursachen, Unfallszenarien, Häufigkeit und Schadensausmaß, Risikoklasse, Entscheidung „weitgehend akzeptabel“, Risikoakzeptanzprinzip und -kriterium, Maßnahmen und Restrisiko je Gefährdung (EN 50126-1:2017 6.3, 7.4.2.1, 7.4.3 a); EN 50126-2:2017 8.2–8.4).
+Umfang: Dieses Dokument behandelt den Sicherheitsteil (S) des RAMS-Prozesses nach EN 50126-1. RAM-Äquivalente von Gefährdungen (EN 50126-1 7.4.2.1) sind nicht Gegenstand dieses Dokuments.
+Security: Vorsätzliche Handlungen (Angriffe, Sabotage) sind nicht Gegenstand dieser Analyse; EN 50126-1 7.4.2.1 d) schließt vorsätzlichen Missbrauch aus der Gefährdungsidentifikation aus, EN 50129 6.4 verlangt ihre Betrachtung auf anderem Weg. Begründung: Demonstrationsprojekt; die Security-Betrachtung nach CLC/TS 50701 folgt mit der Security-Erweiterung des Werkzeugs.
+System: Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600) (Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation). Zweck des Systems: Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.
+Projektprofil
+Merkmal
+ | Festlegung
+ | Bezug
+ | Rolle im Projekt
+ | Produktlieferant
+ | EN 50126-1 5.3.2; EN 50126-2 5.6
+ | Domäne
+ | Zugsteuerung, Zugsicherung und Signaltechnik (inkl. Warnsysteme)
+ | EN 50126-1 5.3.3
+ | Betrachtungsebene
+ | System (übergeordnet: Baustellensicherung Gleiserneuerung Reiden Süd (Infrastrukturbetreiberin, fiktiv))
+ | EN 50126-1 6.5.2
+ | Art des Sicherheitsnachweises
+ | Spezifische Anwendung
+ | EN 50129 7.3
+ | Art des Vorhabens
+ | Neuentwicklung
+ | EN 50126-1 6.5.3, 6.5.4
+ | Lebenszyklusumfang
+ | Phase 1 Konzept; Phase 2 Systemdefinition; Phase 3 Risikoanalyse und -bewertung; Phase 4 Systemanforderungen
+ | EN 50126-1 6.5.2
+ | RAMS-Umfang
+ | Sicherheit (S)
+ | EN 50126-1 7.4.2.1
+ | Zulässige Risikoakzeptanzprinzipien
+ | Anerkannte Regeln der Technik (CoP); Referenzsystem; Explizite Risikoabschätzung
+ | EN 50126-1 7.4.2.1; EN 50126-2 8.3
+ | Kalibrierung
+ | en50126-1-annex-c-default
+ | EN 50126-1 Anhang C.1
+ | Herkunft tolerierbarer Gefährdungsraten
+ | Vom Betreiber vorgegeben
+ | EN 50126-2 8.3, 10.2
+ | SIL-Anwendbarkeit
+ | Elektronische sicherheitsrelevante Funktionen (SIL anwendbar)
+ | EN 50126-2 10.2.1, 10.3
+ | Land
+ | Schweiz; Infrastrukturbetreiber: Infrastrukturbetreiberin (fiktiv)
+ | EN 50126-1 7.2.2 e)
+ | CSM-RA (VO (EU) 402/2013)
+ | Noch zu klären
+ | EN 50126-1 7.2.2 e)
+ | Security-Tiefe
+ | Stufe 0 – nicht betrachtet (Begründung erforderlich) – Begründung: Demonstrationsprojekt; die Security-Betrachtung nach CLC/TS 50701 folgt mit der Security-Erweiterung des Werkzeugs.
+ | EN 50126-1 5.5, 7.4.2.1 d); EN 50129 6.4
+ | Datenklassifizierung
+ | Öffentlich / fiktiv
+ |
+ | Bestätigt
+ | 24.09.2026 durch Demo
+ |
+ |
+Änderungen des Projektprofils
+Datum
+ | Bearbeiter
+ | Begründung
+ | Änderungen
+ | 24.09.2026
+ | Demo
+ | Erstbestätigung
+ |
+ |
+2 Normative Referenzen und Abkürzungen
+Referenzen
+Dokument
+ | Titel
+ | EN 50126-1:2017
+ | Bahnanwendungen – Spezifikation und Nachweis der Zuverlässigkeit, Verfügbarkeit, Instandhaltbarkeit und Sicherheit (RAMS) – Teil 1: Generischer RAMS-Prozess
+ | EN 50126-2:2017
+ | RAMS – Teil 2: Systembezogene Sicherheitsmethodik
+ | EN 50129:2018
+ | Bahnanwendungen – Telekommunikationstechnik, Signaltechnik und Datenverarbeitungssysteme – Sicherheitsrelevante elektronische Systeme für Signaltechnik
+ |
+Domänenspezifische Normen (Domänenpaket Zugsteuerung, Zugsicherung und Signaltechnik (inkl. Warnsysteme), v1; Anwendbarkeit im Projekt zu prüfen)
+Dokument
+ | Titel / Zweck
+ | EN 50129:2018
+ | Sicherheitsrelevante elektronische Systeme für Signaltechnik (Sicherheitsnachweis, SIL, SRAC)
+ | EN 50716:2023
+ | Software für Bahnanwendungen
+ | EN 50159
+ | Sicherheitsrelevante Kommunikation in Übertragungssystemen
+ | EN 50121-4
+ | EMV – Signal- und Telekommunikationseinrichtungen
+ | EN 16704
+ | Sicherheit bei Arbeiten im Gleisbereich (für Warnsysteme)
+ |
+Abkürzungen
+Abkürzung
+ | Bedeutung
+ | CCA
+ | Common Cause Analysis (Analyse gemeinsamer Ursachen)
+ | CoP
+ | Code of Practice (anerkannte Regeln der Technik)
+ | ERE
+ | Explizite Risikoabschätzung
+ | RAC
+ | Risikoakzeptanzkriterium
+ | RAP
+ | Risikoakzeptanzprinzip
+ | SIL
+ | Sicherheitsintegritätslevel
+ | SRAC
+ | Safety-Related Application Condition (sicherheitsbezogene Anwendungsbedingung)
+ | SRS
+ | Safety Requirements Specification (Sicherheitsanforderungsspezifikation)
+ | TFFR
+ | Tolerable Functional Failure Rate (tolerierbare Funktionsausfallrate)
+ | THR
+ | Tolerable Hazard Rate (tolerierbare Gefährdungsrate)
+ |
+3 Systemdefinition (EN 50126-1 7.3.2.1, Anhang D)
+Das normative Minimum der Systemdefinition (7.3.2.1 a) bis e)) ist dokumentiert.
+Systemdefinition
+Merkmal
+ | Bezug
+ | Inhalt
+ | Systemname (N)
+ | EN 50126-1 7.3.2.1 e)
+ | Minimel Lynx ATWS – Baustellenwarnung Gleiserneuerung Gleis 2, Abschnitt Reiden Süd (km 58,000–59,600)
+ | Systemtyp (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Funkbasiertes automatisches Warnsystem (ATWS) für Arbeiten im Gleisbereich mit Automatischer Sektorumschaltung (ASU), temporäre Installation
+ | Zweck / Systemziel (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Automatische, rechtzeitige akustische und optische Warnung des Personals, das im gesperrten Arbeitsgleis 2 und im Gefahrenbereich des Nachbargleises 1 tätig ist, vor Zugfahrten auf Gleis 1, damit das Personal den Gefahrenbereich vor Eintreffen des Zuges verlassen und den Sicherheitsraum aufsuchen kann. Das System ersetzt die ständige Beobachtung durch Vorwärter an den Baustellenenden.
+ | Missionsprofil (Einsatz, Verkehr, Betriebszeiten) (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Gleiserneuerung Gleis 2 auf 1,6 km während 8 Wochen (fiktiv KW 42–49), überwiegend Nachtschichten 22:00–06:00 sowie einzelne Wochenendschichten am Tag. Zwei Warnsektoren à 800 m (Sektor 1 km 58,000–58,800, Sektor 2 km 58,800–59,600). Das Nachbargleis 1 bleibt im Gleiswechselbetrieb in beiden Richtungen befahren: Reisezüge bis 140 km/h (tagsüber ca. 6 Züge/h je Richtung), Güterzüge bis 100 km/h (nachts ca. 2–3 Züge/h). Einsatz von Zweiwegebaggern, Stopfmaschine, Schotterbettreinigung und Thermit-Schweissarbeiten; bis zu 45 Personen gleichzeitig im Baustellenbereich.
+ | Systembeschreibung (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Die Zugerkennung erfolgt an zwei Einschaltstellen auf Gleis 1: Einschaltstelle Süd (für Fahrten Richtung Süd) bei km 57,050 mit zwei mechanischen Schienenkontakten RSK89 und Einschaltstelle Nord (für Fahrten Richtung Nord) bei km 60,550 mit einem RSK89 und einem induktiven Schienenkontakt RSR123. Die Schienenkontakte sind an Funksender HSF-L angeschlossen, die die Zugannäherung per Funk an die Zentrale EZE-L (km 58,800, feldseitig) übertragen; wegen Funkabschattung durch Kurve und Lärmschutzwand ist bei km 59,250 ein HSF-L als Repeater eingesetzt. Die EZE-L löst die Warnung in beiden Sektoren aus: in Sektor 1 über 8 kabelgebundene Warneinheiten AW126-L (Brückenbereich), in Sektor 2 über 10 funkbasierte Warneinheiten EWK-L. Alle Starktonhörner passen die Lautstärke mit ALADIN über das eingebaute Mikrofon automatisch zwischen 96 und 126 dB an den Umgebungslärm an. Zusätzlich warnen 12 Personenwarngeräte EPW und Maschinenwarnkombinationen MWK an Stopfmaschine und Zweiwegebagger; die MWK wechselt über die Automatische Sektorumschaltung (ASU) den Warnsektor ohne Zutun des Maschinenführers. Das Ende der Zugfahrt wird an den Ausschaltstellen (km 59,650 für Fahrten Richtung Süd, km 57,950 für Fahrten Richtung Nord, je HSF-L mit RSK89) automatisch erkannt oder vom Sicherheitschef nach Sichtkontrolle an der EZE-L quittiert. Kabelgebundene Geräte werden über die Lynx Power Box (230 V Baustrom) versorgt, funkbasierte Geräte über wiederaufladbare Akkus für eine Arbeitsschicht.
+ | Systemgrenze und Schnittstellen (Umwelt, andere Systeme, Menschen, andere Betreiber) (N)
+ | EN 50126-1 7.3.2.1 b)
+ | Innerhalb: Schienenkontakte RSK89/RSR123 inkl. Befestigung, Funksender HSF-L (Ein-, Ausschaltstellen, Repeater), Zentrale EZE-L mit Parametrierung, Warneinheiten AW126-L und EWK-L mit ALADIN, Personenwarngeräte EPW, MWK mit ASU, Lynx Power Box, Akkus und Ladegeräte, Kabel der AW126-L. Ausserhalb (Schnittstellen): Nachbargleis 1 und die darauf verkehrenden Züge; Stellwerk und Fahrdienstleitung der Infrastrukturbetreiberin (Sperrung Gleis 2, Sicherung Spurwechsel W 12/13, Meldung von Sonder- und Langsamfahrten); Gleisfreimeldeanlagen/Achszähler; Funkumgebung (Abschattung, Fremdstörer, weitere Lynx-Anlagen); Sicherheitschef und Sicherungspersonal; Baupersonal und Maschinenführer; Baumaschinen (Lärm, EMV, mechanische Einwirkung); Baustromversorgung; Fahrleitung 15 kV/16,7 Hz; Umgebung (Witterung, Anwohner); Aufbau- und Instandhaltungspersonal (M2S).
+ | Eingeschlossene Funktionen / Elemente (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Zugfahrt an der Einschaltstelle erkennen; Einschaltmeldung per Funk (inkl. Repeater) an die Zentrale übertragen; Warnung in der Zentrale EZE-L auslösen und verwalten (Zugzählung, Zugfolge, Zugkreuzung, Sektoren); akustische und optische Warnung an den Warneinheiten ausgeben; Warnlautstärke automatisch an den Umgebungslärm anpassen (ALADIN); Warnung an Personenwarngeräten EPW und Maschinenwarnkombinationen MWK ausgeben; Warnsektor der Maschinen automatisch umschalten (ASU); Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden; Warnung manuell auslösen und quittieren; Funkstrecken und Geräte überwachen und Störung melden; Anlage mit Energie versorgen; Anlage projektieren, aufbauen, prüfen und abbauen.
+ | Ausdrücklich ausgeschlossene Funktionen (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Sperrung und Sicherung des Arbeitsgleises 2 (Aufgabe der Infrastrukturbetreiberin/Stellwerk); Zugbeeinflussung und Geschwindigkeitsbeschränkungen auf Gleis 1; Warnung vor Fahrten auf dem gesperrten Arbeitsgleis 2 (Baufahrzeuge, Arbeitszüge – separat über die Bauleitung geregelt); feste Abschrankungen zum Nachbargleis; Arbeitsverfahren und Führung der Baumaschinen; Erste Hilfe und Rettungskonzept.
+ | Räumliche Lage der Systemteile und Einfluss auf Nachbarn (N)
+ | EN 50126-1 7.3.2.1 b)
+ | Freie Strecke südlich Reiden (fiktive Kilometrierung), Doppelspur, Gleisabstand 4,0 m. Baustelle km 58,000–59,600: gerade bis km 59,050, danach Kurve R = 900 m mit eingeschränkter Sicht; Brücke über die Wigger bei km 58,440–58,500 ohne seitlichen Sicherheitsraum auf der Gleis-1-Seite; Lärmschutzwand km 59,100–59,600 feldseitig (Funk- und Schallreflexion). Spurwechsel W 12/13 bei km 60,150 zwischen Baustellenende und Einschaltstelle Nord. Zentrale EZE-L bei km 58,800 an der Sektorgrenze; Repeater bei km 59,250. Nachbarn: Wohnbebauung in ca. 150 m Entfernung (Lärmemission in der Nacht).
+ | Physikalische Umgebung (Klima, Mechanik, EMV, Höhe) (N)
+ | EN 50126-1 7.3.2.1 b)
+ | Aussenaufstellung im Herbst/Winter: −15 °C bis +30 °C, Regen, Nebel, Schnee und Vereisung, Laub auf den Schienen. Baumaschinenlärm bis 105 dB(A) an Stopfmaschine, Schotterreinigung und Trennschleifer, kurze Lärmspitzen durch Schlagschrauber direkt am Arbeitsplatz. Vibration und Stoss an den Schienenkontakten (Überfahrten bis 140 km/h, Stopfarbeiten). Funkumgebung mit Abschattung durch Kurve, Lärmschutzwand, Brückenträger und abgestellte Fahrzeuge; Beeinflussung durch Fahrleitung 15 kV/16,7 Hz, Rückstrom, Schweissgeräte; Blitzgefährdung; Akkukapazität sinkt bei Kälte.
+ | Langfristige Betriebsstrategie und -bedingungen (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Aufbau und Inbetriebnahme durch geschultes M2S-Personal vor dem ersten Einsatz inklusive Funkausleuchtung; vor jeder Schicht Funktionsprüfung mit Probewarnung in beiden Sektoren, Kontrolle der Hörbarkeit, der EPW und der MWK durch den Sicherheitschef; Betrieb im Automatikmodus während der gesamten Schicht. Bei Störung sofortiges Verlassen des Gefahrenbereichs und Wechsel auf die Rückfallebene (Vorwärter mit HSF-L-Handauslösung) oder Einstellung der Arbeiten im Gefahrenbereich von Gleis 1. Umstellen von Warneinheiten bei Baufortschritt nur durch berechtigtes Personal mit anschliessender Teilprüfung.
+ | Langfristige Instandhaltungsstrategie und -bedingungen (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Tägliche Sicht- und Funktionsprüfung (Schienenkontakte, HSF-L, Warneinheiten, EPW, MWK, Akkuzustand) vor Schichtbeginn gemäss Prüfliste; Akkuwechsel bzw. Laden zwischen den Schichten; wöchentliche Kontrolle der Befestigung der Schienenkontakte; Austausch defekter Komponenten nur durch M2S-Personal mit anschliessender Teilprüfung; gesetzlich vorgeschriebene periodische Wartung der Geräte durch Schweizer Electronic; keine Änderung der Parametrierung vor Ort ohne Freigabe.
+ | Systemlebensdauer (N)
+ | EN 50126-1 7.3.2.1 a)
+ | Gerätelebensdauer der Komponenten ca. 10 Jahre bei periodischer Wartung; Einsatzdauer in diesem Projekt 8 Wochen.
+ | Logistik / logistische Unterstützung (N)
+ | EN 50126-1 7.3.2.1 a), c)
+ | Anlieferung der Geräte aus dem Lager Reiden; Ersatzgeräte (2 EWK-L, 1 HSF-L, 2 RSK89, 3 EPW, 10 Wechselakkus) und Ladestation im Baustellencontainer; 24/7-Hotline M2S für Störungen.
+ | Betriebsbedingungen, Betriebsverfahren und zulässiges Personal (Qualifikation, Zeit) (N)
+ | EN 50126-1 7.3.2.1 c)
+ | Bedienung der EZE-L nur durch den ausgebildeten Sicherheitschef mit Lynx-Bedienerschulung (Lynx Operator). Aufbau, Umbau und Parametrierung nur durch M2S-Personal. Alle Personen im Gleisbereich sind unterwiesen, tragen Warnkleidung und Gehörschutz mit Signalhörbarkeit; Personal mit Einzelarbeitsplätzen (Schweisser, Vermessung) trägt ein EPW. Bei jeder Warnung wird die Arbeit sofort unterbrochen und der Sicherheitsraum feldseitig aufgesucht. Arbeiten im Gefahrenbereich von Gleis 1 nur bei funktionsfähiger Warnanlage. Schichtübergabe mit dokumentierter Übergabe des Anlagen- und Akkuzustands.
+ | Randbedingungen aus bestehender Infrastruktur (N)
+ | EN 50126-1 7.3.2.1 c)
+ | Keine feste Stromversorgung – Baustromverteiler bei km 58,800; funkbasierte Geräte nur mit Akkus. Einschaltstellen müssen im Betriebsgleis 1 montiert werden (Montage nur in Zugpausen unter Sicherung). Die Brücke über die Wigger erlaubt keine Aufstellung von Warneinheiten auf der Gleis-1-Seite. Achszähler und Gleisfreimeldung dürfen durch die Schienenkontakte nicht beeinflusst werden. Der Spurwechsel W 12/13 liegt innerhalb der Einschaltdistanz Nord. Funkverbindung von der Einschaltstelle Nord zur EZE-L nur über Repeater zuverlässig.
+ | Einfluss auf Betriebs-/Instandhaltungspersonal, Fahrgäste und Öffentlichkeit (N)
+ | EN 50126-1 7.3.2.1 c)
+ | Gefährdet sind das Baupersonal (bis 45 Personen), Maschinenführer, der Sicherheitschef und Sicherungsposten sowie M2S-Personal beim Auf- und Umbau im Gleisbereich; bei einer Kollision mit einer Maschine im Lichtraum zusätzlich Lokpersonal und Reisende auf Gleis 1. Die Öffentlichkeit ist durch die Lärmemission der Warnsignale betroffen (durch ALADIN reduziert).
+ | Begründung, falls keine menschlichen Tätigkeiten betrachtet werden
+ | EN 50126-1 7.3.2.1 c)
+ | Nicht zutreffend – menschliche Tätigkeiten (Bedienung, Aufbau, Prüfung, Akkuwechsel, Reaktion auf die Warnung) werden vollständig betrachtet.
+ | Erfahrungen mit ähnlichen Systemen (Betriebsdaten, Unfälle, Störungen) (N)
+ | EN 50126-1 7.3.2.1 c)
+ | Branchenerfahrung: Unfälle im Gleisbereich entstehen überwiegend durch fehlende, zu späte oder nicht wahrgenommene Warnungen, durch Arbeiten bei abgeschalteter oder gestörter Warnanlage und durch Fehlverhalten nach der Warnung. Störungsauswertung vergleichbarer Lynx-Einsätze (Referenzdokument LYNX-BE-04): Funkabschattungen in Kurven und an Lärmschutzwänden, Akkuprobleme bei Kälte und verlängerten Schichten, gelockerte Schienenkontakte nach Stopfarbeiten, Fehlwarnungen durch Bauzüge, vergessene EPW-Ladung, verzögerte Sektorumschaltung von Maschinen.
+ | Bestehende Sicherheitsmaßnahmen und Annahmen, die den Umfang der Risikobewertung begrenzen (N)
+ | EN 50126-1 7.3.2.1 d)
+ | Sicherheitsgerichtete Auslegung (Überwachung der Funkstrecken mit Störungsmeldung, fehlende Lebenszeichen führen zur Störungswarnung); diversitäre Schienenkontakte an der Einschaltstelle Nord (RSK89 mechanisch + RSR123 induktiv); Repeater für die abgeschattete Funkstrecke; Einschaltdistanz für 140 km/h mit Zuschlag projektiert; ALADIN-Lautstärkeanpassung; tägliche Funktionsprüfung mit Probewarnung; manuelle Auslösung als Rückfallebene; betriebliche Sicherung des Spurwechsels W 12/13 (Annahme, Bestätigung der Infrastrukturbetreiberin ausstehend). Annahme für den Umfang: Das Arbeitsgleis 2 ist gesperrt; Gefährdungen aus Fahrten auf Gleis 2 werden nicht betrachtet.
+ | Annahmen zu Schnittstellen und Systemgrenzen (RAMS-Annahmen) (N)
+ | EN 50126-1 7.3.2.1 d)
+ | A1: Höchstgeschwindigkeit auf Gleis 1 im Baustellenbereich 140 km/h; keine Langsamfahrstelle. A2: Erforderliche Mindestwarnzeit 20 s (Räumzeit 12 s + Reaktionszeit 3 s + Sicherheitszuschlag 5 s), maximale Warnzeit 60 s (Projektvorgabe der Infrastrukturbetreiberin). A3: Der Spurwechsel W 12/13 wird während der Arbeiten im Stellwerk gegen Umstellen gesichert; Nordfahrten wechseln bereits im Bahnhof Süd (km 61,800) auf Gleis 1. A4: Die Akkus der Funkgeräte reichen für eine Schicht von 8 h bei Temperaturen bis −15 °C (Projektannahme, Nachweis ausstehend). A5: Die Schienenkontakte beeinflussen Achszähler und Gleisfreimeldung nicht. A6: ALADIN stellt an jedem Arbeitsplatz einen Warnpegel mindestens 3 dB(A) über dem Umgebungspegel ein; bei kurzen Lärmspitzen direkt am Arbeitsplatz ausserhalb der Mikrofonreichweite ist dies nicht separat nachgewiesen. A7: Keine weitere Lynx-Anlage arbeitet im Funkbereich auf derselben Frequenz ohne Abstimmung.
+ | Abweichungen von einer Referenzversion (mit Begründung)
+ | EN 50126-1 7.3.2.1 e)
+ | Gegenüber dem Standardeinsatz (gerade Strecke, ein Warnsektor, keine Weichen) weicht dieses Projekt ab durch: zwei Sektoren mit ASU; Spurwechsel W 12/13 innerhalb der Einschaltdistanz Nord; Repeater wegen Funkabschattung; Brücke ohne Sicherheitsraum auf der Gleis-1-Seite; Kurve mit Sichteinschränkung; Gleiswechselbetrieb in beiden Richtungen; überwiegender Nachtbetrieb bei Kälte (Akkulaufzeit).
+ | Anzuwendende Normen / anerkannte Regeln der Technik (CoP)
+ | EN 50126-1 EN 50126-2 8.3.1
+ | EN 50126-1:2017, EN 50126-2:2017, EN 50129:2018, EN 50716:2023 (Software), EN 50159 (sicherheitsrelevante Kommunikation in offenen Übertragungssystemen – Funk), EN 16704-1 (Sicherheitsmassnahmen bei Arbeiten im Gleisbereich), EN 16704-2-1 (Anforderungen an Warnsysteme), EN 50121-4 (EMV), ETSI EN 300 220 (Funk), EN 60529, Regelwerk der Infrastrukturbetreiberin für Arbeiten im Gleisbereich (z. B. R RTE 20100).
+ | Referenzsysteme (falls Referenzsystem-Prinzip angewendet wird)
+ | EN 50126-1 EN 50126-2 8.3.2
+ | Minimel Lynx ATWS in Standardkonfiguration mit Freigabe durch Infrastrukturbetreiber (u. a. in der Liste freigegebener automatischer Warnsysteme der DB Netz AG geführt); vergleichbare Gleiserneuerungsprojekte mit Lynx und ASU auf Doppelspurstrecken.
+ | Rechtlicher Rahmen / Sicherheitsvorschriften
+ | EN 50126-1 7.2.2 e)
+ | Eisenbahngesetz (EBG) und Eisenbahnverordnung (EBV); Bauarbeitenverordnung (BauAV); Verordnung über die Unfallverhütung (VUV) und SUVA-Regeln für Arbeiten im Gleisbereich; Fernmeldegesetz / Funkkonzessionen (BAKOM); Fahrdienstvorschriften (FDV); Regelwerk der Infrastrukturbetreiberin.
+ | Betriebsarten im Umfang
+ | EN 50126-1 7.3.2.1 c)
+ | Normalbetrieb, Degradierter Betrieb, Betriebsartwechsel / Übergänge, Instandhaltung, Notbetrieb / Notfall, Errichtung / Inbetriebnahme, Rückbau / Entsorgung
+ |
+Funktionen
+ID
+ | Funktion
+ | Beschreibung
+ | Art
+ | Sich.-rel.
+ | Sicherer Zustand
+ | Teilsystem
+ | Betriebsarten
+ | F-0001
+ | Zugfahrt an der Einschaltstelle erkennen
+ | Eingang: Radüberfahrten über die Schienenkontakte der Einschaltstelle (Süd km 57,050: 2 × RSK89; Nord km 60,550: RSK89 + RSR123). Verarbeitung: Auswertung der Kontaktreihenfolge zur Bestimmung der Fahrtrichtung. Ausgang: richtungsbezogene Zugmeldung an den angeschlossenen HSF-L.
+ | Gemischt (elektronischer Anteil)
+ | ja
+ | Bei erkanntem Fehler eines Schienenkontakts wird eine Störung an die EZE-L gemeldet und die Störungswarnung ausgelöst.
+ | Zugerkennung
+ | Normalbetrieb, Degradierter Betrieb, Betriebsartwechsel / Übergänge
+ | F-0002
+ | Einschaltmeldung per Funk an die Zentrale übertragen
+ | Eingang: Zugmeldung am HSF-L. Verarbeitung: gesicherte Funkübertragung zur EZE-L, bei der Einschaltstelle Nord über den Repeater bei km 59,250; zyklische Lebenszeichen. Ausgang: Einschaltmeldung in der EZE-L.
+ | Elektronisch
+ | ja
+ | Ausbleibende Lebenszeichen oder gestörte Funkstrecke werden erkannt und führen zur Störungswarnung.
+ | Funkübertragung
+ | Normalbetrieb, Degradierter Betrieb
+ | F-0003
+ | Warnung in der Zentrale auslösen und verwalten
+ | Eingang: Ein- und Ausschaltmeldungen beider Richtungen, manuelle Auslösung. Verarbeitung: Warnlogik mit Zugzählung je Richtung (Zugfolge, Zugkreuzung) für beide Sektoren; Warnung endet erst, wenn alle eingeschalteten Züge ausgeschaltet sind. Ausgang: Warnbefehl an AW126-L, EWK-L, EPW und MWK.
+ | Elektronisch
+ | ja
+ | Warnung bleibt aktiv bzw. Störungswarnung wird ausgelöst; Rücknahme nur durch Ausschaltung oder Quittierung des Sicherheitschefs.
+ | Zentrale und Bedienung
+ | Normalbetrieb, Degradierter Betrieb, Betriebsartwechsel / Übergänge
+ | F-0004
+ | Akustische und optische Warnung an den Warneinheiten ausgeben
+ | Eingang: Warnbefehl (AW126-L über Kabel, EWK-L über Funk). Verarbeitung: Ansteuerung von 8 AW126-L und 10 EWK-L mit Starktonhorn und Blitzleuchte. Ausgang: akustisches und optisches Warnsignal an allen Arbeitsplätzen beider Sektoren.
+ | Gemischt (elektronischer Anteil)
+ | ja
+ | Ausfall oder fehlendes Lebenszeichen einer Warneinheit wird erkannt und führt zur Störungswarnung.
+ | Warnmittel
+ | Normalbetrieb, Degradierter Betrieb
+ | F-0005
+ | Warnlautstärke automatisch an den Umgebungslärm anpassen
+ | Eingang: Umgebungslärm am Mikrofon jedes Starktonhorns. Verarbeitung: ALADIN regelt den Warnpegel zwischen 96 und 126 dB. Ausgang: Warnsignal so laut wie nötig, mindestens 3 dB(A) über dem Umgebungspegel.
+ | Elektronisch
+ | ja
+ | Bei Fehler der Pegelregelung wird mit maximalem Pegel (126 dB) gewarnt.
+ | Warnmittel
+ | Normalbetrieb
+ | F-0006
+ | Warnung an Personenwarngeräten und Maschinen ausgeben
+ | Eingang: Warnbefehl der EZE-L. Verarbeitung: Funkübertragung an 12 Personenwarngeräte EPW und an die MWK von Stopfmaschine und Zweiwegebagger. Ausgang: Vibrations-, Ton- und Lichtsignal am EPW bzw. Warnung im Führerstand.
+ | Elektronisch
+ | ja
+ | Verbindungsverlust wird am EPW bzw. im Führerstand und an der EZE-L angezeigt.
+ | Maschinenwarnung
+ | Normalbetrieb, Degradierter Betrieb
+ | F-0007
+ | Warnsektor der Maschinen automatisch umschalten
+ | Eingang: Standort der Maschine (Sektorwechsel an der Sektorgrenze km 58,800). Verarbeitung: Automatische Sektorumschaltung ASU ordnet die MWK dem aktuellen Warnsektor zu. Ausgang: Warnung der Maschine aus dem richtigen Sektor ohne Zutun des Maschinenführers.
+ | Elektronisch
+ | ja
+ | Bei unklarer Sektorzuordnung erhält die MWK die Warnungen beider Sektoren.
+ | Maschinenwarnung
+ | Normalbetrieb, Betriebsartwechsel / Übergänge
+ | F-0008
+ | Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden
+ | Eingang: Radüberfahrt am RSK89 der Ausschaltstelle (km 59,650 für Richtung Süd, km 57,950 für Richtung Nord). Verarbeitung: richtungsabhängige Auswertung und Funkmeldung. Ausgang: Ausschaltmeldung an die EZE-L.
+ | Gemischt (elektronischer Anteil)
+ | ja
+ | Bei Fehler oder fehlender Ausschaltung bleibt die Warnung bestehen, bis der Sicherheitschef nach Sichtkontrolle quittiert.
+ | Zugerkennung
+ | Normalbetrieb, Degradierter Betrieb
+ | F-0009
+ | Warnung manuell auslösen und quittieren
+ | Eingang: Betätigung an der EZE-L oder am Hand-Funksender HSF-L durch Sicherheitschef bzw. Vorwärter. Verarbeitung: manuelle Auslösung (Rückfallebene, Probewarnung) bzw. Quittierung nach Sichtkontrolle. Ausgang: Warnbefehl bzw. Rücknahme der Warnung.
+ | Gemischt (elektronischer Anteil)
+ | ja
+ | Quittierung nur bei freiem Gleis nach Sichtkontrolle; bei Fehler bleibt die Warnung aktiv.
+ | Zentrale und Bedienung
+ | Normalbetrieb, Degradierter Betrieb, Notbetrieb / Notfall
+ | F-0010
+ | Funkstrecken und Geräte überwachen und Störung melden
+ | Eingang: Lebenszeichen aller Funkteilnehmer, Kabelüberwachung der AW126-L, Geräte- und Akkuzustand. Verarbeitung: zyklische Überwachung durch die EZE-L. Ausgang: Störungswarnung (eigener Signalton) und Anzeige an der EZE-L.
+ | Elektronisch
+ | ja
+ | Störungswarnung aktiv; Personal verlässt den Gefahrenbereich.
+ | Funkübertragung
+ | Normalbetrieb, Degradierter Betrieb, Instandhaltung
+ | F-0011
+ | Anlage mit Energie versorgen
+ | Eingang: Baustrom 230 V, Akkus der Funkgeräte. Verarbeitung: Versorgung der kabelgebundenen Geräte über die Lynx Power Box; autarker Akkubetrieb von HSF-L, EWK-L und EPW für eine Schicht. Ausgang: Versorgungsspannung, Unterspannungsmeldung.
+ | Elektronisch
+ | ja
+ | Unterspannung bzw. niedriger Akkustand wird rechtzeitig gemeldet und führt zur Störungswarnung.
+ | Energieversorgung
+ | Normalbetrieb, Degradierter Betrieb, Notbetrieb / Notfall
+ | F-0012
+ | Anlage projektieren, aufbauen, prüfen und abbauen
+ | Eingang: Gleisplan, Streckengeschwindigkeit, Baustellenplan. Verarbeitung: Berechnung der Einschaltdistanzen, Festlegung der Standorte und Sektoren, Funkausleuchtung, Aufbau, Inbetriebnahmeprüfung, Umbau bei Baufortschritt, Abbau. Ausgang: geprüfte und freigegebene Anlage mit Prüfprotokoll.
+ | Prozedural / menschlich
+ | ja
+ | Anlage gilt bis zur dokumentierten Prüfung und Freigabe als nicht betriebsbereit; keine Arbeiten im Gefahrenbereich.
+ | Projektierung und Aufbau
+ | Errichtung / Inbetriebnahme, Instandhaltung, Rückbau / Entsorgung
+ |
+Schnittstellen
+ID
+ | Schnittstelle
+ | Typ
+ | Gegenstelle
+ | Beschreibung
+ | IF-0001
+ | Schienenkontakte zu Rad und Schiene Gleis 1
+ | Physisch
+ | Züge und Oberbau Gleis 1
+ | Betätigung der RSK89/RSR123 durch Radsätze bis 140 km/h; Befestigung am Schienenfuss; Einwirkung durch Vibration und Stopfarbeiten.
+ | IF-0002
+ | Schienenkontakte zu Gleisfreimeldung
+ | Fremdsystem
+ | Achszähler / Gleisfreimeldung der Infrastrukturbetreiberin
+ | Rückwirkungsfreiheit: Schienenkontakte dürfen Achszähler und Gleisstromkreise nicht beeinflussen.
+ | IF-0003
+ | Funkstrecken zu Funkumgebung
+ | Physisch
+ | Funkumgebung (Topografie, Fahrzeuge, Fremdstörer, weitere Lynx-Anlagen)
+ | Abschattung durch Kurve, Lärmschutzwand, Brücke und abgestellte Fahrzeuge; Störungen durch Fahrleitung und Schweissgeräte; Frequenzkoordination mit weiteren Anlagen.
+ | IF-0004
+ | Zentrale zu Sicherheitschef
+ | Mensch
+ | Sicherheitschef (SC)
+ | Bedienung (Automatik/Hand, Probewarnung, Quittierung), Anzeige von Warnung, Störung, Sektor- und Akkuzustand; Schichtübergabe.
+ | IF-0005
+ | Warnmittel zu Baupersonal
+ | Mensch
+ | Baupersonal im Gleisbereich
+ | Wahrnehmung der Warnung bei Lärm bis 105 dB(A) und Gehörschutz; Reaktion: Arbeit einstellen, Sicherheitsraum aufsuchen; Tragen und Laden der EPW.
+ | IF-0006
+ | MWK zu Baumaschinen und Maschinenführern
+ | Fremdsystem
+ | Stopfmaschine, Zweiwegebagger
+ | Warnung im Führerstand, Sektorwechsel über ASU, Montage und Energieversorgung an der Maschine.
+ | IF-0007
+ | Energieversorgung zu Baustrom
+ | Physisch
+ | Baustromverteiler km 58,800
+ | 230-V-Einspeisung der Lynx Power Box; Unterbrechungen durch Bauablauf.
+ | IF-0008
+ | Anlage zu Fahrdienstleitung und Stellwerk
+ | Organisation
+ | Fahrdienstleitung der Infrastrukturbetreiberin
+ | Sperrung Gleis 2, Sicherung Spurwechsel W 12/13, Meldung von Sonderfahrten, Langsamfahrten, Umleitungen und Störungen.
+ | IF-0009
+ | Kabel und Geräte zu Baumaschinen
+ | Physisch
+ | Baumaschinen, Materialtransport
+ | Beschädigung der AW126-L-Kabel und Umstossen von Warneinheiten durch Zweiwegebagger und Materialablage.
+ | IF-0010
+ | Anlage zu Fahrleitung und Rückstrom
+ | Physisch
+ | Fahrleitung 15 kV/16,7 Hz
+ | Elektromagnetische Beeinflussung, Berührungsspannung bei Arbeiten an Schienenkontakten.
+ | IF-0011
+ | Warnsignale zu Anwohnern
+ | Organisation
+ | Anwohner, Gemeinde
+ | Lärmemission in der Nacht; Forderung nach Pegelreduktion.
+ | IF-0012
+ | Anlage zu Aufbau- und Instandhaltungspersonal
+ | Mensch
+ | M2S-Personal
+ | Aufbau, Umbau, Akkuwechsel, Instandsetzung und Parametrierung im Gleisbereich; Prüfprotokolle.
+ |
+Teilsysteme
+Teilsystem
+ | Beschreibung
+ | Zugerkennung
+ | Einschalt- und Ausschaltstellen mit Schienenkontakten RSK89/RSR123 und Funksendern HSF-L
+ | Funkübertragung
+ | Funkstrecken HSF-L → EZE-L → EWK-L/EPW/MWK inkl. Repeater, Lebenszeichenüberwachung
+ | Zentrale und Bedienung
+ | Zentrale EZE-L mit Warnlogik, Sektorverwaltung, Parametrierung, Bedienung und Anzeige
+ | Warnmittel
+ | 8 AW126-L (kabelgebunden, Sektor 1), 10 EWK-L (funkbasiert, Sektor 2) mit ALADIN, 12 Personenwarngeräte EPW
+ | Maschinenwarnung
+ | MWK an Stopfmaschine und Zweiwegebagger mit Automatischer Sektorumschaltung (ASU)
+ | Energieversorgung
+ | Lynx Power Box (230 V), Akkus der Funkgeräte, Ladestation
+ | Projektierung und Aufbau
+ | Einschaltdistanzen, Standorte, Funkausleuchtung, Aufbau, Prüfung, Umbau, Abbau (M2S)
+ |
+Referenzdokumente
+Dokument
+ | Umfang (Zeichen)
+ | Hinweis
+ | LYNX-SB-01_Systembeschreibung_Minimel_Lynx_ATWS.docx
+ | 13979
+ |
+ | LYNX-SH-02_Sicherheitshinweise_Anwendungsbedingungen.pdf
+ | 6597
+ |
+ | LYNX-PR-03_Projektierung_Einschaltdistanzen.xlsx
+ | 5707
+ |
+ | LYNX-BE-04_Betriebserfahrung_Stoerungen_2022-2025.csv
+ | 6515
+ |
+ | IB-LH-05_Anforderungen_Infrastrukturbetreiberin_Warnsysteme.md
+ | 3200
+ |
+ |
+4 Methode und Werkzeug
+Die Gefährdungsidentifikation erfolgte rechnergestützt mit der Railway Hazard Analysis Suite (Version test) als KI-gestützte Vorschlagsgenerierung in Durchläufen je Funktion (Leitwortmethode, HAZOP-artig), je Schnittstelle, je Betriebsart, je Gefährdungsquelle nach EN 50126-1 7.4.2.1 a) bis n), sowie in Interaktions-, Kritik- und Lückenfüllungsdurchläufen. Jeder Vorschlag wurde vom Bearbeiter geprüft und übernommen oder mit Begründung verworfen; nichts gelangt ohne diese Entscheidung in die Gefährdungsliste. Die Vollständigkeit der Identifikation bleibt eine Ingenieurentscheidung; der Abdeckungsnachweis dokumentiert, welche Einheiten mit welchem Ergebnis durchsucht wurden.
+Risikoklassen werden ausschließlich lokal aus der Projektkalibrierung (Standardkalibrierung nach EN 50126-1:2017 Anhang C (informativ), Version 1) aus Häufigkeit und Schadensausmaß des Unfallszenarios berechnet. Tolerierbare Gefährdungsraten (THR) werden eingetragen und mit Herkunft dokumentiert, nie geschätzt. Der Integritätslevel je Funktion folgt lokal aus der TFFR (EN 50126-2 Tabelle 2) und wird nur elektronischen Funktionen zugeordnet.
+Das Werkzeug ist ein Werkzeug mit indirektem Einfluss auf die Sicherheit im Sinne von EN 50129 6.3 (Erstellung und Nachverfolgung von Sicherheitsdokumentation); es erzeugt keine Entwurfs- oder Konfigurationsdaten. Sprachmodell: keine KI-Läufe.
+KI-Läufe (Methodennachweis)
+Keine Einträge.
+Durchläufe der Gefährdungsidentifikation
+Keine Einträge.
+Abdeckungsnachweis
+Dimension
+ | Einheit
+ | Durchsucht
+ | Vorgeschlagen
+ | Übernommen
+ | Gefährdungsquelle
+ | GQ-a Normalbetrieb
+ | nein
+ | 1
+ | 0
+ | Gefährdungsquelle
+ | GQ-b Fehlerzustände
+ | nein
+ | 1
+ | 1
+ | Gefährdungsquelle
+ | GQ-c Notbetrieb
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-d Vorhersehbarer Fehlgebrauch
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-e Schnittstellen
+ | nein
+ | 1
+ | 1
+ | Gefährdungsquelle
+ | GQ-f Funktionalität
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-g Konfigurationsparameter
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-h Betrieb, Instandhaltung und Unterstützung
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-i Entsorgung / Rückbau
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-j Menschliche Faktoren
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-k Arbeitsschutz
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-l Mechanische Umgebung
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-m Elektrische Umgebung
+ | nein
+ | 0
+ | 0
+ | Gefährdungsquelle
+ | GQ-n Natürliche Umgebung
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0001 Zugfahrt an der Einschaltstelle erkennen
+ | nein
+ | 2
+ | 2
+ | Funktion
+ | F-0002 Einschaltmeldung per Funk an die Zentrale übertragen
+ | nein
+ | 1
+ | 1
+ | Funktion
+ | F-0003 Warnung in der Zentrale auslösen und verwalten
+ | nein
+ | 2
+ | 1
+ | Funktion
+ | F-0004 Akustische und optische Warnung an den Warneinheiten ausgeben
+ | nein
+ | 1
+ | 1
+ | Funktion
+ | F-0005 Warnlautstärke automatisch an den Umgebungslärm anpassen
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0006 Warnung an Personenwarngeräten und Maschinen ausgeben
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0007 Warnsektor der Maschinen automatisch umschalten
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0008 Zugvorbeifahrt an der Ausschaltstelle erkennen und Warnung beenden
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0009 Warnung manuell auslösen und quittieren
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0010 Funkstrecken und Geräte überwachen und Störung melden
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0011 Anlage mit Energie versorgen
+ | nein
+ | 0
+ | 0
+ | Funktion
+ | F-0012 Anlage projektieren, aufbauen, prüfen und abbauen
+ | nein
+ | 1
+ | 1
+ | Schnittstelle
+ | IF-0001 Schienenkontakte zu Rad und Schiene Gleis 1
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0002 Schienenkontakte zu Gleisfreimeldung
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0003 Funkstrecken zu Funkumgebung
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0004 Zentrale zu Sicherheitschef
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0005 Warnmittel zu Baupersonal
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0006 MWK zu Baumaschinen und Maschinenführern
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0007 Energieversorgung zu Baustrom
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0008 Anlage zu Fahrdienstleitung und Stellwerk
+ | nein
+ | 1
+ | 1
+ | Schnittstelle
+ | IF-0009 Kabel und Geräte zu Baumaschinen
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0010 Anlage zu Fahrleitung und Rückstrom
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0011 Warnsignale zu Anwohnern
+ | nein
+ | 0
+ | 0
+ | Schnittstelle
+ | IF-0012 Anlage zu Aufbau- und Instandhaltungspersonal
+ | nein
+ | 0
+ | 0
+ | Betriebsart
+ | Normalbetrieb
+ | nein
+ | 1
+ | 1
+ | Betriebsart
+ | Degradierter Betrieb
+ | nein
+ | 1
+ | 1
+ | Betriebsart
+ | Betriebsartwechsel / Übergänge
+ | nein
+ | 0
+ | 0
+ | Betriebsart
+ | Instandhaltung
+ | nein
+ | 0
+ | 0
+ | Betriebsart
+ | Notbetrieb / Notfall
+ | nein
+ | 0
+ | 0
+ | Betriebsart
+ | Errichtung / Inbetriebnahme
+ | nein
+ | 0
+ | 0
+ | Betriebsart
+ | Rückbau / Entsorgung
+ | nein
+ | 0
+ | 0
+ | Leitwort
+ | Ausfall / keine Funktion
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Unbeabsichtigte Ausführung
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Zu früh
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Zu spät
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Teilweise / unvollständig
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Falscher Wert / Zustand
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Fälschlich als sicher gemeldet
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Nicht beendet / blockiert
+ | –
+ | 0
+ | 0
+ | Leitwort
+ | Fehlerreaktion unzureichend
+ | –
+ | 0
+ | 0
+ | Methode
+ | Gefährdungsquelle (EN 50126-1 7.4.2.1)
+ | –
+ | 1
+ | 0
+ | Methode
+ | Manuell erfasst
+ | –
+ | 2
+ | 2
+ |
+5 Risikoakzeptanzkriterien und Kalibrierung (EN 50126-1 Anhang C, EN 50126-2 8.3)
+Die Matrix wird auf die Häufigkeit und das Schadensausmaß des UNFALLS (nicht der Gefährdung) angewendet. Häufigkeiten beziehen sich auf eine einzelne Instanz des Systems/der Funktion.
+Beispielgewichtung nach C.1: 1 Todesfall ≈ 10 schwere Verletzungen ≈ 100 leichte Verletzungen (mit dem Betreiber zu vereinbaren).
+Häufigkeitskategorien (Standardkalibrierung nach EN 50126-1:2017 Anhang C (informativ))
+Kategorie
+ | Beschreibung
+ | Beispielbereich (je Einzelinstanz)
+ | Häufig
+ | Tritt voraussichtlich häufig auf; wird regelmäßig erlebt.
+ | mehr als einmal in ca. 6 Wochen (bei 24 h/Tag Betrieb)
+ | Wahrscheinlich
+ | Tritt mehrmals auf; ist oft zu erwarten.
+ | ca. einmal in 6 Wochen bis einmal pro Jahr
+ | Gelegentlich
+ | Tritt voraussichtlich mehrmals in der Lebensdauer auf.
+ | ca. einmal pro Jahr bis einmal in 10 Jahren
+ | Selten
+ | Tritt voraussichtlich irgendwann in der Systemlebensdauer auf; ist vernünftigerweise zu erwarten.
+ | ca. einmal in 10 Jahren bis einmal in 1 000 Jahren
+ | Unwahrscheinlich
+ | Unwahrscheinlich, aber möglich; kann ausnahmsweise auftreten.
+ | ca. einmal in 1 000 Jahren bis einmal in 100 000 Jahren
+ | Höchst unwahrscheinlich
+ | Äußerst unwahrscheinlich; es wird angenommen, dass es nicht auftritt.
+ | einmal in ca. 100 000 Jahren oder seltener
+ |
+Schadenskategorien
+Kategorie
+ | Personen / Umwelt
+ | Betrieb / Sachwerte
+ | Katastrophal
+ | Betrifft eine große Anzahl von Personen und führt zu mehreren Todesfällen und/oder extremem Umweltschaden.
+ | Jede der nachfolgenden Folgen, sofern Personen oder Umwelt betroffen sind.
+ | Kritisch
+ | Betrifft eine sehr kleine Anzahl von Personen und führt zu mindestens einem Todesfall und/oder großem Umweltschaden.
+ | Verlust eines Hauptsystems.
+ | Marginal
+ | Kein Todesfall möglich; schwere oder leichte Verletzungen und/oder geringer Umweltschaden.
+ | Schwerer Schaden an System(en).
+ | Unbedeutend
+ | Möglicherweise leichte Verletzung.
+ | Geringer Systemschaden.
+ |
+Risikoakzeptanzkategorien
+Kategorie
+ | Erforderliche Handlung
+ | Untragbar
+ | Das Risiko muss beseitigt werden.
+ | Unerwünscht
+ | Nur akzeptabel, wenn eine Risikoreduktion nicht praktikabel ist, und mit Zustimmung der Betreiber bzw. der zuständigen Sicherheitsbehörde.
+ | Tragbar
+ | Tolerierbar und akzeptabel mit angemessener Kontrolle (z. B. Instandhaltungsverfahren oder Regeln) und mit Zustimmung der zuständigen Betreiber.
+ | Vernachlässigbar
+ | Akzeptabel ohne Zustimmung der Betreiber.
+ |
+Risikomatrix (Unfallhäufigkeit × Schadensausmaß)
+Häufigkeit \ Schadensausmaß
+ | Katastrophal
+ | Kritisch
+ | Marginal
+ | Unbedeutend
+ | Häufig
+ | Untragbar
+ | Untragbar
+ | Untragbar
+ | Unerwünscht
+ | Wahrscheinlich
+ | Untragbar
+ | Untragbar
+ | Unerwünscht
+ | Tragbar
+ | Gelegentlich
+ | Untragbar
+ | Unerwünscht
+ | Unerwünscht
+ | Tragbar
+ | Selten
+ | Unerwünscht
+ | Unerwünscht
+ | Tragbar
+ | Vernachlässigbar
+ | Unwahrscheinlich
+ | Unerwünscht
+ | Tragbar
+ | Vernachlässigbar
+ | Vernachlässigbar
+ | Höchst unwahrscheinlich
+ | Tragbar
+ | Vernachlässigbar
+ | Vernachlässigbar
+ | Vernachlässigbar
+ |
+6 Risikoanalyse und -bewertung (EN 50126-1 7.4.2.1; EN 50126-2 8)
+Je Gefährdung: Ursachen (typisiert), auslösendes Ereignis und Bedingungen, Gefährdung auf Ebene des Eisenbahnsystems, Unfallszenarien mit Schadensausmaß und Häufigkeit samt Begründung, berechnete Risikoklasse, bestehende Barrieren, Entscheidung „weitgehend akzeptabel“ bzw. gewähltes Risikoakzeptanzprinzip und -kriterium, THR.
+Risikoanalyse und -bewertung je Gefährdung
+ID
+ | Gefährdung
+ | Ursachen
+ | Auslöser / Bedingungen
+ | Gefährdung Eisenbahnsystem
+ | Unfallszenarien (S / H → Risiko)
+ | Begründungen
+ | Risikoklasse
+ | Bestehende Barrieren
+ | Bewertung (RAP / RAC)
+ | THR
+ | H-0001
+ | Keine oder zu kurze Warnung bei Zugfahrt über Spurwechsel W 12/13
+Ein Zug gelangt über den Spurwechsel W 12/13 von Gleis 2 auf Gleis 1 zwischen Einschaltstelle Nord und Baustellenende; das Personal erhält keine oder eine deutlich zu kurze Warnung.
+ | Sicherung von W 12/13 im Stellwerk nicht eingegeben oder aufgehoben (Menschlich); Umleitung über W 12/13 ohne Information des Sicherheitschefs (Menschlich); Projektierung der Einschaltstelle ohne Berücksichtigung des Spurwechsels (Systematisch)
+ | Zugfahrt von Gleis 2 über W 12/13 auf Gleis 1 in Richtung Baustelle
+ |
+ | A1: Zug erfasst Arbeiter auf der Brücke über die Wigger [Personal] – Kritisch / Gelegentlich → Unerwünscht
+A2: Zug kollidiert mit Zweiwegebagger im Lichtraum; Entgleisung [Personal, Fahrgäste, Sachwerte] – Katastrophal / Unwahrscheinlich → Unerwünscht
+ | A1: S: Kollision mit einer Person bei bis zu 140 km/h; 1–3 Betroffene. | H: Ein Ereignis in vier Jahren (LYNX-BE-04, Ereignis 9) und Personal ca. 30 % der Schichtzeit im Gefahrenbereich.
+A2: S: Entgleisung eines Reisezuges bei 140 km/h. | H: Erfordert gleichzeitig Fahrt über W 12/13 und Maschine im Lichtraum.
+ | Unerwünscht
+ | Stellwerkssicherung W 12/13 in Grundstellung (Häufigkeitsmindernd, außerhalb → SRAC)
+ | Explizite Risikoabschätzung – RAC: Kalibrierte Risikomatrix (EN 50126-1 Anhang C). Projektspezifische Gleistopologie.
+ | –
+ | H-0002
+ | Personal im Gefahrenbereich erhält keine Warnung trotz Zugannäherung auf Gleis 1
+Ein Zug befährt die Einschaltstelle, aber durch einen unerkannten Fehler in Zugerkennung, Funkübertragung, Warnlogik oder Warnausgabe wird keine Warnung ausgegeben.
+ | Unerkannter Ausfall eines Schienenkontakts (Zufällig); Funkmeldung geht verloren, ohne dass die Lebenszeichenüberwachung anspricht (Zufällig); Softwarefehler in der Warnlogik der EZE-L (Systematisch)
+ | Zugfahrt auf Gleis 1 bei unerkanntem Fehler der Warnkette
+ |
+ | Zug erfasst Personen im Gefahrenbereich von Gleis 1 [Personal] – Kritisch / Unwahrscheinlich → Tragbar
+ | S: Wie Leitgefährdung A. | H: Sicherheitsgerichtete Warnkette; unerkannter gefährlicher Ausfall nur mit THR-begrenzter Rate.
+ | Tragbar
+ |
+ | Anerkannte Regeln der Technik (CoP) – EN 50129:2018 (SIL 3), EN 50159; Vorgabe IB-02
+ | 5 × 10^-8 /h (Vom Betreiber vorgegeben)
+ |
+7 Maßnahmen und Restrisiko (EN 50126-1 5.9.2, 7.4.2.1)
+Maßnahmen und Restrisiko
+Gef.
+ | Gefährdung
+ | Maßn.
+ | Maßnahme
+ | Wirkung
+ | Hierarchie
+ | Rest S / H
+ | Restrisiko
+ | Grenze
+ | Status
+ | Begründung
+ | H-0001
+ | Keine oder zu kurze Warnung bei Zugfahrt über Spurwechsel W 12/13
+ | M1
+ | Zusätzliche Einschaltstelle auf Gleis 2 vor dem Spurwechsel W 12/13
+ | Häufigkeit der Gefährdung senken
+ | Zusätzliche Sicherheitsfunktion / Barriere (5.9.2 b))
+ | Kritisch / Unwahrscheinlich
+ | Tragbar
+ | innerhalb
+ | bestätigt
+ |
+ | H-0001
+ | Keine oder zu kurze Warnung bei Zugfahrt über Spurwechsel W 12/13
+ | M2
+ | Infrastrukturbetreiberin sichert W 12/13 für die gesamte Bauzeit
+ | Häufigkeit der Gefährdung senken
+ | Sicherheitsbezogene Information / Auflage (5.9.2 c))
+ | Kritisch / Selten
+ | Unerwünscht
+ | außerhalb → SRAC
+ | bestätigt
+ |
+ | H-0001
+ | Keine oder zu kurze Warnung bei Zugfahrt über Spurwechsel W 12/13
+ | M3
+ | Vier-Augen-Prüfung der Einschaltstellen gegen den Gleisplan
+ | Häufigkeit der Gefährdung senken
+ | Sicherheitsbezogene Information / Auflage (5.9.2 c))
+ | Kritisch / Selten
+ | Unerwünscht
+ | innerhalb
+ | bestätigt
+ |
+ | H-0002
+ | Personal im Gefahrenbereich erhält keine Warnung trotz Zugannäherung auf Gleis 1
+ | M1
+ | Tägliche Funktionsprüfung mit Probewarnung in beiden Sektoren
+ | Häufigkeit der Gefährdung senken
+ | Sicherheitsbezogene Information / Auflage (5.9.2 c))
+ | Kritisch / Höchst unwahrscheinlich
+ | Vernachlässigbar
+ | innerhalb
+ | bestätigt
+ |
+ |
+8 Ergebnis der Bewertung
+Die ganzheitliche Bewertung des Restrisikos über alle Gefährdungen (EN 50126-2 5.3) und die Zustimmung des Betreibers bzw. der Behörde zu Risiken der Klassen „Unerwünscht“ und „Tragbar“ (EN 50126-1 Tabelle C.8) sind außerhalb dieses Werkzeugs zu dokumentieren.
+Ergebnis der Risikobewertung
+Risikoklasse
+ | Ausgangsrisiko (Gefährdungen)
+ | Restrisiko nach Maßnahmen
+ | Untragbar
+ | 0
+ | 0
+ | Unerwünscht
+ | 1
+ | 0
+ | Tragbar
+ | 1
+ | 1
+ | Vernachlässigbar
+ | 0
+ | 1
+ | Weitgehend akzeptabel (6.3)
+ | 0
+ | –
+ | Nicht klassifiziert
+ | 0
+ | –
+ |
+9 Annahmen und offene Punkte
+Annahmen
+Herkunft
+ | Annahme
+ | Systemdefinition
+ | A1: Höchstgeschwindigkeit auf Gleis 1 im Baustellenbereich 140 km/h; keine Langsamfahrstelle. A2: Erforderliche Mindestwarnzeit 20 s (Räumzeit 12 s + Reaktionszeit 3 s + Sicherheitszuschlag 5 s), maximale Warnzeit 60 s (Projektvorgabe der Infrastrukturbetreiberin). A3: Der Spurwechsel W 12/13 wird während der Arbeiten im Stellwerk gegen Umstellen gesichert; Nordfahrten wechseln bereits im Bahnhof Süd (km 61,800) auf Gleis 1. A4: Die Akkus der Funkgeräte reichen für eine Schicht von 8 h bei Temperaturen bis −15 °C (Projektannahme, Nachweis ausstehend). A5: Die Schienenkontakte beeinflussen Achszähler und Gleisfreimeldung nicht. A6: ALADIN stellt an jedem Arbeitsplatz einen Warnpegel mindestens 3 dB(A) über dem Umgebungspegel ein; bei kurzen Lärmspitzen direkt am Arbeitsplatz ausserhalb der Mikrofonreichweite ist dies nicht separat nachgewiesen. A7: Keine weitere Lynx-Anlage arbeitet im Funkbereich auf derselben Frequenz ohne Abstimmung.
+ | CCA CCA-0001
+ | Gemeinsame EZE-L
+ | CCA CCA-0001
+ | Gemeinsamer Funkkanal
+ | Barriere H-0001
+ | Stellwerkssicherung W 12/13 in Grundstellung (außerhalb der Systemgrenze, wird Anwendungsbedingung)
+ |
+Offene Punkte (unvollständige Datensätze)
+Keine Einträge.

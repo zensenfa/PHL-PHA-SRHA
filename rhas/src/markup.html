@@ -1,0 +1,340 @@
+<header id="hdr">
+  <div class="brand"><span class="brand-name" role="heading" aria-level="1">RHAS</span><span class="brand-sub">Railway Hazard Analysis Suite · EN 50126 / EN 50129</span></div>
+  <div class="hdr-project">
+    <label class="fld"><span>Projekt</span><select id="project-select"></select></label>
+    <button id="btn-new-project" class="btn" type="button">Neu</button>
+    <button id="btn-import-project" class="btn" type="button">Import</button>
+    <button id="btn-demo-project" class="btn" type="button">Beispiel</button>
+    <button id="btn-delete-project" class="btn danger" type="button" title="Projekt löschen">Löschen</button>
+  </div>
+  <div class="hdr-doc">
+    <label class="fld"><span>Dok.-ID</span><input id="doc-id" placeholder="SA-…" /></label>
+    <label class="fld"><span>Rev.</span><input id="doc-rev" placeholder="A" class="w-3" /></label>
+    <label class="fld"><span>Bearbeiter</span><input id="doc-author" placeholder="Name" /></label>
+  </div>
+  <button id="btn-provider" class="provider" type="button" title="KI-Anbieter"><span id="provider-dot" class="dot"></span><span id="provider-label">KI</span></button>
+</header>
+
+<div id="inline-project-form" class="inline-panel hidden">
+  <label class="fld"><span>Projektname</span><input id="new-project-name" /></label>
+  <label class="fld"><span>Beschreibung</span><input id="new-project-desc" /></label>
+  <button id="btn-create-project" class="btn primary" type="button">Anlegen</button>
+  <button id="btn-cancel-project" class="btn" type="button">Abbrechen</button>
+  <span id="new-project-error" class="err"></span>
+</div>
+<div id="inline-delete-form" class="inline-panel hidden">
+  <span id="delete-message"></span>
+  <button id="btn-confirm-delete" class="btn danger" type="button">Endgültig löschen</button>
+  <button id="btn-cancel-delete" class="btn" type="button">Abbrechen</button>
+</div>
+<input id="import-project-file" type="file" accept=".json" class="hidden" />
+
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-title">Arbeitsablauf</div>
+    <nav id="rail-nav">
+      <button class="rail-btn" data-stage="profile"><span class="n">0</span><span class="t">Projektprofil<small>Einrichtung · EN 50126-1 6.5</small></span><span class="pct" id="pct-profile"></span></button>
+      <button class="rail-btn" data-stage="definition"><span class="n">1</span><span class="t">Systemdefinition<small>EN 50126-1 7.3</small></span><span class="pct" id="pct-definition"></span></button>
+      <button class="rail-btn" data-stage="identification"><span class="n">2</span><span class="t">Gefährdungsidentifikation<small>EN 50126-1 7.4.2.1</small></span><span class="pct" id="pct-identification"></span></button>
+      <button class="rail-btn" data-stage="analysis"><span class="n">3</span><span class="t">Risikoanalyse &amp; -bewertung<small>EN 50126-1 7.4, EN 50126-2 8</small></span><span class="pct" id="pct-analysis"></span></button>
+      <button class="rail-btn hidden" data-stage="security" id="rail-security"><span class="n">3b</span><span class="t">Bedrohungsprotokoll<small>Security-Stufe 2 · EN 50129 6.4</small></span><span class="pct" id="pct-security"></span></button>
+      <button class="rail-btn" data-stage="requirements"><span class="n">4</span><span class="t">Sicherheitsanforderungen<small>EN 50126-1 7.5, EN 50129 5.3.7</small></span><span class="pct" id="pct-requirements"></span></button>
+      <button class="rail-btn" data-stage="reports"><span class="n">5</span><span class="t">Berichte &amp; Export<small>DOCX · XLSX · PDF</small></span><span class="pct" id="pct-reports"></span></button>
+    </nav>
+    <div class="rail-stats" id="rail-stats"></div>
+    <div class="rail-foot">
+      <button id="btn-checkpoint" class="btn small" type="button">Checkpoint</button>
+      <button id="btn-help" class="btn small" type="button" aria-label="Hilfe: Arbeitsweise" title="Hilfe: Arbeitsweise">?</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="empty-state" class="empty hidden">
+      <h2>Kein Projekt ausgewählt</h2>
+      <p>Legen Sie ein Projekt an, importieren Sie ein Projekt (JSON) oder laden Sie das Beispielprojekt (automatisches Warnsystem Minimel Lynx), um alle fünf Stufen mit Daten zu sehen.</p>
+      <div class="row"><button id="empty-new" class="btn primary" type="button">Neues Projekt</button><button id="empty-demo" class="btn" type="button">Beispielprojekt laden</button></div>
+    </div>
+
+    <!-- Stage 0 -->
+    <section id="stage-profile" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Projektprofil</h2><span class="sub">Rolle, Domäne, Art des Sicherheitsnachweises, Risikoakzeptanz, Rahmen, Security-Tiefe und Datenklassifizierung — einmal zu Projektbeginn festgelegt, danach nur mit Begründung geändert.</span></div>
+        <div class="toolbar"><span id="profile-status" class="badge"></span></div>
+      </div>
+      <div id="profile-findings"></div>
+      <form id="profile-form" class="form-grid"></form>
+      <div id="profile-actions" class="panel"></div>
+      <h3>Kalibrierung der Risikobewertung (EN 50126-1 Anhang C)</h3>
+      <div id="calibration-editor" class="panel"></div>
+      <input id="import-calibration-file" type="file" accept=".json" class="hidden" />
+      <h3>Änderungsverlauf</h3>
+      <table class="grid" id="tbl-profile-log"><thead><tr><th>Datum</th><th>Bearbeiter</th><th>Begründung</th><th>Änderungen</th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <!-- Stage 1 -->
+    <section id="stage-definition" class="stage hidden">
+      <div id="profile-banner" class="warn hidden"></div>
+      <div class="stage-head">
+        <div><h2>Systemdefinition</h2><span class="sub">System, Grenze, Betrieb, Funktionen und Schnittstellen — Grundlage jeder Gefährdungsidentifikation (EN 50126-1 7.3.2.1).</span></div>
+        <div class="toolbar">
+          <span id="def-completeness" class="badge"></span>
+          <button id="btn-def-check" class="btn" type="button">Vollständigkeit prüfen</button>
+          <button id="btn-decompose" class="btn primary" type="button">KI: Zerlegung vorschlagen</button>
+        </div>
+      </div>
+      <div id="def-findings" class="findings hidden"></div>
+      <div class="two-col">
+        <div class="col">
+          <form id="def-form" class="form-grid"></form>
+        </div>
+        <div class="col">
+          <div class="tabs" id="def-tabs">
+            <button class="tab active" data-tab="functions">Funktionen <span id="cnt-functions" class="cnt"></span></button>
+            <button class="tab" data-tab="interfaces">Schnittstellen <span id="cnt-interfaces" class="cnt"></span></button>
+            <button class="tab" data-tab="subsystems">Teilsysteme</button>
+            <button class="tab" data-tab="modes">Betriebsarten</button>
+            <button class="tab" data-tab="documents">Dokumente <span id="cnt-documents" class="cnt"></span></button>
+          </div>
+          <div class="tab-pane" data-pane="functions">
+            <div class="toolbar"><button id="btn-add-function" class="btn small" type="button">+ Funktion</button><button id="btn-fn-templates" class="btn small" type="button">Vorlagen der Domäne</button><span class="hint">Verb + Objekt; sicherer Zustand je Funktion. TFFR/SIL werden in Stufe 4 gepflegt.</span></div>
+            <table class="grid" id="tbl-functions"><thead><tr><th>ID</th><th>Funktion</th><th>Art</th><th>Sicherheitsrelevant</th><th>Sicherer Zustand</th><th>Teilsystem</th><th></th></tr></thead><tbody></tbody></table>
+          </div>
+          <div class="tab-pane hidden" data-pane="interfaces">
+            <div class="toolbar"><button id="btn-add-interface" class="btn small" type="button">+ Schnittstelle</button><button id="btn-if-templates" class="btn small" type="button">Vorlagen der Domäne</button></div>
+            <table class="grid" id="tbl-interfaces"><thead><tr><th>ID</th><th>Schnittstelle</th><th>Typ</th><th>Gegenstelle</th><th>Beschreibung</th><th></th></tr></thead><tbody></tbody></table>
+          </div>
+          <div class="tab-pane hidden" data-pane="subsystems">
+            <div class="toolbar"><button id="btn-add-subsystem" class="btn small" type="button">+ Teilsystem</button></div>
+            <table class="grid" id="tbl-subsystems"><thead><tr><th>Teilsystem</th><th>Beschreibung</th><th></th></tr></thead><tbody></tbody></table>
+          </div>
+          <div class="tab-pane hidden" data-pane="modes">
+            <p class="hint">Betriebsarten und Lebenszyklusszenarien im Umfang der Analyse (7.3.2.1 c)). Jede gewählte Betriebsart erhält in Stufe 2 einen eigenen Durchlauf.</p>
+            <div id="modes-list" class="check-list"></div>
+          </div>
+          <div class="tab-pane hidden" data-pane="documents">
+            <label class="dropzone" id="doc-dropzone" for="doc-file-input"><strong>Referenzdokumente hochladen</strong><span>TXT, MD, CSV, DOCX, XLSX, PDF — ziehen oder klicken. Auszüge werden je Durchlauf passend zur Funktion/Schnittstelle in den Prompt übernommen.</span><input id="doc-file-input" type="file" multiple accept=".txt,.md,.csv,.docx,.xlsx,.pdf" /></label>
+            <div id="doc-status" class="hint"></div>
+            <table class="grid" id="tbl-documents"><thead><tr><th>Dokument</th><th>Zeichen</th><th>Hinweis</th><th></th></tr></thead><tbody></tbody></table>
+            <details><summary>Text manuell einfügen</summary><input id="doc-paste-name" placeholder="Bezeichnung" /><textarea id="doc-paste-text" rows="6"></textarea><button id="btn-doc-paste" class="btn small" type="button">Als Dokument speichern</button></details>
+          </div>
+        </div>
+      </div>
+      <div id="decompose-box" class="proposal hidden"></div>
+    </section>
+
+    <!-- Stage 2 -->
+    <section id="stage-identification" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Gefährdungsidentifikation</h2><span class="sub">KI-Durchläufe je Funktion, Schnittstelle, Betriebsart und Gefährdungsquelle. Nichts gelangt ohne Ihre Entscheidung in die Liste.</span></div>
+        <div class="toolbar">
+          <button id="btn-toggle-run" class="btn" type="button">Durchlauf konfigurieren</button>
+          <button id="btn-add-hazard" class="btn" type="button">+ Manuell erfassen</button>
+          <button id="btn-toggle-coverage" class="btn" type="button">Abdeckungsnachweis</button>
+        </div>
+      </div>
+      <div id="run-panel" class="panel hidden">
+        <div class="run-grid">
+          <div>
+            <div class="lbl">Tiefe</div>
+            <div id="depth-cards" class="depth-cards"></div>
+          </div>
+          <div>
+            <div class="lbl">Durchläufe</div>
+            <div id="pass-toggles" class="check-list compact"></div>
+          </div>
+          <div>
+            <div class="lbl">Gefährdungsquellen im Umfang (EN 50126-1 7.4.2.1)</div>
+            <div id="source-scope" class="chip-list"></div>
+          </div>
+        </div>
+        <div class="run-actions">
+          <span id="run-estimate" class="badge"></span>
+          <button id="btn-run-arm" class="btn primary" type="button">Durchlauf starten</button>
+          <button id="btn-run-confirm" class="btn primary hidden" type="button"></button>
+          <button id="btn-run-cancel" class="btn danger hidden" type="button">Abbrechen</button>
+          <div id="run-progress" class="progress hidden"><div class="bar"></div><span class="txt"></span></div>
+        </div>
+        <div id="run-log" class="log"></div>
+        <div id="run-gate" class="findings hidden"></div>
+      </div>
+      <div id="coverage-panel" class="panel hidden"></div>
+      <div class="filters" id="hz-filters">
+        <input id="hz-search" placeholder="Suche…" />
+        <select id="hz-f-status"><option value="pending">Offen</option><option value="accepted">Übernommen</option><option value="rejected">Verworfen</option><option value="">Alle</option></select>
+        <select id="hz-f-source"><option value="">Alle Quellen</option></select>
+        <select id="hz-f-function"><option value="">Alle Funktionen</option></select>
+        <select id="hz-f-method"><option value="">Alle Methoden</option></select>
+        <label class="chk"><input type="checkbox" id="hz-f-dup" /> nur Duplikat-Verdacht</label>
+        <span class="spacer"></span>
+        <span id="hz-count" class="badge"></span>
+        <button id="btn-bulk-accept" class="btn small" type="button">Alle gefilterten übernehmen (ohne Duplikate)</button>
+        <button id="btn-bulk-reject-dup" class="btn small" type="button">Duplikate verwerfen</button>
+        <button id="btn-bulk-confirm" class="btn small primary hidden" type="button"></button>
+        <button id="btn-bulk-cancel" class="btn small hidden" type="button">Abbrechen</button>
+      </div>
+      <div class="table-wrap" id="hz-table-wrap">
+        <table class="grid rows" id="tbl-hazards"><thead><tr><th class="w-id">ID</th><th>Gefährdung</th><th class="w-s">Quelle</th><th class="w-m">Funktionen</th><th class="w-s">Leitwort</th><th class="w-m">Methode</th><th class="w-s">Hinweis</th><th class="w-s">Status</th><th class="w-a"></th></tr></thead><tbody></tbody></table>
+      </div>
+      <div class="hint">Tastatur: ↑/↓ Zeile · Enter Details · A übernehmen · R verwerfen · Esc schließen</div>
+    </section>
+
+    <!-- Stage 3 -->
+    <section id="stage-analysis" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Risikoanalyse &amp; -bewertung</h2><span class="sub">Ursachen, Unfallszenarien, Häufigkeit × Schadensausmaß, Risikoakzeptanzprinzip, Maßnahmen und Restrisiko je übernommener Gefährdung. Risikoklassen werden ausschließlich lokal aus der Kalibrierung berechnet.</span></div>
+        <div class="toolbar">
+          <button id="btn-an-batch" class="btn primary" type="button">KI: Risikoanalyse</button>
+          <button id="btn-ms-batch" class="btn primary" type="button">KI: Maßnahmen</button>
+          <button id="btn-an-confirm" class="btn primary hidden" type="button"></button>
+          <button id="btn-an-cancel" class="btn danger hidden" type="button">Abbrechen</button>
+          <button id="btn-toggle-risk-summary" class="btn" type="button">Risikoübersicht</button>
+        </div>
+      </div>
+      <div id="an-progress" class="progress hidden"><div class="bar"></div><span class="txt"></span></div>
+      <div id="risk-summary" class="panel hidden"></div>
+      <div class="filters">
+        <input id="an-search" placeholder="Suche…" />
+        <select id="an-f-stage"><option value="">Alle Stufen</option><option value="identified">Nur identifiziert</option><option value="analysed">Analysiert</option><option value="evaluated">Bewertet</option><option value="controlled">Beherrscht</option><option value="incomplete">Unvollständig</option><option value="proposal">Mit KI-Vorschlag</option></select>
+        <select id="an-f-class"><option value="">Alle Risikoklassen</option></select>
+        <select id="an-f-source"><option value="">Alle Quellen</option></select>
+        <span class="spacer"></span>
+        <span id="an-count" class="badge"></span>
+      </div>
+      <div class="table-wrap">
+        <table class="grid rows" id="tbl-analysis"><thead><tr><th class="w-id">ID</th><th>Gefährdung</th><th class="w-s">Ursachen</th><th class="w-s">Szenarien</th><th class="w-m">Schadensausmaß</th><th class="w-m">Häufigkeit</th><th class="w-m">Risikoklasse</th><th class="w-s">RAP</th><th class="w-s">Maßn.</th><th class="w-m">Restrisiko</th><th class="w-m">Stand</th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <!-- Stage 3b (security level >= 2) -->
+    <section id="stage-security" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Bedrohungsprotokoll und Security-Risikobewertung</h2><span class="sub">Bedrohungen mit Exposition, Verwundbarkeit und Auswirkung; das Security-Risiko wird lokal aus der Matrix berechnet. Vorsätzliche Ursachen werden über Gegenmaßnahmen beherrscht, nicht über THR oder SIL (EN 50129 6.4).</span></div>
+        <div class="toolbar"><button id="btn-threat-derive" class="btn" type="button">Aus Gefährdungen ableiten</button><button id="btn-threat-add" class="btn primary" type="button">+ Bedrohung</button></div>
+      </div>
+      <div id="threat-kpis"></div>
+      <div class="table-wrap"><table class="grid" id="tbl-threats"><thead><tr><th class="w-id">ID</th><th>Bedrohung</th><th class="w-m">Klassen</th><th class="w-m">Gefährdungen</th><th class="w-a">E / V / W</th><th class="w-a">Auswirkung</th><th class="w-m">Risiko → Rest</th><th class="w-m">Status</th></tr></thead><tbody></tbody></table></div>
+      <h3>Security-Risikomatrix</h3>
+      <div id="sec-matrix" class="panel"></div>
+      <div id="zones-section" class="hidden">
+        <div class="stage-head"><div><h3>Zonen und Conduits (Security-Stufe 3, Vorschau)</h3><span class="sub">Partitionierung nach IEC 62443-3-2 (ZCR 3), SL-T je Zone und Conduit (ZCR 5.6), Systemanforderungen nach IEC 62443-3-3 (nur Kennungen und Titel).</span></div>
+        <div class="toolbar"><button id="btn-zone-add" class="btn small" type="button">+ Zone</button><button id="btn-conduit-add" class="btn small" type="button">+ Conduit</button></div></div>
+        <div id="zone-findings"></div>
+        <table class="grid" id="tbl-zones"><thead><tr><th class="w-id">Zone</th><th>Name</th><th class="w-m">Funktionen</th><th class="w-m">Schnittstellen</th><th class="w-a">SL-T (Vorschlag)</th><th class="w-m">SR</th></tr></thead><tbody></tbody></table>
+        <table class="grid" id="tbl-conduits"><thead><tr><th class="w-id">Conduit</th><th>Name</th><th class="w-m">Verbindet</th><th class="w-m">Schnittstellen</th><th class="w-a">SL-T (Vorschlag)</th></tr></thead><tbody></tbody></table>
+        <h3>Cybersecurity-Nachweis: Gliederung und Stand</h3>
+        <table class="grid" id="tbl-case"><thead><tr><th>Inhalt</th><th class="w-m">Bezug</th><th class="w-a">Stand</th></tr></thead><tbody></tbody></table>
+      </div>
+    </section>
+
+    <!-- Stage 4 -->
+    <section id="stage-requirements" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Sicherheitsanforderungen</h2><span class="sub">Funktionale, technische und betriebliche Sicherheitsanforderungen sowie Anwendungsbedingungen (SRAC), rückverfolgbar zu Gefährdung, Maßnahme und Funktion. TFFR → SIL nach EN 50126-2 Tabelle 2, lokal berechnet.</span></div>
+        <div class="toolbar">
+          <button id="btn-rq-batch" class="btn primary" type="button">KI: Anforderungen ableiten</button>
+          <button id="btn-rq-confirm" class="btn primary hidden" type="button"></button>
+          <button id="btn-rq-cancel" class="btn danger hidden" type="button">Abbrechen</button>
+          <button id="btn-add-requirement" class="btn" type="button">+ Anforderung</button>
+        </div>
+      </div>
+      <div id="rq-progress" class="progress hidden"><div class="bar"></div><span class="txt"></span></div>
+      <div class="tabs" id="rq-tabs">
+        <button class="tab active" data-tab="requirements">Anforderungen <span id="cnt-requirements" class="cnt"></span></button>
+        <button class="tab" data-tab="functions">Funktionen &amp; SIL</button>
+        <button class="tab" data-tab="srac">SRAC <span id="cnt-srac" class="cnt"></span></button>
+        <button class="tab" data-tab="trace">Nachverfolgbarkeit</button>
+        <button class="tab" data-tab="cca">Unabhängigkeit (CCA)</button>
+      </div>
+      <div class="tab-pane" data-pane="requirements">
+        <div class="filters">
+          <input id="rq-search" placeholder="Suche…" />
+          <select id="rq-f-category"><option value="">Alle Kategorien</option></select>
+          <select id="rq-f-status"><option value="">Alle Stati</option></select>
+          <select id="rq-f-hazard"><option value="">Alle Gefährdungen</option></select>
+          <span class="spacer"></span><span id="rq-count" class="badge"></span>
+        </div>
+        <div class="table-wrap"><table class="grid rows" id="tbl-requirements"><thead><tr><th class="w-id">ID</th><th>Anforderung</th><th class="w-m">Kategorie</th><th class="w-m">Gefährdungen</th><th class="w-m">Funktionen</th><th class="w-s">Verifikation</th><th class="w-s">Status</th><th class="w-s">Prüfung</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="tab-pane hidden" data-pane="functions">
+        <p class="hint">TFFR je sicherheitsrelevanter Funktion eintragen (h⁻¹). Der Integritätslevel folgt aus EN 50126-2 Tabelle 2. Bei mehreren Funktionen je Gefährdung gilt ohne CCA-Nachweis die ODER-Summe (Σ TFFR ≤ THR).</p>
+        <div class="table-wrap"><table class="grid rows" id="tbl-fn-sil"><thead><tr><th class="w-id">ID</th><th>Funktion</th><th class="w-s">Art</th><th class="w-s">Sich.-rel.</th><th class="w-m">TFFR [1/h]</th><th class="w-m">Integrität</th><th class="w-m">Gefährdungen</th><th>Prüfhinweise</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="tab-pane hidden" data-pane="srac">
+        <p class="hint">Jede SRAC braucht mindestens eine Gefährdung und einen Empfänger (EN 50129 5.3.13). Barrieren und Maßnahmen außerhalb der Systemgrenze werden hier als Kandidaten geführt.</p>
+        <div class="table-wrap"><table class="grid rows" id="tbl-srac"><thead><tr><th class="w-id">ID</th><th>SRAC</th><th class="w-m">Empfänger</th><th class="w-m">Gefährdungen</th><th class="w-m">Herkunft</th><th class="w-s">Verifikation</th><th class="w-s">Status</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="tab-pane hidden" data-pane="trace"><div id="trace-view"></div></div>
+      <div class="tab-pane hidden" data-pane="cca">
+        <div class="toolbar"><button id="btn-add-cca" class="btn small" type="button">+ CCA-Nachweis</button><span class="hint">Nur mit nachgewiesener Unabhängigkeit (zufällig UND systematisch) darf eine THR über eine UND-Verknüpfung aufgeteilt werden (EN 50126-2 10.2.2, 11.4).</span></div>
+        <div class="table-wrap"><table class="grid rows" id="tbl-cca"><thead><tr><th class="w-id">ID</th><th class="w-m">Funktionen</th><th class="w-s">Zufällig</th><th class="w-s">Systematisch</th><th class="w-s">Ergebnis</th><th>Nachweis / Annahmen</th><th class="w-a"></th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- Stage 5 -->
+    <section id="stage-reports" class="stage hidden">
+      <div class="stage-head">
+        <div><h2>Berichte &amp; Export</h2><span class="sub">Dokumentlenkung (EN 50126-1 6.6), Berichte je Stufe als Word-Dokument, Excel-Arbeitsmappe, Druckansicht und Projektsicherung.</span></div>
+      </div>
+      <div class="two-col">
+        <div class="col">
+          <h3>Dokumentlenkung</h3>
+          <form id="doc-control-form" class="form-grid"></form>
+          <h3>Kalibrierung</h3>
+          <div id="calibration-info" class="hint"></div>
+        </div>
+        <div class="col">
+          <h3>Berichte</h3>
+          <div class="export-grid" id="export-grid"></div>
+          <h3>Projektsicherung</h3>
+          <div class="row"><button id="btn-export-json" class="btn" type="button">Projekt als JSON sichern</button><button id="btn-import-json" class="btn" type="button">Projekt aus JSON importieren</button></div>
+          <h3>Checkpoints</h3>
+          <div class="row"><input id="cp-name" placeholder="Bezeichnung" /><button id="btn-cp-create" class="btn small" type="button">Checkpoint anlegen</button></div>
+          <table class="grid" id="tbl-checkpoints"><thead><tr><th>Bezeichnung</th><th>Datum</th><th>Umfang</th><th></th></tr></thead><tbody></tbody></table>
+          <h3>KI-Läufe (Methodennachweis)</h3>
+          <table class="grid" id="tbl-runs"><thead><tr><th>Lauf</th><th>Art</th><th>Modell</th><th>Aufrufe</th><th>Ergebnis</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside id="drawer" class="drawer hidden">
+    <div class="drawer-head"><span id="drawer-title"></span><span class="spacer"></span><span id="drawer-nav"></span><button id="drawer-close" class="btn small" type="button">Esc</button></div>
+    <div id="drawer-body" class="drawer-body"></div>
+  </aside>
+</div>
+
+<div id="settings-panel" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head"><strong>KI-Anbieter</strong><span class="spacer"></span><button id="settings-close" class="btn small" type="button">Schließen</button></div>
+    <div class="form-grid">
+      <label class="fld"><span>Anbieter</span><select id="set-provider"><option value="ollama">Ollama (lokal, offline)</option><option value="openai-compat">Lokaler Server, OpenAI-kompatibel (LM Studio, llama-server, vLLM)</option><option value="mistral-api">Mistral API (Cloud)</option></select></label>
+      <label class="fld"><span>Ollama-URL</span><input id="set-ollama-url" /></label>
+      <label class="fld"><span>Ollama-Modell</span><input id="set-ollama-model" list="ollama-models" /><datalist id="ollama-models"></datalist></label>
+      <label class="fld"><span>Ollama: Kontextlänge (num_ctx)</span><input id="set-ollama-ctx" type="number" min="4096" step="1024" /></label>
+      <label class="fld"><span>Ollama: Denkmodus</span><select id="set-ollama-think"><option value="auto">Modellstandard</option><option value="off">aus</option><option value="on">an</option></select></label>
+      <label class="fld"><span>Ollama: Modell geladen halten</span><input id="set-ollama-keep" placeholder="30m" /></label>
+      <label class="fld"><span>Lokaler Server: URL</span><input id="set-compat-url" placeholder="http://127.0.0.1:1234" /></label>
+      <label class="fld"><span>Lokaler Server: Modell</span><input id="set-compat-model" list="compat-models" /><datalist id="compat-models"></datalist></label>
+      <label class="fld"><span>Lokaler Server: Schlüssel (optional)</span><input id="set-compat-key" type="password" autocomplete="off" /></label>
+      <label class="fld"><span>Kleine Modelle: Leitworte je Funktion in 2 Aufrufe teilen</span><select id="set-split-gw"><option value="off">nein</option><option value="on">ja</option></select></label>
+      <label class="fld"><span>Mistral-Modell</span><input id="set-mistral-model" /></label>
+      <label class="fld"><span>Mistral-API-Schlüssel</span><input id="set-mistral-key" type="password" autocomplete="off" /></label>
+      <label class="fld"><span>Weiche Obergrenze (Aufrufe)</span><input id="set-soft-calls" type="number" min="1" /></label>
+      <label class="fld"><span>Harte Obergrenze (Aufrufe)</span><input id="set-hard-calls" type="number" min="1" /></label>
+    </div>
+    <div id="cloud-warning" class="warn hidden">Cloud-Anbieter: Systembeschreibung, Dokumentauszüge und Gefährdungen verlassen das Gerät. Der Schlüssel wird nur lokal im Browser gespeichert und niemals exportiert.</div>
+    <div id="file-origin-warning" class="warn hidden">Die Anwendung ist als Datei (file://) geöffnet. Der Browser sendet dann die Herkunft „null“, die Ollama standardmäßig ablehnt. Empfohlen: mit dem Starter (start-rhas) unter http://127.0.0.1:8765 öffnen. Alternativ OLLAMA_ORIGINS gezielt setzen – niemals „*“, sonst kann jede besuchte Webseite das lokale Modell nutzen. Hinweis: Projekte sind je Herkunft gespeichert; beim Wechsel per JSON exportieren und importieren.</div>
+    <div id="settings-status" class="hint"></div>
+    <div class="row"><button id="btn-settings-test" class="btn" type="button">Verbindung prüfen</button><button id="btn-settings-save" class="btn primary" type="button">Speichern</button></div>
+  </div>
+</div>
+
+<div id="help-panel" class="modal hidden">
+  <div class="modal-card wide">
+    <div class="modal-head"><strong>Arbeitsweise</strong><span class="spacer"></span><button id="help-close" class="btn small" type="button">Schließen</button></div>
+    <div id="help-body" class="help"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+

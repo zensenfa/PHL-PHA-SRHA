@@ -1,0 +1,291 @@
+{
+  "schema": "rhas-domains/1",
+  "note": "Domänenpakete sind Arbeitshilfen (Beispiele, Vorlagen, Checklisten) und fachlich vom Anwender zu prüfen; sie enthalten keine Normtexte.",
+  "packs": [
+    {
+      "id": "ccs",
+      "version": 1,
+      "label": "Zugsteuerung, Zugsicherung und Signaltechnik (inkl. Warnsysteme)",
+      "appliesTo": [
+        "ccs"
+      ],
+      "standards": [
+        [
+          "EN 50129:2018",
+          "Sicherheitsrelevante elektronische Systeme für Signaltechnik (Sicherheitsnachweis, SIL, SRAC)"
+        ],
+        [
+          "EN 50716:2023",
+          "Software für Bahnanwendungen"
+        ],
+        [
+          "EN 50159",
+          "Sicherheitsrelevante Kommunikation in Übertragungssystemen"
+        ],
+        [
+          "EN 50121-4",
+          "EMV – Signal- und Telekommunikationseinrichtungen"
+        ],
+        [
+          "EN 16704",
+          "Sicherheit bei Arbeiten im Gleisbereich (für Warnsysteme)"
+        ]
+      ],
+      "examples": {
+        "hazardRight": "Personal im Gefahrenbereich erhält keine wirksame Warnung vor einer Zugannäherung",
+        "hazardWrong": "Funkübertragung der Zugannäherung ausgefallen",
+        "functionName": "Zugannäherung erkennen",
+        "safeState": "Warnung aktiv, Sperrung wirksam, Rückfallebene angefordert",
+        "availabilityFollowUp": "Missachtung der Warnung nach häufigem Fehlalarm",
+        "copReference": "EN 50159 für sicherheitsrelevante Übertragung",
+        "interfacePartners": "Bediener, Instandhalter, Sicherungspersonal, Fahrdienstleitung, Züge, Stellwerk"
+      },
+      "affectedTypical": [
+        "staff",
+        "passengers",
+        "third"
+      ],
+      "functionTemplates": [
+        {
+          "name": "Zugannäherung erkennen",
+          "kind": "mixed",
+          "description": "Eingang: Radüberfahrt oder Belegung. Verarbeitung: Auswertung der Einschaltstelle. Ausgang: richtungsbezogene Zugmeldung."
+        },
+        {
+          "name": "Meldung sicher übertragen",
+          "kind": "electronic",
+          "description": "Eingang: Zugmeldung. Verarbeitung: gesicherte Übertragung mit Überwachung (EN 50159). Ausgang: Meldung beim Empfänger."
+        },
+        {
+          "name": "Warnung oder Sicherung auslösen",
+          "kind": "electronic",
+          "description": "Eingang: Meldungen. Verarbeitung: Logik mit Zugzählung. Ausgang: Befehl an Warn- oder Sicherungseinrichtungen."
+        },
+        {
+          "name": "Warnung oder Signalbild ausgeben",
+          "kind": "mixed",
+          "description": "Eingang: Befehl. Verarbeitung: Ansteuerung. Ausgang: wahrnehmbares Signal."
+        },
+        {
+          "name": "Zugvorbeifahrt erkennen und Vorgang beenden",
+          "kind": "mixed",
+          "description": "Eingang: Ausschaltmeldung. Verarbeitung: Richtungs- und Zählprüfung. Ausgang: Beenden der Warnung oder Sicherung."
+        },
+        {
+          "name": "Störungen erkennen und melden",
+          "kind": "electronic",
+          "description": "Eingang: Lebenszeichen, Diagnose. Verarbeitung: Überwachung. Ausgang: Störungsmeldung, sicherer Zustand."
+        },
+        {
+          "name": "Anlage bedienen und quittieren",
+          "kind": "procedural",
+          "description": "Eingang: Bedienhandlung. Verarbeitung: Plausibilisierung. Ausgang: Betriebsartwechsel oder Quittierung."
+        },
+        {
+          "name": "Anlage projektieren, aufbauen und prüfen",
+          "kind": "procedural",
+          "description": "Parametrierung, Montage, Inbetriebnahmeprüfung, Rückbau."
+        }
+      ],
+      "interfaceTemplates": [
+        {
+          "name": "Sensorik zu Fahrzeug und Gleis",
+          "type": "physical",
+          "partner": "Züge, Oberbau"
+        },
+        {
+          "name": "Funk- oder Kabelübertragung",
+          "type": "functional",
+          "partner": "Übertragungssystem (EN 50159)"
+        },
+        {
+          "name": "Bedienung",
+          "type": "human",
+          "partner": "Bediener, Sicherungspersonal"
+        },
+        {
+          "name": "Stellwerk und Fahrdienstleitung",
+          "type": "organisation",
+          "partner": "Infrastrukturbetreiber"
+        },
+        {
+          "name": "Energieversorgung",
+          "type": "physical",
+          "partner": "Netz, Akkus"
+        }
+      ],
+      "checklist": [
+        "Falsche Freimeldung oder ausbleibende Meldung (fälschlich als sicher gemeldet)",
+        "Zu späte Warnung oder Sicherung bei höchster Streckengeschwindigkeit",
+        "Vorzeitiges Beenden bei Zugfolge oder Zugkreuzung",
+        "Fehlerhafte oder nicht validierte Projektierungsparameter",
+        "Übertragungsfehler nach EN 50159 (Wiederholung, Löschung, Einfügung, Verzögerung, Maskerade)",
+        "Rückfallebene und Degradierter Betrieb",
+        "Menschliche Reaktion auf Warnung, Gewöhnung, Quittierung",
+        "Aufbau, Umbau und Inbetriebnahme im Betriebsgleis",
+        "Umwelteinflüsse auf Sensorik (Vereisung, Laub, EMV)"
+      ]
+    },
+    {
+      "id": "rollingStock",
+      "version": 1,
+      "label": "Fahrzeuge",
+      "appliesTo": [
+        "rollingStock"
+      ],
+      "standards": [
+        [
+          "EN 50716:2023",
+          "Software für Bahnanwendungen (inkl. Fahrzeuge)"
+        ],
+        [
+          "EN 50155",
+          "Elektronische Einrichtungen auf Schienenfahrzeugen"
+        ],
+        [
+          "EN 45545-2",
+          "Brandschutz in Schienenfahrzeugen – Materialanforderungen"
+        ],
+        [
+          "EN 14752",
+          "Seiteneinstiegssysteme für Schienenfahrzeuge"
+        ],
+        [
+          "EN 15227",
+          "Kollisionssicherheit von Schienenfahrzeugen"
+        ],
+        [
+          "EN 50129:2018",
+          "Nur für sicherheitsrelevante elektronische Signaltechnik-Anteile (z. B. Zugsicherung an Bord)"
+        ]
+      ],
+      "examples": {
+        "hazardRight": "Fahrgasttür ist geöffnet oder nicht verriegelt, während der Zug fährt",
+        "hazardWrong": "Türsteuergerät ausgefallen",
+        "functionName": "Türen freigeben und verriegeln",
+        "safeState": "Türen geschlossen und verriegelt, Traktion gesperrt, Bremse angelegt",
+        "availabilityFollowUp": "Notentriegelung durch Fahrgäste nach wiederholter Türstörung",
+        "copReference": "EN 14752 für Seiteneinstiegssysteme",
+        "interfacePartners": "Triebfahrzeugführer, Zugbegleiter, Fahrgäste, Instandhalter, Bahnsteig, Fahrweg"
+      },
+      "affectedTypical": [
+        "passengers",
+        "staff",
+        "maintenance"
+      ],
+      "functionTemplates": [
+        {
+          "name": "Türen freigeben und verriegeln",
+          "kind": "mixed",
+          "description": "Eingang: Freigabe, Geschwindigkeit. Verarbeitung: Verriegelungslogik. Ausgang: Türzustand, Türschleife an Traktion."
+        },
+        {
+          "name": "Zug bremsen",
+          "kind": "mixed",
+          "description": "Eingang: Bremsanforderung. Verarbeitung: Bremssteuerung. Ausgang: Bremskraft je Drehgestell."
+        },
+        {
+          "name": "Notbremsung auslösen und überbrücken",
+          "kind": "mixed",
+          "description": "Eingang: Fahrgastnotbremse, Zugsicherung. Verarbeitung: Auswertung, Überbrückung. Ausgang: Notbremsung oder Halt an geeigneter Stelle."
+        },
+        {
+          "name": "Traktion steuern und abschalten",
+          "kind": "electronic",
+          "description": "Eingang: Fahrbefehl, Sperren. Verarbeitung: Antriebsregelung. Ausgang: Zugkraft oder Traktionssperre."
+        },
+        {
+          "name": "Zugintegrität überwachen",
+          "kind": "electronic",
+          "description": "Eingang: Kupplungs- und Leitungszustand. Verarbeitung: Überwachung. Ausgang: Meldung, Zwangsbremsung."
+        },
+        {
+          "name": "Brand erkennen und melden",
+          "kind": "electronic",
+          "description": "Eingang: Melder. Verarbeitung: Auswertung. Ausgang: Alarm an Führerstand."
+        },
+        {
+          "name": "Hochspannung sicher trennen und erden",
+          "kind": "mixed",
+          "description": "Stromabnehmer, Hauptschalter, Erdung bei Instandhaltung."
+        }
+      ],
+      "interfaceTemplates": [
+        {
+          "name": "Führerstand",
+          "type": "human",
+          "partner": "Triebfahrzeugführer"
+        },
+        {
+          "name": "Fahrgastraum und Türen",
+          "type": "human",
+          "partner": "Fahrgäste"
+        },
+        {
+          "name": "Zugsicherung an Bord",
+          "type": "externalSystem",
+          "partner": "ETCS/Zugbeeinflussung"
+        },
+        {
+          "name": "Fahrweg und Bahnsteig",
+          "type": "physical",
+          "partner": "Infrastruktur"
+        },
+        {
+          "name": "Energieversorgung über Stromabnehmer",
+          "type": "physical",
+          "partner": "Oberleitung"
+        }
+      ],
+      "checklist": [
+        "Türen: Öffnen während der Fahrt, Einklemmen, Spalt zum Bahnsteig",
+        "Bremse: unzureichende Bremskraft, ungewolltes Lösen, Notbremsüberbrückung",
+        "Traktion: ungewollte Anfahrt oder Zugkraft",
+        "Brand und Rauch, Evakuierung",
+        "Kollision und Kollisionssicherheit",
+        "Elektrische Sicherheit, Hochspannung, Erdung",
+        "Zugtrennung und Kupplung",
+        "Instandhaltung im Depot (Absturz, Quetschen, Spannung)"
+      ]
+    },
+    {
+      "id": "generic",
+      "version": 1,
+      "label": "Allgemein (ohne domänenspezifische Vorlagen)",
+      "appliesTo": [
+        "fixedInstallations",
+        "telecom",
+        "other"
+      ],
+      "standards": [
+        [
+          "EN 50716:2023",
+          "Software für Bahnanwendungen"
+        ]
+      ],
+      "examples": {
+        "hazardRight": "Personen sind einer Gefahr ausgesetzt, weil die Schutzfunktion an der Systemgrenze nicht wirkt",
+        "hazardWrong": "Steuergerät ausgefallen",
+        "functionName": "Gefahrenzustand erkennen",
+        "safeState": "Schutzwirkung ausgelöst und Störung gemeldet",
+        "availabilityFollowUp": "Umgehen der Schutzfunktion nach häufigen Fehlauslösungen",
+        "copReference": "einem benannten, für die Domäne anerkannten Regelwerk",
+        "interfacePartners": "Bediener, Instandhalter, Öffentlichkeit, Nachbarsysteme"
+      },
+      "affectedTypical": [
+        "staff",
+        "passengers",
+        "third"
+      ],
+      "functionTemplates": [],
+      "interfaceTemplates": [],
+      "checklist": [
+        "Normalbetrieb, Störung, Notfall",
+        "Schnittstellen zu Nachbarsystemen",
+        "Instandhaltung und Arbeitsschutz",
+        "Menschliche Faktoren",
+        "Umwelteinflüsse"
+      ]
+    }
+  ]
+}

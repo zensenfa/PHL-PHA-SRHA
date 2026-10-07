@@ -1,0 +1,39 @@
+{
+  "vendor": [
+    "vendor/xlsx.full.min.js",
+    "vendor/mammoth.browser.min.js",
+    "vendor/pdf.min.js",
+    "vendor/pdf.worker.min.js"
+  ],
+  "modules": [
+    "src/model.js",
+    "src/profile.js",
+    "src/calibration.js",
+    "src/domains.js",
+    "src/security.js",
+    "src/threatlog.js",
+    "src/zones.js",
+    "src/schemas.js",
+    "src/prompts.js",
+    "src/ollama.js",
+    "src/mistral.js",
+    "src/openai-compat.js",
+    "src/llm-pipeline.js",
+    "src/dedup.js",
+    "src/documents.js",
+    "src/virtualize.js",
+    "src/engine.js",
+    "src/docx.js",
+    "src/db.js",
+    "src/reports.js",
+    "src/ui/app-core.js",
+    "src/ui/app-profile.js",
+    "src/ui/app-definition.js",
+    "src/ui/app-identification.js",
+    "src/ui/app-analysis.js",
+    "src/ui/app-security.js",
+    "src/ui/app-requirements.js",
+    "src/ui/app-reports.js",
+    "src/ui/app-main.js"
+  ]
+}

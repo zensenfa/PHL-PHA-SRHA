@@ -1,0 +1,12 @@
+{
+  "name": "railway-hazard-analysis-suite",
+  "private": true,
+  "description": "RHAS – EN 50126/50129 hazard analysis tool (single-file, offline)",
+  "scripts": {
+    "build": "python3 build.py",
+    "test": "TZ=UTC node --test tests/*.test.js",
+    "test:update-golden": "TZ=UTC UPDATE_GOLDEN=1 node --test tests/*.test.js",
+    "fixtures": "node tests/fixtures/make-reference-project.js"
+  },
+  "engines": { "node": ">=20" }
+}

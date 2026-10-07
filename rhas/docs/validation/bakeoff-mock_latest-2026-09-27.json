@@ -1,0 +1,95 @@
+{
+ "date": "2026-09-27T11:12:48.837Z",
+ "provider": "ollama",
+ "model": "mock:latest",
+ "settings": {
+  "ollamaUrl": "http://127.0.0.1:11999",
+  "ollamaModel": "mock:latest",
+  "ollamaNumCtx": 32768,
+  "ollamaThink": "auto",
+  "ollamaKeepAlive": "30m"
+ },
+ "modelInfo": {
+  "contextLength": 40960,
+  "capabilities": [
+   "completion"
+  ],
+  "parameterSize": "7B",
+  "quantization": "Q4"
+ },
+ "plan": {
+  "depth": "schnell",
+  "calls": 26,
+  "kinds": [
+   "source",
+   "threat"
+  ],
+  "securityLevel": 1
+ },
+ "totals": {
+  "proposed": 52,
+  "passes": 26,
+  "failed": 0
+ },
+ "seconds": 0,
+ "suggestions": 52,
+ "intentional": 38,
+ "linkedToExisting": 12,
+ "aha": [
+  {
+   "finding": "Spurwechsel W 12/13",
+   "hit": false
+  },
+  {
+   "finding": "Funkabschattung / Repeater",
+   "hit": true
+  },
+  {
+   "finding": "Akku bei Kälte",
+   "hit": true
+  },
+  {
+   "finding": "Lärm / Warnpegel",
+   "hit": false
+  },
+  {
+   "finding": "ASU / Sektorgrenze",
+   "hit": false
+  },
+  {
+   "finding": "Lange Warnzeit / Langsamfahrt",
+   "hit": false
+  }
+ ],
+ "ahaSecurity": [
+  {
+   "finding": "Replay / Einspielen der Ausschaltmeldung",
+   "hit": true
+  },
+  {
+   "finding": "Funkstörung",
+   "hit": false
+  },
+  {
+   "finding": "Manipulierte Parametrierung",
+   "hit": false
+  }
+ ],
+ "sample": [
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke",
+  "Replay der Ausschaltmeldung beendet Warnung",
+  "Keine Warnung wegen Funkabschattung an der Brücke"
+ ]
+}

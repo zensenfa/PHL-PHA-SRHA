@@ -1,0 +1,543 @@
+{
+ "date": "2026-09-27 11:15 UTC",
+ "version": "2026-09-27-wp9",
+ "commit": "9140264",
+ "build_sha256": "b7d8cffa52c1fda45c6e21cac8b8ad14ecce875a02e18c405eb6f63ff610bf14",
+ "build_ok": true,
+ "node": "v22.22.2",
+ "python": "3.12.3",
+ "suites": {
+  "build.test.js": [
+   {
+    "name": "build.py produces a file whose inline scripts all compile",
+    "status": "passed"
+   },
+   {
+    "name": "no external resources are referenced (air-gap deployable)",
+    "status": "passed"
+   }
+  ],
+  "calibration.test.js": [
+   {
+    "name": "template C.1/C.4/C.8 reproduces the Table C.9 example and is valid (approval pending)",
+    "status": "passed"
+   },
+   {
+    "name": "other Annex C combinations start with an empty matrix that must be filled",
+    "status": "passed"
+   },
+   {
+    "name": "binary calibration drives risk class, rank, labels and completeness",
+    "status": "passed"
+   },
+   {
+    "name": "validation catches duplicate ids, unknown cells and non-monotonic matrices",
+    "status": "passed"
+   },
+   {
+    "name": "impact analysis lists hazards whose categories no longer exist",
+    "status": "passed"
+   },
+   {
+    "name": "LLM schemas use the project categories",
+    "status": "passed"
+   },
+   {
+    "name": "report renders a non-default calibration",
+    "status": "passed"
+   }
+  ],
+  "domains.test.js": [
+   {
+    "name": "every profile domain resolves to a pack; unknown domains fall back to generic",
+    "status": "passed"
+   },
+   {
+    "name": "packs are complete and use valid enums",
+    "status": "passed"
+   },
+   {
+    "name": "prompts contain no hard-coded domain wording (source check)",
+    "status": "passed"
+   },
+   {
+    "name": "function and decomposition prompts use the examples of the project domain",
+    "status": "passed"
+   },
+   {
+    "name": "critique prompt carries the domain checklist",
+    "status": "passed"
+   },
+   {
+    "name": "reports list the domain standards of the project pack",
+    "status": "passed"
+   },
+   {
+    "name": "the embedded demo is the Lynx project with a confirmed profile and all five stages populated",
+    "status": "passed"
+   },
+   {
+    "name": "demo carries prepared security data for levels 1-3 (hidden at level 0)",
+    "status": "passed"
+   }
+  ],
+  "engine.test.js": [
+   {
+    "name": "near-duplicates in one batch are merged, not dropped",
+    "status": "passed"
+   },
+   {
+    "name": "distinct suggestions stay separate",
+    "status": "passed"
+   },
+   {
+    "name": "similarity to an accepted hazard flags duplicateOf, to a rejected one flags previouslyRejected",
+    "status": "passed"
+   },
+   {
+    "name": "prompts list rejected hazards so the model does not re-propose them",
+    "status": "passed"
+   }
+  ],
+  "local-providers.test.js": [
+   {
+    "name": "Ollama: num_ctx, keep_alive, think are sent; answer in content is returned",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: think &quot;auto&quot; leaves the model default",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: answer only in the thinking field is recovered",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: prompt longer than num_ctx is refused before sending",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama: silent truncation is detected from prompt_eval_count",
+    "status": "passed"
+   },
+   {
+    "name": "Ollama preflight reports context length, capabilities and warnings",
+    "status": "passed"
+   },
+   {
+    "name": "OpenAI-compatible server: SSE streaming, json_schema with fallback to json_object",
+    "status": "passed"
+   },
+   {
+    "name": "pipeline dispatches to the OpenAI-compatible provider",
+    "status": "passed"
+   },
+   {
+    "name": "confidential projects: local or private-network servers allowed, cloud or public hosts blocked",
+    "status": "passed"
+   },
+   {
+    "name": "guideword split plans two function passes per function",
+    "status": "passed"
+   }
+  ],
+  "model.test.js": [
+   {
+    "name": "risk class reproduces EN 50126-1 Table C.9 for all 24 cells",
+    "status": "passed"
+   },
+   {
+    "name": "risk class rejects unknown categories instead of mapping silently",
+    "status": "passed"
+   },
+   {
+    "name": "frequency bands follow EN 50126-1 Table C.1 (per hour, 24 h/day)",
+    "status": "passed"
+   },
+   {
+    "name": "SIL from TFFR follows EN 50126-2 Table 2 with half-open bands",
+    "status": "passed"
+   },
+   {
+    "name": "TFFR exactly 1e-5 is Basic Integrity and flagged for confirmation",
+    "status": "passed"
+   },
+   {
+    "name": "SIL is not applied to mechanical/procedural or non-safety functions (EN 50126-2 10.2.1, 10.3)",
+    "status": "passed"
+   },
+   {
+    "name": "no &quot;SIL 0&quot; label exists (EN 50129 A.5.1)",
+    "status": "passed"
+   },
+   {
+    "name": "parseRate accepts common engineering notations",
+    "status": "passed"
+   },
+   {
+    "name": "OR-sum check (EN 50129 A.4.3.4 NOTE 1)",
+    "status": "passed"
+   },
+   {
+    "name": "AND credit only with a CCA record proving random and systematic independence",
+    "status": "passed"
+   },
+   {
+    "name": "THR on a hazard without function is an error (EN 50129 A.4.3.2)",
+    "status": "passed"
+   },
+   {
+    "name": "rejected measures neither lower the residual risk nor count as control (PATCH-2)",
+    "status": "passed"
+   },
+   {
+    "name": "hazard risk class is the worst accident scenario (EN 50126-2 8.2.2 many-to-many model)",
+    "status": "passed"
+   },
+   {
+    "name": "hazard sources are EN 50126-1 7.4.2.1 a) to n) in order",
+    "status": "passed"
+   },
+   {
+    "name": "measure hierarchy follows EN 50126-1 5.9.2 a) to c); legacy values are migrated",
+    "status": "passed"
+   },
+   {
+    "name": "assumptions field cites EN 50126-1 7.3.2.1 d), not 6.5.2 (K1)",
+    "status": "passed"
+   },
+   {
+    "name": "cause kinds: schema, labels and editors agree (no silent re-classification on save)",
+    "status": "passed"
+   }
+  ],
+  "profile.test.js": [
+   {
+    "name": "a new profile is incomplete until the wizard is filled",
+    "status": "passed"
+   },
+   {
+    "name": "security level 0 requires a justification (EN 50126-1 7.4.2.1 d))",
+    "status": "passed"
+   },
+   {
+    "name": "security levels not yet implemented cannot be selected",
+    "status": "passed"
+   },
+   {
+    "name": "first confirmation needs no reason; later changes need one and are logged",
+    "status": "passed"
+   },
+   {
+    "name": "invalid profiles are not accepted",
+    "status": "passed"
+   },
+   {
+    "name": "projects without a profile are migrated with defaults and marked",
+    "status": "passed"
+   },
+   {
+    "name": "confidential projects may only use the local model",
+    "status": "passed"
+   },
+   {
+    "name": "the pipeline refuses a blocked call before contacting any provider",
+    "status": "passed"
+   },
+   {
+    "name": "prompts carry the project profile",
+    "status": "passed"
+   },
+   {
+    "name": "reports show the profile, its change log and the security statement",
+    "status": "passed"
+   }
+  ],
+  "reference-project.test.js": [
+   {
+    "name": "lead hazard A: Undesirable, residual Tolerable despite a rejected better measure",
+    "status": "passed"
+   },
+   {
+    "name": "lead hazard B: Tolerable",
+    "status": "passed"
+   },
+   {
+    "name": "stage 4 demo: F-0004 at 1.5e-8 passes the OR-sum against THR 5e-8",
+    "status": "passed"
+   },
+   {
+    "name": "stage 4 demo: F-0004 at 3e-8 raises the OR-sum error",
+    "status": "passed"
+   },
+   {
+    "name": "stage 4 demo: F-0011 at 1e-5 needs confirmation, F-0012 is SIL not applicable",
+    "status": "passed"
+   },
+   {
+    "name": "CCA F-0004/F-0006 is dependent, so no AND credit",
+    "status": "passed"
+   },
+   {
+    "name": "stage 1 of the demo project is complete (25 fields, gate to stage 2 open)",
+    "status": "passed"
+   }
+  ],
+  "reports.test.js": [
+   {
+    "name": "DOCX hazid: deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "DOCX risk: deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "DOCX hazlog: deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "DOCX srs: deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "DOCX full: deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "XLSX workbook matches golden content",
+    "status": "passed"
+   },
+   {
+    "name": "print view matches golden HTML",
+    "status": "passed"
+   },
+   {
+    "name": "no &quot;[object Object]&quot; in any output (PATCH-1, PATCH-3)",
+    "status": "passed"
+   },
+   {
+    "name": "lead hazard titles appear in the hazard list (PATCH-1)",
+    "status": "passed"
+   },
+   {
+    "name": "reports contain no MIL-STD-882E reference or task deliverable names",
+    "status": "passed"
+   },
+   {
+    "name": "deliverables map to EN 50126-1 phase 3/4 outputs; legacy keys still work",
+    "status": "passed"
+   },
+   {
+    "name": "hazard log covers EN 50126-1 7.4.2.2 b) to g) and exports the SRAC",
+    "status": "passed"
+   },
+   {
+    "name": "every report states the RAMS scope (safety only)",
+    "status": "passed"
+   }
+  ],
+  "security.test.js": [
+   {
+    "name": "level 1 is selectable and needs no level-0 justification",
+    "status": "passed"
+   },
+   {
+    "name": "level 1 plans one threat pass per interface plus the safety/security interaction check",
+    "status": "passed"
+   },
+   {
+    "name": "threat prompt: EN 50159 threats, existing hazards, security context, no THR/SIL",
+    "status": "passed"
+   },
+   {
+    "name": "threat pass: link to existing hazard, intentional causes, threat ids filtered, interface set",
+    "status": "passed"
+   },
+   {
+    "name": "deliberate cause without security measure is not controlled; SIL/THR are not credit",
+    "status": "passed"
+   },
+   {
+    "name": "level 1 report: security section with context, hazards, coverage, requirements; level 0 unchanged",
+    "status": "passed"
+   }
+  ],
+  "threatlog.test.js": [
+   {
+    "name": "likelihood = exposure + vulnerability - 1, only for valid scales",
+    "status": "passed"
+   },
+   {
+    "name": "default security matrix is complete and monotonic, but not approved",
+    "status": "passed"
+   },
+   {
+    "name": "risk and residual risk are computed from the matrix; only accepted countermeasures count",
+    "status": "passed"
+   },
+   {
+    "name": "impact floor follows the worst linked safety severity (proposal)",
+    "status": "passed"
+   },
+   {
+    "name": "derive: one threat per deliberate cause of an accepted hazard, no duplicates",
+    "status": "passed"
+   },
+   {
+    "name": "completeness: rationale, hazard link, high risk needs countermeasure, countermeasure needs requirement",
+    "status": "passed"
+   },
+   {
+    "name": "level 2 report: matrix, threat log, trace; XLSX sheet",
+    "status": "passed"
+   }
+  ],
+  "zones.test.js": [
+   {
+    "name": "SR catalogue: 7 FRs, 51 SRs, identifiers and titles only",
+    "status": "passed"
+   },
+   {
+    "name": "SL-T proposal: attacker profile where medium/high threats touch the zone, else SL 1",
+    "status": "passed"
+   },
+   {
+    "name": "partition check: unassigned assets, mixed safety zones, missing SL-T, bad conduits",
+    "status": "passed"
+   },
+   {
+    "name": "cybersecurity case skeleton reports what exists and what is open",
+    "status": "passed"
+   },
+   {
+    "name": "level 3 report: zones, conduits, SR per zone, findings, case skeleton; XLSX sheets",
+    "status": "passed"
+   }
+  ]
+ },
+ "browser": [
+  {
+   "script": "dryrun_demo.py",
+   "status": "passed",
+   "output": [
+    "3 export L0: SA_Stufe0.docx",
+    "4 L1 security context filled: True",
+    "5 H-0002 shows deliberate cause: True",
+    "5b deliberate causes survive save: 2",
+    "6 L2 threats: 3 | kpis: 3 Bedrohungen 3 bewertet 1 hohes Risiko 1 hohes Restrisiko 2 vollständig",
+    "7 L3 zones/conduits: 3 2",
+    "  findings: Schnittstelle IF-0008 weder Zone noch Conduit zugeordnet. | Schnittstelle IF-0009 weder Zone noch Conduit zugeordnet. | Schnittstelle IF-0011 weder Zone noch Conduit zugeordnet. | Z-01: Partitionierungsnachweis offen für ZCR 3.4, ZCR 3.6. | Z-02: Partitionierungsnachweis offen für ZCR 3.2, ZCR 3.4, ",
+    "8 export L3: full_Stufe3.docx",
+    "8 export L3: hazlog_Stufe3.docx",
+    "8 export L3: srs_Stufe3.docx",
+    "8 export L3: Arbeitsmappe_Stufe3.xlsx",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_calibration.py",
+   "status": "passed",
+   "output": [
+    "apply disabled (no change): True",
+    "cells: 15 | apply disabled (empty matrix): True",
+    "invalid warning: True",
+    "apply disabled (filled): False",
+    "toast without reason: Begründung für die Kalibrierungsänderung erforderlich",
+    "toast: Kalibrierung übernommen (v1); 3 Gefährdungen neu bewertet",
+    "profile log mentions calibration: True",
+    "approved: True",
+    "class filter options: ['Alle Risikoklassen', 'Nicht akzeptabel', 'Akzeptabel']",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_domains.py",
+   "status": "passed",
+   "output": [
+    "demo: Beispiel: Minimel Lynx ATWS – Gleiserneuerung Reiden Süd (fiktiv)",
+    "hazards/reqs: [3, 5]",
+    "pack shown: True",
+    "rolling stock pack: True | ccs std gone: True",
+    "drawer: Vorlagen: Fahrzeuge",
+    "functions: ['F-0001 Türen freigeben und verriegeln', 'F-0002 Zug bremsen', 'F-0003 Notbremsung auslösen und überbrücken', 'F-0004 Traktion steuern und abschalten', 'F-0005 Zugintegrität überwachen', 'F-0006 Brand erkennen und melden', 'F-0007 Hochspannung sicher trennen und erden']",
+    "interfaces: 5",
+    "duplicates disabled: 7",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_local.py",
+   "status": "passed",
+   "output": [
+    "file:// warning visible: True | provider options: 3",
+    "launcher warning visible: False | origin: http://127.0.0.1:8766",
+    "confidential + openai-compat http://127.0.0.1:1234: allowed=True",
+    "confidential + openai-compat https://api.example.com: allowed=False",
+    "confidential + mistral-api : allowed=False",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_profile.py",
+   "status": "passed",
+   "output": [
+    "confirm disabled: True",
+    "confirm disabled after fill: False",
+    "toast1: Projektprofil bestätigt ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']",
+    "status: bestätigt 27.09.2026, 11:15 | rail: ✓",
+    "apply btn: Änderungen übernehmen (1)",
+    "log rows: 2",
+    "banner hidden: True",
+    "toast: Projekt ist als vertraulich klassifiziert: nur lokale KI (Ollama oder lokaler Server im eigenen Netz) zulässig. Anbieter unter „KI“ umstellen oder Klassifizierung im Projektprofil begründet ändern.",
+    "demo banner hidden: True | rail: ✓",
+    "cards: ['GI – Gefährdungsidentifikation', 'RB – Risikoanalyse und Risikobewertung', 'GP – Gefährdungsprotokoll (Hazard Log)', 'SAS – Sicherheitsanforderungen und sicherheitsbezogene Anwendungsbedingungen', 'SA – Sicherheitsanalyse (EN 50126-1 Phasen 3 und 4)', 'Excel-Arbeitsmappe']",
+    "download: SA-LYNX-RS-001_RevA_Minimel_Lynx_ATWS_Baustellenwarnung_Gleiserneuerung_Gleis_2_.docx",
+    "errors: ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']"
+   ]
+  },
+  {
+   "script": "smoke_security.py",
+   "status": "passed",
+   "output": [
+    "enabled levels: ['Stufe 0', 'Stufe 1', 'Stufe 2', 'Stufe 3']",
+    "toast: Projektprofil geändert",
+    "security fieldset: True",
+    "saved sd: 3",
+    "security passes planned: 13 | interfaces: 12",
+    "security checkbox in measures: 5",
+    "download: SA-LYNX-RS-001_RevA_Minimel_Lynx_ATWS_Baustellenwarnung_Gleiserneuerung_Gleis_2_.docx",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_threatlog.py",
+   "status": "passed",
+   "output": [
+    "rail hidden at level 0: True",
+    "rail visible at level 2: True",
+    "toast: 1 Bedrohung(en) aus vorsätzlichen Ursachen abgeleitet",
+    "rows: 4",
+    "impact proposal: B",
+    "live risk: Hoch | likelihood: 5",
+    "residual: Niedrig",
+    "pct: 3/4",
+    "download ok: True",
+    "errors: []"
+   ]
+  },
+  {
+   "script": "smoke_zones.py",
+   "status": "passed",
+   "output": [
+    "zones section visible: True",
+    "zone: {\"SR 3.1\":\"R-0004\",\"SR 3.8\":\"R-0004\"} SL3",
+    "conduit drawer: C-03 · Conduit",
+    "findings: Funktion F-0001 in mehreren Zonen (Z-01, Z-04). | Funktion F-0002 in mehreren Zonen (Z-01, Z-04). | Schnittstelle IF-0008 weder Zone noch Conduit zugeordnet. | Schnit",
+    "case rows: 10",
+    "download ok: True",
+    "errors: []"
+   ]
+  }
+ ]
+}

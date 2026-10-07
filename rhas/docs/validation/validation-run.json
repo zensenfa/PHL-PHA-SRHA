@@ -1,11 +1,11 @@
 {
- "date": "2026-09-27 11:15 UTC",
- "version": "2026-09-27-wp9",
- "commit": "9140264",
- "build_sha256": "b7d8cffa52c1fda45c6e21cac8b8ad14ecce875a02e18c405eb6f63ff610bf14",
+ "date": "2026-10-07 08:30 UTC",
+ "version": "2026-10-07-wp10",
+ "commit": "3b3edc6",
+ "build_sha256": "aef2ec147b77db306ff2c1ce6ca43432adca325e749bd763af2ee1955c385245",
  "build_ok": true,
- "node": "v22.22.2",
- "python": "3.12.3",
+ "node": "v22.22.0",
+ "python": "3.13.16",
  "suites": {
   "build.test.js": [
    {
@@ -14,6 +14,14 @@
    },
    {
     "name": "no external resources are referenced (air-gap deployable)",
+    "status": "passed"
+   },
+   {
+    "name": "a literal </script> or <!-- in the embedded data cannot break the page",
+    "status": "passed"
+   },
+   {
+    "name": "the build fails on </script in an app module and on modules missing from the manifest",
     "status": "passed"
    }
   ],
@@ -44,6 +52,12 @@
    },
    {
     "name": "report renders a non-default calibration",
+    "status": "passed"
+   }
+  ],
+  "db-ids.test.js": [
+   {
+    "name": "next id is max(existing ids, persistent counter) + 1",
     "status": "passed"
    }
   ],
@@ -97,6 +111,20 @@
    {
     "name": "prompts list rejected hazards so the model does not re-propose them",
     "status": "passed"
+   },
+   {
+    "name": "prompts mark project data and document excerpts as data, not instructions",
+    "status": "passed"
+   }
+  ],
+  "import-ids.test.js": [
+   {
+    "name": "shipped reference project and demo project pass the id check",
+    "status": "passed"
+   },
+   {
+    "name": "hostile record ids and id references are rejected",
+    "status": "passed"
    }
   ],
   "local-providers.test.js": [
@@ -134,6 +162,10 @@
    },
    {
     "name": "confidential projects: local or private-network servers allowed, cloud or public hosts blocked",
+    "status": "passed"
+   },
+   {
+    "name": "confidential projects: hostnames that merely start like a private IP are not local",
     "status": "passed"
    },
    {
@@ -208,6 +240,18 @@
    },
    {
     "name": "cause kinds: schema, labels and editors agree (no silent re-classification on save)",
+    "status": "passed"
+   },
+   {
+    "name": "proposed (unconfirmed) measures do not lower residual risk or count as control",
+    "status": "passed"
+   },
+   {
+    "name": "a measure cannot leave the hazard with a residual risk worse than the initial risk",
+    "status": "passed"
+   },
+   {
+    "name": "&quot;broadly acceptable&quot; on a class that needs measures requires a reasoned deviation",
     "status": "passed"
    }
   ],
@@ -393,6 +437,12 @@
     "status": "passed"
    }
   ],
+  "xlsx-security.test.js": [
+   {
+    "name": "xlsx security sheets appear per level, like the Word sections",
+    "status": "passed"
+   }
+  ],
   "zones.test.js": [
    {
     "name": "SR catalogue: 7 FRs, 51 SRs, identifiers and titles only",
@@ -444,10 +494,11 @@
     "invalid warning: True",
     "apply disabled (filled): False",
     "toast without reason: Begründung für die Kalibrierungsänderung erforderlich",
-    "toast: Kalibrierung übernommen (v1); 3 Gefährdungen neu bewertet",
+    "toast: Nicht übernommen: 2 Gefährdung(en) verwenden Kategorien, die es in der neuen Kalibrierung nicht gibt (H-0001, H-0002). Zuerst anpassen.",
+    "toast: Kalibrierung übernommen (v2); 3 Gefährdungen neu bewertet",
     "profile log mentions calibration: True",
     "approved: True",
-    "class filter options: ['Alle Risikoklassen', 'Nicht akzeptabel', 'Akzeptabel']",
+    "class filter options: ['Alle Risikoklassen', 'Untragbar', 'Unerwünscht', 'Tragbar', 'Vernachlässigbar']",
     "errors: []"
    ]
   },
@@ -485,7 +536,7 @@
     "confirm disabled: True",
     "confirm disabled after fill: False",
     "toast1: Projektprofil bestätigt ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']",
-    "status: bestätigt 27.09.2026, 11:15 | rail: ✓",
+    "status: bestätigt 07.10.2026, 08:29 | rail: ✓",
     "apply btn: Änderungen übernehmen (1)",
     "log rows: 2",
     "banner hidden: True",

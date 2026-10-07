@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="SR catalogue: 7 FRs, 51 SRs, identifiers and titles only" time="0.002018" classname="test"/>
-	<testcase name="SL-T proposal: attacker profile where medium/high threats touch the zone, else SL 1" time="0.000901" classname="test"/>
-	<testcase name="partition check: unassigned assets, mixed safety zones, missing SL-T, bad conduits" time="0.000730" classname="test"/>
-	<testcase name="cybersecurity case skeleton reports what exists and what is open" time="0.000398" classname="test"/>
-	<testcase name="level 3 report: zones, conduits, SR per zone, findings, case skeleton; XLSX sheets" time="0.150324" classname="test"/>
+	<testcase name="SR catalogue: 7 FRs, 51 SRs, identifiers and titles only" time="0.003454" classname="test"/>
+	<testcase name="SL-T proposal: attacker profile where medium/high threats touch the zone, else SL 1" time="0.001378" classname="test"/>
+	<testcase name="partition check: unassigned assets, mixed safety zones, missing SL-T, bad conduits" time="0.000890" classname="test"/>
+	<testcase name="cybersecurity case skeleton reports what exists and what is open" time="0.000495" classname="test"/>
+	<testcase name="level 3 report: zones, conduits, SR per zone, findings, case skeleton; XLSX sheets" time="0.164837" classname="test"/>
 	<!-- tests 5 -->
 	<!-- suites 0 -->
 	<!-- pass 5 -->
@@ -12,5 +12,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 336.573752 -->
+	<!-- duration_ms 437.892707 -->
 </testsuites>

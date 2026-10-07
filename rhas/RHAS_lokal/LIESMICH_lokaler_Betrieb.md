@@ -1,6 +1,6 @@
 # RHAS – Lokaler Betrieb mit eigener KI (Plan B)
 
-Stand 27.09.2026 · gilt ab Build 2026-09-27-wp9
+Stand 07.10.2026 · gilt ab Build 2026-10-07-wp10
 
 Die Railway Hazard Analysis Suite (RHAS) kann vollständig ohne Internet betrieben werden: die Anwendung ist eine HTML-Datei, die KI läuft lokal über **Ollama** oder über einen **OpenAI-kompatiblen Server** im eigenen Netz (LM Studio, llama-server, vLLM). Projekte mit der Datenklassifizierung „vertraulich“ lassen nur solche lokalen Anbieter zu.
 

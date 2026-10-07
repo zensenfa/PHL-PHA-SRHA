@@ -75,3 +75,24 @@ test('the build fails on </script in an app module and on modules missing from t
     assert.ok(!r2.ok && /unlisted\.js/.test(r2.err), 'unlisted module is reported, not silently dropped');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('Content-Security-Policy: every inline script is allowed by hash, nothing is allowed by keyword', () => {
+  const crypto = require('crypto');
+  execFileSync('python3', [path.join(ROOT, 'build.py'), '--out', 'dist/test-build.html']);
+  const html = fs.readFileSync(OUT, 'utf8');
+  fs.unlinkSync(OUT);
+  const meta = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)">/);
+  assert.ok(meta, 'policy present');
+  const policy = Object.fromEntries(meta[1].split('; ').map((d) => { const [k, ...v] = d.split(' '); return [k, v]; }));
+  assert.deepEqual(policy['default-src'], ["'none'"]);
+  const scriptSrc = policy['script-src'];
+  assert.ok(!scriptSrc.includes("'unsafe-inline'") && !scriptSrc.includes("'unsafe-eval'"), 'no unsafe keywords for scripts');
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  assert.ok(scripts.length > 25);
+  for (const s of scripts) {
+    const h = `'sha256-${crypto.createHash('sha256').update(s.replace(/\r\n?/g, '\n')).digest('base64')}'`;
+    assert.ok(scriptSrc.includes(h), `hash for script starting ${JSON.stringify(s.slice(0, 40))}`);
+  }
+  assert.equal(scriptSrc.filter((x) => x.startsWith("'sha256-")).length, scripts.length, 'no stale hashes');
+  assert.ok(!/<[a-z][^>]*\son[a-z]+\s*=/i.test(html.slice(0, html.indexOf('<script>'))), 'no inline event handlers in the page markup');
+});

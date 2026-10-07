@@ -46,6 +46,7 @@ const TRS = [
   ['TR-13', 'Eine Datei, ohne externe Ressourcen, reproduzierbar aus dem Quellstand gebaut; eingebettete Daten können die Seite nicht beschädigen; nicht aufgeführte Module führen zum Abbruch.', 'build'],
   ['TR-14', 'Import und Kennungen: Kennungen und Verweise mit HTML-relevanten Zeichen werden beim Import abgewiesen; Kennungen gelöschter Datensätze werden nicht erneut vergeben; Anbieter-Prüfung für vertrauliche Projekte erkennt nur echte lokale Adressen.', 'import-ids, db-ids, local-providers; Browser: smoke_local'],
   ['TR-16', 'Bedienbarkeit: Tabellenzeilen, Reiter, Dialoge und Seitenleiste sind per Tastatur bedienbar (Fokus in Dialoge und zurück, Fokusfalle in modalen Dialogen); Eingabefelder, Schaltflächen und Statusmeldungen haben zugängliche Namen; automatische Prüfung mit axe-core (WCAG 2.1 AA) ohne Befund auf allen Arbeitsschritten.', 'Browser: smoke_a11y'],
+  ['TR-17', 'Die Seite trägt eine Content-Security-Policy: Skripte laufen nur, wenn ihre SHA-256-Prüfsumme im Build eingetragen ist (kein unsafe-inline/unsafe-eval für Skripte, keine Inline-Ereignisbehandler); eingeschleustes Markup kann keinen Code ausführen; Import (PDF, DOCX, XLSX, TXT), Export und Druckansicht arbeiten unter der Policy.', 'build; Browser: smoke_csp'],
   ['TR-15', 'Berichte sind unabhängig von der Zeitzone des Rechners; die Excel-Arbeitsmappe enthält die Security-Tabellen des Word-Berichts je Stufe.', 'reports, security-reports, xlsx-security'],
 ];
 

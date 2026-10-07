@@ -6,7 +6,7 @@ Usage:  python3 build.py [--out dist/Railway_Hazard_Analysis_Suite.html]
 The output is one self-contained, offline HTML file. Source files keep CRLF
 line endings byte-for-byte (see .gitattributes); the build only concatenates.
 """
-import json, os, re, sys, argparse
+import json, os, re, sys, argparse, hashlib, base64
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 CR = b'\r\n'
@@ -57,12 +57,37 @@ def data_json():
     # '<' is escaped so that no string in the data can contain a literal </script or <!-- (valid JSON and JS).
     return json.dumps(data, ensure_ascii=False).replace('<', '\\u003c').encode('utf-8')
 
+def csp_policy(html):
+    """Content-Security-Policy for the single file. Every executable inline <script> is allowed by SHA-256 only, so
+    markup injected at runtime (e.g. via imported project data) cannot run script. The hash is taken over the text
+    after the HTML parser's newline normalisation (CRLF -> LF). Styles stay inline (the UI sets style attributes);
+    connections must stay open to http(s) because the AI server URLs are user settings."""
+    hashes = []
+    for m in re.finditer(rb'<script>(.*?)</script>', html, re.S):
+        text = m.group(1).replace(b'\r\n', b'\n').replace(b'\r', b'\n')
+        hashes.append("'sha256-" + base64.b64encode(hashlib.sha256(text).digest()).decode() + "'")
+    return '; '.join([
+        "default-src 'none'",
+        # blob: is needed because on file:// pdf.js cannot start a real worker from a blob and falls back to loading
+        # its worker script from a blob: URL. Creating a blob URL already requires running script, and the URL is
+        # unguessable, so markup injection alone cannot use it.
+        'script-src ' + ' '.join(hashes) + " blob:",
+        "style-src 'unsafe-inline'",
+        "img-src data: blob:",
+        "font-src data:",
+        "connect-src http: https:",
+        "worker-src blob:",
+        "base-uri 'none'", "form-action 'none'", "object-src 'none'", "frame-src 'none'",
+    ])
+
+CSP_SLOT = b'<!--CSP-->'
+
 def build():
     man = json.loads(rd('build-manifest.json'))
     check_manifest(man)
     version = rd('src/VERSION').decode().strip()
     parts = [
-        body('src/head.html'),
+        body('src/head.html'), CSP_SLOT,
         b'<style>', body('src/styles.css'), b'</style>',
         b'</head>', b'<body>',
         body('src/markup.html'),
@@ -75,7 +100,10 @@ def build():
     for m in man['modules']:
         parts += [b'<script>', f'// ==== {m} ===='.encode(), script_body(m), b'</script>']
     parts += [b'</body>', b'</html>', b'']
-    return CR.join(parts)
+    html = CR.join(parts)
+    meta = b'<meta http-equiv="Content-Security-Policy" content="' + csp_policy(html).encode() + b'">'
+    assert html.count(CSP_SLOT) == 1
+    return html.replace(CSP_SLOT, meta)
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()

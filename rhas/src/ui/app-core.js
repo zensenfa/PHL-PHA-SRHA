@@ -198,7 +198,7 @@ A.refresh = () => {
   if (!secOn && A.state.stage === 'security') A.state.stage = 'analysis';
   const banner = A.el('profile-banner');
   banner.classList.toggle('hidden', !!prof.confirmedAt);
-  banner.innerHTML = prof.confirmedAt ? '' : `Projektprofil ${prof.origin === 'migrated' ? 'aus einem älteren Projektstand übernommen' : 'noch nicht bestätigt'} – bitte prüfen und bestätigen. <button class="btn link" type="button" onclick="window.RHAS_APP.show('profile')">zum Projektprofil</button>`;
+  banner.innerHTML = prof.confirmedAt ? '' : `Projektprofil ${prof.origin === 'migrated' ? 'aus einem älteren Projektstand übernommen' : 'noch nicht bestätigt'} – bitte prüfen und bestätigen. <button class="btn link" type="button" data-goto-stage="profile">zum Projektprofil</button>`;
   A.el('pct-definition').textContent = `${st.stageProgress.definition} %`; A.el('pct-identification').textContent = `${st.stageProgress.identification} %`; A.el('pct-analysis').textContent = `${st.stageProgress.analysis} %`; A.el('pct-requirements').textContent = `${st.stageProgress.requirements} %`; A.el('pct-reports').textContent = '';
   A.el('rail-stats').innerHTML = `<span>Funktionen</span><b>${st.functions.total}</b><span>Gefährdungen offen</span><b>${st.hazards.pending}</b><span>übernommen</span><b>${st.hazards.accepted}</b><span>bewertet</span><b>${st.hazards.evaluated}</b><span>Anforderungen</span><b>${st.requirements.total}</b><span>SRAC</span><b>${st.requirements.byCategory.srac || 0}</b>`;
   const mod = A.stages[A.state.stage];
@@ -219,6 +219,9 @@ A.helpHtml = () => `
 A.bindCore = () => {
   A.loadSettings(); bindSettings(); bindProject();
   document.querySelectorAll('.rail-btn').forEach((b) => { b.onclick = () => A.show(b.dataset.stage); });
+  // No inline handlers anywhere (content-security policy): navigation links and form submits are delegated.
+  document.addEventListener('click', (e) => { const g = e.target.closest && e.target.closest('[data-goto-stage]'); if (g) A.show(g.dataset.gotoStage); });
+  document.addEventListener('submit', (e) => e.preventDefault());
   A.el('drawer-close').onclick = A.closeDrawer;
   A.el('btn-help').onclick = () => { A.el('help-body').innerHTML = A.helpHtml(); A.el('help-panel').classList.remove('hidden'); };
   A.el('help-close').onclick = () => A.el('help-panel').classList.add('hidden');

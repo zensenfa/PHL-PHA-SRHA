@@ -409,7 +409,7 @@ body{font:10.5pt/1.35 -apple-system,"Segoe UI",Roboto,sans-serif;color:#17212b;m
 table{border-collapse:collapse;width:100%;font-size:8.5pt;margin:4pt 0 8pt;page-break-inside:auto}th,td{border:1px solid #9aa5b1;padding:3px 5px;vertical-align:top;text-align:left}th{background:#d9e2ec;font-weight:600}tr{page-break-inside:avoid}tbody tr:nth-child(even) td{background:#f5f7fa}.kv td:first-child{font-weight:600;width:30%}.hint{color:#6b7580;font-style:italic;font-size:9pt}.toc li{margin:2px 0}
 @page{size:A4;margin:14mm}@media print{.noprint{display:none}}
 </style></head><body>
-<div class="noprint" style="background:#e3f1ee;padding:6px 10px;margin-bottom:12px;font-size:10pt">Druckansicht — Strg+P / „Als PDF speichern“. <button onclick="window.print()">Drucken</button></div>
+<div class="noprint" style="background:#e3f1ee;padding:6px 10px;margin-bottom:12px;font-size:10pt">Druckansicht — Strg+P / „Als PDF speichern“.</div>
 <h1>${esc(d.title)}</h1><div class="sub">${esc(b.sd.name || b.project.name)}${b.sd.type ? ` – ${esc(b.sd.type)}` : ''}</div>
 <table class="kv">${docControlRows(b, d).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</table>
 <h2>Inhalt</h2><ol class="toc">${secs.map((s) => `<li>${esc(s.heading.replace(/^\d+\s*/, ''))}</li>`).join('')}</ol>

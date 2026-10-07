@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="level 1: DOCX full is deterministic and matches golden text" time="0.070187" classname="test"/>
-	<testcase name="level 1: XLSX workbook matches golden content" time="0.078002" classname="test"/>
-	<testcase name="level 2: DOCX full is deterministic and matches golden text" time="0.035624" classname="test"/>
-	<testcase name="level 2: XLSX workbook matches golden content" time="0.062128" classname="test"/>
-	<testcase name="level 3: DOCX full is deterministic and matches golden text" time="0.040365" classname="test"/>
-	<testcase name="level 3: XLSX workbook matches golden content" time="0.054784" classname="test"/>
-	<testcase name="level 3: print view matches golden HTML and contains no unescaped markup from data" time="0.007850" classname="test"/>
-	<testcase name="hostile text in security records is escaped in print and DOCX output" time="0.019875" classname="test"/>
+	<testcase name="level 1: DOCX full is deterministic and matches golden text" time="0.082311" classname="test"/>
+	<testcase name="level 1: XLSX workbook matches golden content" time="0.071341" classname="test"/>
+	<testcase name="level 2: DOCX full is deterministic and matches golden text" time="0.045162" classname="test"/>
+	<testcase name="level 2: XLSX workbook matches golden content" time="0.054381" classname="test"/>
+	<testcase name="level 3: DOCX full is deterministic and matches golden text" time="0.033160" classname="test"/>
+	<testcase name="level 3: XLSX workbook matches golden content" time="0.047025" classname="test"/>
+	<testcase name="level 3: print view matches golden HTML and contains no unescaped markup from data" time="0.006327" classname="test"/>
+	<testcase name="hostile text in security records is escaped in print and DOCX output" time="0.018478" classname="test"/>
 	<!-- tests 8 -->
 	<!-- suites 0 -->
 	<!-- pass 8 -->
@@ -15,5 +15,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 638.234755 -->
+	<!-- duration_ms 653.822789 -->
 </testsuites>

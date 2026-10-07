@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="DOCX hazid: deterministic and matches golden text" time="0.062252" classname="test"/>
-	<testcase name="DOCX risk: deterministic and matches golden text" time="0.028157" classname="test"/>
-	<testcase name="DOCX hazlog: deterministic and matches golden text" time="0.029745" classname="test"/>
-	<testcase name="DOCX srs: deterministic and matches golden text" time="0.021295" classname="test"/>
-	<testcase name="DOCX full: deterministic and matches golden text" time="0.026425" classname="test"/>
-	<testcase name="XLSX workbook matches golden content" time="0.067509" classname="test"/>
-	<testcase name="print view matches golden HTML" time="0.004117" classname="test"/>
-	<testcase name="no &amp;quot;[object Object]&amp;quot; in any output (PATCH-1, PATCH-3)" time="0.094357" classname="test"/>
-	<testcase name="lead hazard titles appear in the hazard list (PATCH-1)" time="0.019447" classname="test"/>
-	<testcase name="reports contain no MIL-STD-882E reference or task deliverable names" time="0.088420" classname="test"/>
-	<testcase name="deliverables map to EN 50126-1 phase 3/4 outputs; legacy keys still work" time="0.040740" classname="test"/>
-	<testcase name="hazard log covers EN 50126-1 7.4.2.2 b) to g) and exports the SRAC" time="0.008983" classname="test"/>
-	<testcase name="every report states the RAMS scope (safety only)" time="0.052936" classname="test"/>
+	<testcase name="DOCX hazid: deterministic and matches golden text" time="0.048894" classname="test"/>
+	<testcase name="DOCX risk: deterministic and matches golden text" time="0.028278" classname="test"/>
+	<testcase name="DOCX hazlog: deterministic and matches golden text" time="0.023289" classname="test"/>
+	<testcase name="DOCX srs: deterministic and matches golden text" time="0.021675" classname="test"/>
+	<testcase name="DOCX full: deterministic and matches golden text" time="0.028404" classname="test"/>
+	<testcase name="XLSX workbook matches golden content" time="0.070743" classname="test"/>
+	<testcase name="print view matches golden HTML" time="0.005039" classname="test"/>
+	<testcase name="no &amp;quot;[object Object]&amp;quot; in any output (PATCH-1, PATCH-3)" time="0.095318" classname="test"/>
+	<testcase name="lead hazard titles appear in the hazard list (PATCH-1)" time="0.014236" classname="test"/>
+	<testcase name="reports contain no MIL-STD-882E reference or task deliverable names" time="0.109410" classname="test"/>
+	<testcase name="deliverables map to EN 50126-1 phase 3/4 outputs; legacy keys still work" time="0.047007" classname="test"/>
+	<testcase name="hazard log covers EN 50126-1 7.4.2.2 b) to g) and exports the SRAC" time="0.009153" classname="test"/>
+	<testcase name="every report states the RAMS scope (safety only)" time="0.061170" classname="test"/>
 	<!-- tests 13 -->
 	<!-- suites 0 -->
 	<!-- pass 13 -->
@@ -20,5 +20,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 889.202027 -->
+	<!-- duration_ms 850.630452 -->
 </testsuites>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testcase name="near-duplicates in one batch are merged, not dropped" time="0.003568" classname="test"/>
-	<testcase name="distinct suggestions stay separate" time="0.000381" classname="test"/>
-	<testcase name="similarity to an accepted hazard flags duplicateOf, to a rejected one flags previouslyRejected" time="0.000522" classname="test"/>
-	<testcase name="prompts list rejected hazards so the model does not re-propose them" time="0.000609" classname="test"/>
-	<testcase name="prompts mark project data and document excerpts as data, not instructions" time="0.000476" classname="test"/>
+	<testcase name="near-duplicates in one batch are merged, not dropped" time="0.005297" classname="test"/>
+	<testcase name="distinct suggestions stay separate" time="0.000612" classname="test"/>
+	<testcase name="similarity to an accepted hazard flags duplicateOf, to a rejected one flags previouslyRejected" time="0.000825" classname="test"/>
+	<testcase name="prompts list rejected hazards so the model does not re-propose them" time="0.000823" classname="test"/>
+	<testcase name="prompts mark project data and document excerpts as data, not instructions" time="0.000776" classname="test"/>
 	<!-- tests 5 -->
 	<!-- suites 0 -->
 	<!-- pass 5 -->
@@ -12,5 +12,5 @@
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 305.948381 -->
+	<!-- duration_ms 284.912205 -->
 </testsuites>

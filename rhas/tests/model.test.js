@@ -148,3 +148,38 @@ test('cause kinds: schema, labels and editors agree (no silent re-classification
     assert.ok(!/\['systematic', 'random', 'human', 'external'\]/.test(src), `${f}: hard-coded cause kind list`);
   }
 });
+
+test('proposed (unconfirmed) measures do not lower residual risk or count as control', () => {
+  const h = M.makeHazard({
+    accidents: [M.makeAccident({ severity: 'critical', frequency: 'occasional', severityRationale: 'x'.repeat(50), frequencyRationale: 'y'.repeat(50) })],
+    broadlyAcceptable: { decision: false }, rap: { principle: 'cop', reference: 'x' },
+    measures: [M.makeMeasure({ residualSeverity: 'insignificant', residualFrequency: 'highlyImprobable', status: 'proposed' })],
+  });
+  M.recomputeHazardRisk(h);
+  assert.equal(h.residualRiskClass, h.riskClass);
+  assert.ok(M.hazardCompleteness(h).problems.some((p) => p.includes('Keine Maßnahme')));
+  h.measures[0].status = 'accepted';
+  M.recomputeHazardRisk(h);
+  assert.notEqual(h.residualRiskClass, h.riskClass);
+});
+
+test('a measure cannot leave the hazard with a residual risk worse than the initial risk', () => {
+  const h = M.makeHazard({
+    accidents: [M.makeAccident({ severity: 'marginal', frequency: 'rare' })],
+    measures: [M.makeMeasure({ residualSeverity: 'catastrophic', residualFrequency: 'frequent', status: 'accepted' })],
+  });
+  M.recomputeHazardRisk(h);
+  assert.equal(h.residualRiskClass, h.riskClass);
+});
+
+test('"broadly acceptable" on a class that needs measures requires a reasoned deviation', () => {
+  const h = M.makeHazard({
+    accidents: [M.makeAccident({ severity: 'catastrophic', frequency: 'frequent', severityRationale: 'x'.repeat(50), frequencyRationale: 'y'.repeat(50) })],
+    broadlyAcceptable: { decision: true, justification: 'ok' },
+  });
+  M.recomputeHazardRisk(h);
+  assert.equal(h.riskClass, 'Intolerable');
+  assert.ok(M.hazardCompleteness(h).problems.some((p) => p.includes('widerspricht der Risikoklasse')));
+  h.broadlyAcceptable.overrideReason = 'Begründung der Abweichung';
+  assert.ok(!M.hazardCompleteness(h).problems.some((p) => p.includes('widerspricht der Risikoklasse')));
+});

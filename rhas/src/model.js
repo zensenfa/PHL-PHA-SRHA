@@ -139,15 +139,21 @@ function worstRiskClass(classes, cal) {
   return worst;
 }
 
+/** Measures the engineer has accepted; proposed and rejected ones are ignored for residual risk and control. */
+function acceptedMeasures(h) { return (h.measures || []).filter((m) => m.status === 'accepted'); }
+
 /** Recompute every derived risk field on a hazard (accident classes, worst class, residual per measure). Mutates and returns the hazard. */
 function recomputeHazardRisk(h, calibration) {
   for (const a of h.accidents || []) a.riskClass = riskClassOrNull(a.frequency, a.severity, calibration);
   h.riskClass = worstRiskClass((h.accidents || []).map((a) => a.riskClass), calibration);
   for (const m of h.measures || []) { m.hierarchy = normalizeHierarchy(m.hierarchy); m.residualRiskClass = riskClassOrNull(m.residualFrequency, m.residualSeverity, calibration); }
-  const residuals = (h.measures || []).filter((m) => m.status !== 'rejected').map((m) => m.residualRiskClass).filter(Boolean); // PATCH-2
-  // Residual risk of the hazard = best (lowest) residual any single confirmed measure claims. This is OPTIMISTIC
+  // Only measures the engineer has accepted count; proposed (e.g. AI-suggested) measures lower no risk.
+  const residuals = acceptedMeasures(h).map((m) => m.residualRiskClass).filter(Boolean);
+  // Residual risk of the hazard = best (lowest) residual any single accepted measure claims. This is OPTIMISTIC
   // (measures can act on different accident scenarios); the engineer confirms it. Per-scenario residual risk is planned.
-  h.residualRiskClass = residuals.length ? residuals.reduce((best, c) => (rankOf(c, calibration) < rankOf(best, calibration) ? c : best)) : h.riskClass;
+  // A measure can never leave the hazard worse than its initial risk.
+  const best = residuals.length ? residuals.reduce((b, c) => (rankOf(c, calibration) < rankOf(b, calibration) ? c : b)) : h.riskClass;
+  h.residualRiskClass = best && h.riskClass && rankOf(best, calibration) > rankOf(h.riskClass, calibration) ? h.riskClass : best;
   return h;
 }
 
@@ -376,6 +382,7 @@ function hazardCompleteness(h) {
   const ba = h.broadlyAcceptable || {};
   if (ba.decision == null) evalProblems.push('Entscheidung „weitgehend akzeptabel“ fehlt (6.3)');
   else if (ba.decision === true && isBlank(ba.justification)) evalProblems.push('Begründung für „weitgehend akzeptabel“ fehlt (6.3)');
+  else if (ba.decision === true && h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures && isBlank(ba.overrideReason)) evalProblems.push(`„Weitgehend akzeptabel“ widerspricht der Risikoklasse ${label('riskClass', h.riskClass)}; Begründung der Abweichung erforderlich (6.3)`);
   else if (ba.decision === false) {
     if (isBlank(h.rap && h.rap.principle)) evalProblems.push('Risikoakzeptanzprinzip nicht gewählt (6.3, EN 50126-2 8.3)');
     else if (h.rap.principle === 'ere' && isBlank(h.rap.rac)) evalProblems.push('Risikoakzeptanzkriterium für explizite Risikoabschätzung fehlt (EN 50126-2 8.3.3)');
@@ -387,12 +394,12 @@ function hazardCompleteness(h) {
   const ctrlProblems = [];
   if (ba.decision === false) {
     const needsMeasures = !!(h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures);
-    if (needsMeasures && isBlank((h.measures || []).filter((m) => m.status !== 'rejected'))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
+    if (needsMeasures && isBlank(acceptedMeasures(h))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
     const must = (c) => !!(c && (classMeta(c) || {}).mustReduce);
     // WP5: deliberate causes are controlled by security measures, never by THR/SIL (EN 50129 6.4, NOTE 2).
-    if ((h.causes || []).some((c) => c.kind === 'intentional') && !(h.measures || []).some((m) => m.status !== 'rejected' && m.securityRelated)) ctrlProblems.push('Vorsätzliche Ursache ohne Security-Maßnahme (EN 50129 6.4)');
+    if ((h.causes || []).some((c) => c.kind === 'intentional') && !acceptedMeasures(h).some((m) => m.securityRelated)) ctrlProblems.push('Vorsätzliche Ursache ohne Security-Maßnahme (EN 50129 6.4)');
     if (must(h.riskClass) && (!h.residualRiskClass || must(h.residualRiskClass))) ctrlProblems.push('Nicht akzeptables Risiko ohne wirksame Reduktion (EN 50126-1 Tabelle C.8 bzw. Projektkalibrierung)');
-    if ((h.measures || []).filter((m) => m.status !== 'rejected').some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
+    if (acceptedMeasures(h).some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
   }
   out.controlled = out.evaluated && ctrlProblems.length === 0;
   p.push(...ctrlProblems);
@@ -474,7 +481,7 @@ function projectStats({ hazards, requirements, functions, sd }) {
 }
 
 const api = {
-  LABELS, SYSTEM_DEFINITION_FIELDS, setCalibration, activeCalibration, frequencyIds, severityIds, riskClassIds, classMeta, rankOf,
+  acceptedMeasures, LABELS, SYSTEM_DEFINITION_FIELDS, setCalibration, activeCalibration, frequencyIds, severityIds, riskClassIds, classMeta, rankOf,
   data, label, normalizeHierarchy, LEGACY_HIERARCHY, nextId, nowIso,
   riskClass, riskClassOrNull, worstRiskClass, recomputeHazardRisk,
   silFromTffr, functionIntegrity, parseRate, formatRate,

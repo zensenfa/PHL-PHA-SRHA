@@ -796,15 +796,21 @@ function worstRiskClass(classes, cal) {
   return worst;
 }
 
+/** Measures the engineer has accepted; proposed and rejected ones are ignored for residual risk and control. */
+function acceptedMeasures(h) { return (h.measures || []).filter((m) => m.status === 'accepted'); }
+
 /** Recompute every derived risk field on a hazard (accident classes, worst class, residual per measure). Mutates and returns the hazard. */
 function recomputeHazardRisk(h, calibration) {
   for (const a of h.accidents || []) a.riskClass = riskClassOrNull(a.frequency, a.severity, calibration);
   h.riskClass = worstRiskClass((h.accidents || []).map((a) => a.riskClass), calibration);
   for (const m of h.measures || []) { m.hierarchy = normalizeHierarchy(m.hierarchy); m.residualRiskClass = riskClassOrNull(m.residualFrequency, m.residualSeverity, calibration); }
-  const residuals = (h.measures || []).filter((m) => m.status !== 'rejected').map((m) => m.residualRiskClass).filter(Boolean); // PATCH-2
-  // Residual risk of the hazard = best (lowest) residual any single confirmed measure claims. This is OPTIMISTIC
+  // Only measures the engineer has accepted count; proposed (e.g. AI-suggested) measures lower no risk.
+  const residuals = acceptedMeasures(h).map((m) => m.residualRiskClass).filter(Boolean);
+  // Residual risk of the hazard = best (lowest) residual any single accepted measure claims. This is OPTIMISTIC
   // (measures can act on different accident scenarios); the engineer confirms it. Per-scenario residual risk is planned.
-  h.residualRiskClass = residuals.length ? residuals.reduce((best, c) => (rankOf(c, calibration) < rankOf(best, calibration) ? c : best)) : h.riskClass;
+  // A measure can never leave the hazard worse than its initial risk.
+  const best = residuals.length ? residuals.reduce((b, c) => (rankOf(c, calibration) < rankOf(b, calibration) ? c : b)) : h.riskClass;
+  h.residualRiskClass = best && h.riskClass && rankOf(best, calibration) > rankOf(h.riskClass, calibration) ? h.riskClass : best;
   return h;
 }
 
@@ -1033,6 +1039,7 @@ function hazardCompleteness(h) {
   const ba = h.broadlyAcceptable || {};
   if (ba.decision == null) evalProblems.push('Entscheidung „weitgehend akzeptabel“ fehlt (6.3)');
   else if (ba.decision === true && isBlank(ba.justification)) evalProblems.push('Begründung für „weitgehend akzeptabel“ fehlt (6.3)');
+  else if (ba.decision === true && h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures && isBlank(ba.overrideReason)) evalProblems.push(`„Weitgehend akzeptabel“ widerspricht der Risikoklasse ${label('riskClass', h.riskClass)}; Begründung der Abweichung erforderlich (6.3)`);
   else if (ba.decision === false) {
     if (isBlank(h.rap && h.rap.principle)) evalProblems.push('Risikoakzeptanzprinzip nicht gewählt (6.3, EN 50126-2 8.3)');
     else if (h.rap.principle === 'ere' && isBlank(h.rap.rac)) evalProblems.push('Risikoakzeptanzkriterium für explizite Risikoabschätzung fehlt (EN 50126-2 8.3.3)');
@@ -1044,12 +1051,12 @@ function hazardCompleteness(h) {
   const ctrlProblems = [];
   if (ba.decision === false) {
     const needsMeasures = !!(h.riskClass && (classMeta(h.riskClass) || {}).needsMeasures);
-    if (needsMeasures && isBlank((h.measures || []).filter((m) => m.status !== 'rejected'))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
+    if (needsMeasures && isBlank(acceptedMeasures(h))) ctrlProblems.push('Keine Maßnahme bei nicht vernachlässigbarem Risiko (7.4.2.2 f))');
     const must = (c) => !!(c && (classMeta(c) || {}).mustReduce);
     // WP5: deliberate causes are controlled by security measures, never by THR/SIL (EN 50129 6.4, NOTE 2).
-    if ((h.causes || []).some((c) => c.kind === 'intentional') && !(h.measures || []).some((m) => m.status !== 'rejected' && m.securityRelated)) ctrlProblems.push('Vorsätzliche Ursache ohne Security-Maßnahme (EN 50129 6.4)');
+    if ((h.causes || []).some((c) => c.kind === 'intentional') && !acceptedMeasures(h).some((m) => m.securityRelated)) ctrlProblems.push('Vorsätzliche Ursache ohne Security-Maßnahme (EN 50129 6.4)');
     if (must(h.riskClass) && (!h.residualRiskClass || must(h.residualRiskClass))) ctrlProblems.push('Nicht akzeptables Risiko ohne wirksame Reduktion (EN 50126-1 Tabelle C.8 bzw. Projektkalibrierung)');
-    if ((h.measures || []).filter((m) => m.status !== 'rejected').some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
+    if (acceptedMeasures(h).some((m) => isBlank(m.residualSeverity) || isBlank(m.residualFrequency))) ctrlProblems.push('Maßnahme ohne Restrisiko-Einschätzung');
   }
   out.controlled = out.evaluated && ctrlProblems.length === 0;
   p.push(...ctrlProblems);
@@ -1131,7 +1138,7 @@ function projectStats({ hazards, requirements, functions, sd }) {
 }
 
 const api = {
-  LABELS, SYSTEM_DEFINITION_FIELDS, setCalibration, activeCalibration, frequencyIds, severityIds, riskClassIds, classMeta, rankOf,
+  acceptedMeasures, LABELS, SYSTEM_DEFINITION_FIELDS, setCalibration, activeCalibration, frequencyIds, severityIds, riskClassIds, classMeta, rankOf,
   data, label, normalizeHierarchy, LEGACY_HIERARCHY, nextId, nowIso,
   riskClass, riskClassOrNull, worstRiskClass, recomputeHazardRisk,
   silFromTffr, functionIntegrity, parseRate, formatRate,
@@ -4336,12 +4343,30 @@ async function get(pdb, store, id) {
   return req(pdb.transaction(store).objectStore(store).get(id));
 }
 
+/**
+ * Reserve `count` consecutive ids inside an open transaction. A persistent counter (meta `idCounter_<store>`)
+ * keeps ids of deleted records from being handed out again, which would silently re-point old links.
+ * Returns the first reserved number.
+ */
+async function reserveIds(tx, store, all, count) {
+  const meta = tx.objectStore('meta');
+  const row = await req(meta.get('idCounter_' + store));
+  const first = nextNumber(ID_PREFIX[store], all, row && row.value);
+  meta.put({ key: 'idCounter_' + store, value: first + count - 1 });
+  return first;
+}
+/** Pure: next number = max(highest existing id, stored counter) + 1. */
+function nextNumber(prefix, records, counter) {
+  return Math.max(maxSequential(prefix, records), Number(counter) || 0) + 1;
+}
+
 /** Create one record; the id is computed inside the write transaction (sequential prefix-NNNN). */
 async function create(pdb, store, record, by = '') {
-  const tx = pdb.transaction(store, 'readwrite');
+  const tx = pdb.transaction([store, 'meta'], 'readwrite');
   const s = tx.objectStore(store);
   const all = await req(s.getAll());
-  const id = nextSequential(ID_PREFIX[store], all);
+  const n = await reserveIds(tx, store, all, 1);
+  const id = `${ID_PREFIX[store]}-${String(n).padStart(4, '0')}`;
   const now = new Date().toISOString();
   const rec = { ...record, id, createdAt: record.createdAt || now, createdBy: record.createdBy || by, updatedAt: now, updatedBy: by };
   s.put(rec);
@@ -4351,10 +4376,10 @@ async function create(pdb, store, record, by = '') {
 
 /** Create many records in one transaction with consecutive ids; returns the stored records. */
 async function createBatch(pdb, store, records, by = '') {
-  const tx = pdb.transaction(store, 'readwrite');
+  const tx = pdb.transaction([store, 'meta'], 'readwrite');
   const s = tx.objectStore(store);
   const all = await req(s.getAll());
-  let n = maxSequential(ID_PREFIX[store], all);
+  let n = (await reserveIds(tx, store, all, records.length)) - 1;
   const now = new Date().toISOString();
   const out = [];
   for (const r of records) {
@@ -4483,7 +4508,7 @@ async function deleteCheckpoint(checkpointId) {
   db.close();
 }
 
-const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, assertSafeIds, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
+const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, assertSafeIds, nextNumber, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_DB = api;
 })();
 
@@ -5318,6 +5343,10 @@ async function applyCalibration(next, reason, approvalOnly) {
   const cur = A.calibration(); const prof = A.state.projectProfile;
   const needReason = !approvalOnly && (prof.confirmedAt || A.state.hazards.length);
   if (needReason && !reason) { A.toast('Begründung für die Kalibrierungsänderung erforderlich', 'err'); return; }
+  if (!approvalOnly) {
+    const inv = C.impact(A.state.hazards, next).invalid; // categories that no longer exist would erase risk classes
+    if (inv.length) { A.toast(`Nicht übernommen: ${inv.length} Gefährdung(en) verwenden Kategorien, die es in der neuen Kalibrierung nicht gibt (${inv.slice(0, 5).map((x) => x.id).join(', ')}${inv.length > 5 ? ', …' : ''}). Zuerst anpassen.`, 'err'); return; }
+  }
   if (!approvalOnly) { next.version = next.id === cur.id ? Number(cur.version || 1) + 1 : 1; next.approvedBy = ''; next.approvedAt = ''; }
   const v = C.validateCalibration(next); if (!v.ok) { A.toast('Kalibrierung unvollständig', 'err'); return; }
   const changes = approvalOnly ? [`Freigabe ${next.approvedBy}`] : C.describeChange(cur, next);
@@ -5913,6 +5942,7 @@ ${PA ? renderAnalysisProposal(h, PA) : ''}
 <h4>Bewertung (6.3, EN 50126-2 8.3)</h4>
 <div class="f"><label>Weitgehend akzeptabel?</label><select id="an-ba">${A.opts({ '': 'nicht entschieden', false: 'Nein — Risikoakzeptanzprinzip anwenden', true: 'Ja — keine weitere Maßnahme vernünftig' }, ba.decision == null ? '' : String(ba.decision))}</select></div>
 <div class="f"><label>Begründung</label><textarea id="an-ba-just" rows="2">${A.esc(ba.justification || '')}</textarea></div>
+<div class="f"><label>Begründung der Abweichung (nur wenn die Risikoklasse Maßnahmen erfordert)</label><textarea id="an-ba-override" rows="2">${A.esc(ba.overrideReason || '')}</textarea></div>
 <div class="f"><label>Risikoakzeptanzprinzip</label><select id="an-rap">${A.opts(M.LABELS.rap, rap.principle, '–')}</select></div>
 <div class="f"><label>Referenz (Regelwerk / Referenzsystem)</label><input id="an-rap-ref" value="${A.esc(rap.reference || '')}" /></div>
 <div class="f"><label>Risikoakzeptanzkriterium (bei ERE)</label><select id="an-rac">${A.opts(M.LABELS.rac, rap.rac, '–')}</select></div>
@@ -5939,7 +5969,7 @@ ${PM ? renderMeasuresProposal(h, PM) : ''}
     const measures = [...body.querySelectorAll('[data-meas]')].map((box, i) => { const prev = (h.measures || [])[i] || M.makeMeasure(); const m = { ...prev }; box.querySelectorAll('[data-m]').forEach((el) => { m[el.dataset.m] = el.type === 'checkbox' ? el.checked : el.value.trim(); }); return m; }).filter((m) => m.text);
     const baV = A.el('an-ba').value;
     const thrV = M.parseRate(A.el('an-thr').value);
-    return { ...h, causes: A.el('an-causes').value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => { const [text, kind] = l.split('|').map((x) => x.trim()); return { text, kind: Object.keys(M.LABELS.causeKind).includes(kind) ? kind : 'systematic' }; }), triggeringEvent: A.el('an-trigger').value.trim(), enablingConditions: A.el('an-cond').value.split('\n').map((l) => l.trim()).filter(Boolean), railwayHazard: A.el('an-railway').value.trim(), accidents, existingBarriers, measures, broadlyAcceptable: { decision: baV === '' ? null : baV === 'true', justification: A.el('an-ba-just').value.trim(), by: A.author(), at: M.nowIso() }, rap: { principle: A.el('an-rap').value, reference: A.el('an-rap-ref').value.trim(), rac: A.el('an-rac').value, justification: A.el('an-rap-just').value.trim() }, thr: { valuePerHour: thrV, origin: A.el('an-thr-origin').value, justification: A.el('an-thr-just').value.trim() }, responsibleEntity: A.el('an-owner').value.trim() };
+    return { ...h, causes: A.el('an-causes').value.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => { const [text, kind] = l.split('|').map((x) => x.trim()); return { text, kind: Object.keys(M.LABELS.causeKind).includes(kind) ? kind : 'systematic' }; }), triggeringEvent: A.el('an-trigger').value.trim(), enablingConditions: A.el('an-cond').value.split('\n').map((l) => l.trim()).filter(Boolean), railwayHazard: A.el('an-railway').value.trim(), accidents, existingBarriers, measures, broadlyAcceptable: { decision: baV === '' ? null : baV === 'true', justification: A.el('an-ba-just').value.trim(), overrideReason: A.el('an-ba-override').value.trim(), by: A.author(), at: M.nowIso() }, rap: { principle: A.el('an-rap').value, reference: A.el('an-rap-ref').value.trim(), rac: A.el('an-rac').value, justification: A.el('an-rap-just').value.trim() }, thr: { valuePerHour: thrV, origin: A.el('an-thr-origin').value, justification: A.el('an-thr-just').value.trim() }, responsibleEntity: A.el('an-owner').value.trim() };
   };
   const live = () => { const tmp = M.recomputeHazardRisk(collect(), cal); A.el('an-risk').innerHTML = A.riskPill(tmp.riskClass); A.el('an-residual').innerHTML = A.riskPill(tmp.residualRiskClass); body.querySelectorAll('[data-acc]').forEach((box, i) => { const pill = box.querySelector('.pill'); if (pill && tmp.accidents[i]) pill.outerHTML = A.riskPill(tmp.accidents[i].riskClass); }); body.querySelectorAll('[data-meas]').forEach((box, i) => { const line = box.querySelector('.riskline'); if (line && tmp.measures[i]) line.innerHTML = `Restrisiko ${A.riskPill(tmp.measures[i].residualRiskClass)}`; }); };
   body.querySelectorAll('select[data-a], select[data-m]').forEach((s) => { s.onchange = live; });

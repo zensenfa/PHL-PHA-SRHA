@@ -23,7 +23,16 @@ async def main():
         await pg.click('#btn-cal-apply'); await pg.wait_for_timeout(300)
         print('toast without reason:', await pg.inner_text('#toast'))
         await pg.fill('#cal-reason', 'Kalibrierung des Betreibers'); await pg.click('#btn-cal-apply'); await pg.wait_for_timeout(1500)
-        print('toast:', await pg.inner_text('#toast'))
+        toast = await pg.inner_text('#toast'); print('toast:', toast)
+        assert 'Nicht übernommen' in toast, 'incompatible categories must not be applied silently'
+        # a compatible change (same categories, one matrix cell edited) is applied
+        await pg.click('#btn-cal-discard'); await pg.wait_for_timeout(300)
+        cell = pg.locator('[data-cell]').first
+        cur = await cell.input_value(); opts = await cell.locator('option').evaluate_all('o => o.map(x => x.value).filter(Boolean)')
+        await cell.select_option(next(v for v in opts if v != cur))
+        await pg.fill('#cal-reason', 'Kalibrierung des Betreibers'); await pg.click('#btn-cal-apply'); await pg.wait_for_timeout(1500)
+        toast = await pg.inner_text('#toast'); print('toast:', toast)
+        assert 'Kalibrierung übernommen' in toast
         print('profile log mentions calibration:', 'calibration' in await pg.inner_text('#tbl-profile-log'))
         await pg.fill('#cal-approver', 'Betreiber X'); await pg.click('#btn-cal-approve2'); await pg.wait_for_timeout(800)
         print('approved:', 'freigegeben: Betreiber X' in await pg.inner_text('#calibration-editor'))

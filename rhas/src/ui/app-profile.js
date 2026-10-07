@@ -153,6 +153,10 @@ async function applyCalibration(next, reason, approvalOnly) {
   const cur = A.calibration(); const prof = A.state.projectProfile;
   const needReason = !approvalOnly && (prof.confirmedAt || A.state.hazards.length);
   if (needReason && !reason) { A.toast('Begründung für die Kalibrierungsänderung erforderlich', 'err'); return; }
+  if (!approvalOnly) {
+    const inv = C.impact(A.state.hazards, next).invalid; // categories that no longer exist would erase risk classes
+    if (inv.length) { A.toast(`Nicht übernommen: ${inv.length} Gefährdung(en) verwenden Kategorien, die es in der neuen Kalibrierung nicht gibt (${inv.slice(0, 5).map((x) => x.id).join(', ')}${inv.length > 5 ? ', …' : ''}). Zuerst anpassen.`, 'err'); return; }
+  }
   if (!approvalOnly) { next.version = next.id === cur.id ? Number(cur.version || 1) + 1 : 1; next.approvedBy = ''; next.approvedAt = ''; }
   const v = C.validateCalibration(next); if (!v.ok) { A.toast('Kalibrierung unvollständig', 'err'); return; }
   const changes = approvalOnly ? [`Freigabe ${next.approvedBy}`] : C.describeChange(cur, next);

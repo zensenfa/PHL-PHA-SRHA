@@ -97,12 +97,30 @@ async function get(pdb, store, id) {
   return req(pdb.transaction(store).objectStore(store).get(id));
 }
 
+/**
+ * Reserve `count` consecutive ids inside an open transaction. A persistent counter (meta `idCounter_<store>`)
+ * keeps ids of deleted records from being handed out again, which would silently re-point old links.
+ * Returns the first reserved number.
+ */
+async function reserveIds(tx, store, all, count) {
+  const meta = tx.objectStore('meta');
+  const row = await req(meta.get('idCounter_' + store));
+  const first = nextNumber(ID_PREFIX[store], all, row && row.value);
+  meta.put({ key: 'idCounter_' + store, value: first + count - 1 });
+  return first;
+}
+/** Pure: next number = max(highest existing id, stored counter) + 1. */
+function nextNumber(prefix, records, counter) {
+  return Math.max(maxSequential(prefix, records), Number(counter) || 0) + 1;
+}
+
 /** Create one record; the id is computed inside the write transaction (sequential prefix-NNNN). */
 async function create(pdb, store, record, by = '') {
-  const tx = pdb.transaction(store, 'readwrite');
+  const tx = pdb.transaction([store, 'meta'], 'readwrite');
   const s = tx.objectStore(store);
   const all = await req(s.getAll());
-  const id = nextSequential(ID_PREFIX[store], all);
+  const n = await reserveIds(tx, store, all, 1);
+  const id = `${ID_PREFIX[store]}-${String(n).padStart(4, '0')}`;
   const now = new Date().toISOString();
   const rec = { ...record, id, createdAt: record.createdAt || now, createdBy: record.createdBy || by, updatedAt: now, updatedBy: by };
   s.put(rec);
@@ -112,10 +130,10 @@ async function create(pdb, store, record, by = '') {
 
 /** Create many records in one transaction with consecutive ids; returns the stored records. */
 async function createBatch(pdb, store, records, by = '') {
-  const tx = pdb.transaction(store, 'readwrite');
+  const tx = pdb.transaction([store, 'meta'], 'readwrite');
   const s = tx.objectStore(store);
   const all = await req(s.getAll());
-  let n = maxSequential(ID_PREFIX[store], all);
+  let n = (await reserveIds(tx, store, all, records.length)) - 1;
   const now = new Date().toISOString();
   const out = [];
   for (const r of records) {
@@ -244,7 +262,7 @@ async function deleteCheckpoint(checkpointId) {
   db.close();
 }
 
-const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, assertSafeIds, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
+const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, assertSafeIds, nextNumber, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_DB = api;
 })();
 

@@ -27,7 +27,7 @@ Dokument
  | Kalibrierung
  | en50126-1-annex-c-default v1
  | Exportiert
- | 24.09.2026 08:00
+ | 24.09.2026 10:00
  |
 Revisionshistorie
 Revision

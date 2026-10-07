@@ -55,6 +55,7 @@ A.tabs = (containerId) => {
 
 // --------------------------------------------------------------- settings ----
 const SETTINGS_KEY = 'rhas_settings';
+A.modelName = (s = A.settings) => s.provider === 'mistral-api' ? s.mistralModel : s.provider === 'openai-compat' ? s.compatModel : s.ollamaModel;
 A.loadSettings = () => { try { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ollamaNumCtx: 32768, ollamaThink: 'auto', ollamaKeepAlive: '30m', compatUrl: 'http://127.0.0.1:1234', compatModel: '', compatApiKey: '', splitGuidewords: 'off', ...JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}') }; } catch { A.settings = { provider: 'ollama', ollamaUrl: 'http://localhost:11434', ollamaModel: 'mistral-small3.2:latest', mistralModel: 'mistral-large-latest', mistralApiKey: '', softCapCalls: 80, hardCapCalls: 300, ollamaNumCtx: 32768, ollamaThink: 'auto', ollamaKeepAlive: '30m', compatUrl: 'http://127.0.0.1:1234', compatModel: '', compatApiKey: '', splitGuidewords: 'off' }; } };
 A.saveSettings = () => localStorage.setItem(SETTINGS_KEY, JSON.stringify(A.settings));
 A.provider = () => { const g = PROFILE.aiProviderAllowed(A.state.projectProfile, A.settings.provider, A.settings); return { provider: A.settings.provider, settings: { ...A.settings, blockedReason: g.ok ? '' : g.reason } }; };

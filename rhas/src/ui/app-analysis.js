@@ -163,7 +163,7 @@ async function runBatch(list, kind) {
   const abort = new AbortController(); const runState = A.runState(); runState.tracker.start(Date.now());
   A.state.run = { abort, runState };
   const prog = A.el('an-progress'); prog.classList.remove('hidden'); A.el('btn-an-cancel').classList.remove('hidden');
-  const modelName = A.settings.provider === 'ollama' ? A.settings.ollamaModel : A.settings.mistralModel;
+  const modelName = A.modelName();
   let done = 0, failed = 0; const t0 = Date.now();
   for (const h of list) {
     if (abort.signal.aborted) break;

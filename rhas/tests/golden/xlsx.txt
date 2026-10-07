@@ -13,7 +13,7 @@ Eisenbahnbetreiber (Duty holder),–
 Lieferant,"Schweizer Electronic AG, Reiden"
 Werkzeug,Railway Hazard Analysis Suite test
 Kalibrierung,en50126-1-annex-c-default v1
-Exportiert,24.09.2026 08:00
+Exportiert,24.09.2026 10:00
 ## Projektprofil
 Merkmal,Festlegung,Bezug
 Rolle im Projekt,Produktlieferant,EN 50126-1 5.3.2; EN 50126-2 5.6

@@ -177,7 +177,7 @@ async function decompose() {
   btn.disabled = true; btn.textContent = 'KI arbeitet…';
   try {
     const r = await E.runDecomposition({ ctx: A.ctx(), ...A.provider(), runState: A.runState() });
-    A.state.proposals.decomposition = { ...r, at: M.nowIso(), model: A.settings.provider === 'ollama' ? A.settings.ollamaModel : A.settings.mistralModel };
+    A.state.proposals.decomposition = { ...r, at: M.nowIso(), model: A.modelName() };
     await A.saveProposals(); renderDecomposition();
   } catch (e) { A.toast(`Zerlegung fehlgeschlagen: ${e.message}`, 'err'); }
   btn.disabled = false; btn.textContent = 'KI: Zerlegung vorschlagen';

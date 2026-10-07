@@ -19,7 +19,7 @@ function currentPlan() { return E.planIdentification({ splitGuidewords: A.settin
  */
 function secondsPerCall() {
   const { provider, settings } = A.provider();
-  const model = provider === 'mistral-api' ? settings.mistralModel : settings.ollamaModel;
+  const model = provider === 'mistral-api' ? settings.mistralModel : provider === 'openai-compat' ? settings.compatModel : settings.ollamaModel;
   const rate = (r) => Math.max(5, (new Date(r.finishedAt) - new Date(r.startedAt)) / 1000 / r.calls);
   const runs = A.state.runs.filter((r) => r.mode === 'identification' && r.calls > 0 && r.finishedAt && r.startedAt);
   const sameModel = runs.filter((r) => r.provider === provider && r.model === model);

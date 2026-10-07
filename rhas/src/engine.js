@@ -265,7 +265,7 @@ function parse(content) {
  */
 async function runIdentification({ plan, ctx, existingHazards, provider, settings, runState, signal, onProgress, onBatch, onSoftCap, onCheckpoint }) {
   const runId = 'run_' + Date.now().toString(36);
-  const modelName = provider === 'mistral-api' ? settings.mistralModel : settings.ollamaModel;
+  const modelName = provider === 'mistral-api' ? settings.mistralModel : provider === 'openai-compat' ? settings.compatModel : settings.ollamaModel;
   const chunks = chunkDocuments(ctx.documents);
   const data = M.data();
   const sources = data.sources;

@@ -16,7 +16,9 @@ const ZN = typeof require !== 'undefined' ? require('./zones.js') : window.RHAS_
 const L = (k, v) => M.label(k, v);
 const nz = (v) => (v == null ? '' : String(v));
 const join = (arr, sep = '; ') => (arr || []).filter(Boolean).join(sep);
-const dateDe = (iso) => { if (!iso) return ''; const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }); };
+// Reports are German-language documents: render dates/times in a fixed zone so output does not depend on the machine's time zone.
+const REPORT_TZ = 'Europe/Zurich';
+const dateDe = (iso) => { if (!iso) return ''; const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: REPORT_TZ }); };
 const RISK_SHADE = { Intolerable: 'FDECEB', Undesirable: 'FBF0DF', Tolerable: 'F7F1D6', Negligible: 'E6F3EA', Unacceptable: 'FDECEB', Acceptable: 'E6F3EA' };
 // WP3: classes of other calibrations get a shade by rank (worst = red, best = green).
 const SHADE_SCALE = ['E6F3EA', 'F7F1D6', 'FBF0DF', 'FDECEB'];
@@ -318,7 +320,7 @@ function sections(kind, b) {
 // ------------------------------------------------------------------ DOCX ----
 function docControlRows(b, d) {
   const dc = b.docControl;
-  return [['Dokument', `${d.code} – ${d.title}`], ['Dokument-ID', dc.docId || '–'], ['Revision', dc.revision || '–'], ['Datum', dateDe(dc.date) || dateDe(b.exportedAt)], ['System', `${b.sd.name || '–'}${b.sd.type ? ` (${b.sd.type})` : ''}`], ['Projekt', b.project.name], ['Ersteller (Designer)', dc.author || '–'], ['Prüfer (Verifier)', dc.verifier || '–'], ['Validierer (Validator)', dc.validator || '–'], ['Eisenbahnbetreiber (Duty holder)', dc.dutyHolder || '–'], ['Lieferant', dc.supplier || '–'], ['Werkzeug', `Railway Hazard Analysis Suite ${b.version}`], ['Kalibrierung', `${b.calibration.id} v${b.calibration.version}`], ['Exportiert', `${dateDe(b.exportedAt)} ${new Date(b.exportedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`]];
+  return [['Dokument', `${d.code} – ${d.title}`], ['Dokument-ID', dc.docId || '–'], ['Revision', dc.revision || '–'], ['Datum', dateDe(dc.date) || dateDe(b.exportedAt)], ['System', `${b.sd.name || '–'}${b.sd.type ? ` (${b.sd.type})` : ''}`], ['Projekt', b.project.name], ['Ersteller (Designer)', dc.author || '–'], ['Prüfer (Verifier)', dc.verifier || '–'], ['Validierer (Validator)', dc.validator || '–'], ['Eisenbahnbetreiber (Duty holder)', dc.dutyHolder || '–'], ['Lieferant', dc.supplier || '–'], ['Werkzeug', `Railway Hazard Analysis Suite ${b.version}`], ['Kalibrierung', `${b.calibration.id} v${b.calibration.version}`], ['Exportiert', `${dateDe(b.exportedAt)} ${new Date(b.exportedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: REPORT_TZ })}`]];
 }
 
 function buildDocx(kind, b) {

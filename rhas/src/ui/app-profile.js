@@ -169,5 +169,6 @@ async function applyCalibration(next, reason, approvalOnly) {
 
 function render() { renderForm(); renderActions(); renderStatus(); renderCalibration(); }
 
+A.applyCalibration = applyCalibration;
 A.stages.profile = { render, bind() {} };
 })();

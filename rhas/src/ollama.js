@@ -9,18 +9,6 @@ const STALE_MS = 120000; // no new token for 2 minutes => treat the connection a
 // window must be generous — the /api/tags preflight does NOT warm the model.
 const FIRST_TOKEN_STALE_MS = 360000;
 
-/** Deterministic, non-cryptographic hash for prompt-cache-keying / traceability —
- * not a security control, so a fast synchronous string hash (djb2) is preferable
- * to async Web Crypto here. */
-function promptHash(text) {
-  let hash = 5381;
-  const s = String(text || '');
-  for (let i = 0; i < s.length; i++) {
-    hash = (hash * 33) ^ s.charCodeAt(i);
-  }
-  return (hash >>> 0).toString(16).padStart(8, '0');
-}
-
 function extractAndParseJSON(text) {
   if (!text) throw new Error('Empty AI response');
   let s = text.trim();
@@ -173,7 +161,7 @@ async function modelInfo(ollamaUrl, model) {
   return { contextLength: key ? Number(mi[key]) : null, capabilities: d.capabilities || [], parameterSize: (d.details || {}).parameter_size || '', quantization: (d.details || {}).quantization_level || '' };
 }
 
-const api = { DEFAULT_OLLAMA_URL, DEFAULT_MODEL, OUTPUT_RESERVE, estimatePromptTokens, promptHash, extractAndParseJSON, callOllama, modelInfo };
+const api = { DEFAULT_OLLAMA_URL, DEFAULT_MODEL, OUTPUT_RESERVE, estimatePromptTokens, extractAndParseJSON, callOllama, modelInfo };
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;

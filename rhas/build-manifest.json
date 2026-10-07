@@ -21,7 +21,6 @@
     "src/llm-pipeline.js",
     "src/dedup.js",
     "src/documents.js",
-    "src/virtualize.js",
     "src/engine.js",
     "src/docx.js",
     "src/db.js",

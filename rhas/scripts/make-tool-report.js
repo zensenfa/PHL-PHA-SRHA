@@ -34,16 +34,18 @@ const TRS = [
   ['TR-01', 'Risikoklasse, Häufigkeits- und Schadenskategorien werden lokal aus der Projektkalibrierung berechnet (EN 50126-1 Anhang C); unbekannte Kategorien werden abgewiesen.', 'model, calibration, reference-project'],
   ['TR-02', 'SIL aus TFFR nach EN 50126-2 Tabelle 2 (halboffene Bänder, Basic Integrity, kein SIL 0); SIL nur für elektronische Funktionen.', 'model, reference-project'],
   ['TR-03', 'THR-Aufteilung: ODER-Summe, UND-Anrechnung nur mit CCA-Nachweis (EN 50129 A.4.3.4–A.4.3.6).', 'model, reference-project'],
-  ['TR-04', 'Restrisiko nur aus bestätigten Maßnahmen; verworfene Maßnahmen ohne Wirkung.', 'model, reference-project'],
+  ['TR-04', 'Restrisiko und „kontrolliert“ nur aus angenommenen Maßnahmen; vorgeschlagene und verworfene Maßnahmen ohne Wirkung; Restrisiko nie schlechter als das Ausgangsrisiko; „weitgehend akzeptabel“ bei Klassen mit Maßnahmenpflicht nur mit begründeter Abweichung.', 'model, reference-project'],
   ['TR-05', 'KI-Vorschläge gelangen nur durch ausdrückliche Übernahme in das Projekt; Duplikate werden zusammengeführt statt verworfen; verworfene Gefährdungen werden nicht erneut vorgeschlagen.', 'engine, security; Browser: dryrun_demo'],
   ['TR-06', 'Berichte (Word, Excel, Druck) sind deterministisch, vollständig und frei von Darstellungsfehlern; Struktur nach EN 50126-1 7.4.3/7.5.3; Gefährdungsprotokoll nach 7.4.2.2 b)–g).', 'reports (Golden-Dateien)'],
   ['TR-07', 'Grundlage ausschließlich Bahnnormen; keine MIL-STD-882E-Verweise in Ausgaben.', 'reports; Verifikationsmatrix (Anhang B)'],
   ['TR-08', 'Projektprofil ist Pflicht; Änderungen nach Bestätigung nur mit Begründung und Protokoll; vertrauliche Projekte nur mit lokaler KI.', 'profile; Browser: smoke_profile'],
-  ['TR-09', 'Kalibrierung konfigurierbar, validiert, versioniert, freigabepflichtig; Auswirkungen auf bestehende Gefährdungen werden angezeigt.', 'calibration; Browser: smoke_calibration'],
+  ['TR-09', 'Kalibrierung konfigurierbar, validiert, versioniert, freigabepflichtig (ein Freigabeweg mit Protokoll); Auswirkungen auf bestehende Gefährdungen werden angezeigt; eine Änderung, die bestehenden Gefährdungen Kategorien entzieht, wird abgewiesen.', 'calibration; Browser: smoke_calibration'],
   ['TR-10', 'Domänenwissen nur aus Domänenpaketen, keine Domänenbegriffe fest in KI-Anweisungen.', 'domains; Browser: smoke_domains'],
   ['TR-11', 'Security: vorsätzliche Ursachen ohne THR-/SIL-Anrechnung; Security-Maßnahme erforderlich; Security-Risiko lokal berechnet; SL-T nur durch Bearbeiter.', 'security, threatlog, zones; Browser: smoke_security, smoke_threatlog, smoke_zones'],
   ['TR-12', 'Keine stille Datenveränderung beim Speichern (z. B. Ursachenarten).', 'model; Browser: dryrun_demo'],
-  ['TR-13', 'Eine Datei, ohne externe Ressourcen, reproduzierbar aus dem Quellstand gebaut.', 'build'],
+  ['TR-13', 'Eine Datei, ohne externe Ressourcen, reproduzierbar aus dem Quellstand gebaut; eingebettete Daten können die Seite nicht beschädigen; nicht aufgeführte Module führen zum Abbruch.', 'build'],
+  ['TR-14', 'Import und Kennungen: Kennungen und Verweise mit HTML-relevanten Zeichen werden beim Import abgewiesen; Kennungen gelöschter Datensätze werden nicht erneut vergeben; Anbieter-Prüfung für vertrauliche Projekte erkennt nur echte lokale Adressen.', 'import-ids, db-ids, local-providers; Browser: smoke_local'],
+  ['TR-15', 'Berichte sind unabhängig von der Zeitzone des Rechners; die Excel-Arbeitsmappe enthält die Security-Tabellen des Word-Berichts je Stufe.', 'reports, xlsx-security'],
 ];
 
 // Tool failure modes (voluntary hazard consideration)
@@ -72,7 +74,7 @@ const TUC = [
 // verification matrix from markdown
 const vm = fs.readFileSync(path.join(ROOT, 'docs/verification-matrix.md'), 'utf8').split('\n').filter((l) => l.startsWith('| ') && !l.startsWith('| ---') && !l.startsWith('| Reference')).map((l) => l.split('|').slice(1, -1).map((x) => x.trim()));
 
-const suiteNames = { 'model.test.js': 'Normativer Kern (model.js)', 'reference-project.test.js': 'Referenzprojekt (Demo-Verhalten)', 'reports.test.js': 'Berichte (Golden-Dateien)', 'engine.test.js': 'KI-Orchestrierung', 'profile.test.js': 'Projektprofil', 'calibration.test.js': 'Kalibrierung', 'domains.test.js': 'Domänenpakete und Demo', 'security.test.js': 'Security Stufe 1', 'threatlog.test.js': 'Security Stufe 2', 'zones.test.js': 'Security Stufe 3', 'build.test.js': 'Build' };
+const suiteNames = { 'model.test.js': 'Normativer Kern (model.js)', 'reference-project.test.js': 'Referenzprojekt (Demo-Verhalten)', 'reports.test.js': 'Berichte (Golden-Dateien)', 'engine.test.js': 'KI-Orchestrierung', 'profile.test.js': 'Projektprofil', 'calibration.test.js': 'Kalibrierung', 'domains.test.js': 'Domänenpakete und Demo', 'security.test.js': 'Security Stufe 1', 'threatlog.test.js': 'Security Stufe 2', 'zones.test.js': 'Security Stufe 3', 'build.test.js': 'Build', 'local-providers.test.js': 'Lokale KI-Anbieter und Vertraulichkeit', 'import-ids.test.js': 'Import und Kennungen', 'db-ids.test.js': 'Kennungsvergabe', 'xlsx-security.test.js': 'Excel: Security-Blätter' };
 
 const children = [
   new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: 'Werkzeugnachweis Railway Hazard Analysis Suite (RHAS)', bold: true, size: 40, color: '1F3864' })] }),

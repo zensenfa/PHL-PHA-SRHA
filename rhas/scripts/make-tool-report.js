@@ -45,7 +45,7 @@ const TRS = [
   ['TR-12', 'Keine stille Datenveränderung beim Speichern (z. B. Ursachenarten).', 'model; Browser: dryrun_demo'],
   ['TR-13', 'Eine Datei, ohne externe Ressourcen, reproduzierbar aus dem Quellstand gebaut; eingebettete Daten können die Seite nicht beschädigen; nicht aufgeführte Module führen zum Abbruch.', 'build'],
   ['TR-14', 'Import und Kennungen: Kennungen und Verweise mit HTML-relevanten Zeichen werden beim Import abgewiesen; Kennungen gelöschter Datensätze werden nicht erneut vergeben; Anbieter-Prüfung für vertrauliche Projekte erkennt nur echte lokale Adressen.', 'import-ids, db-ids, local-providers; Browser: smoke_local'],
-  ['TR-15', 'Berichte sind unabhängig von der Zeitzone des Rechners; die Excel-Arbeitsmappe enthält die Security-Tabellen des Word-Berichts je Stufe.', 'reports, xlsx-security'],
+  ['TR-15', 'Berichte sind unabhängig von der Zeitzone des Rechners; die Excel-Arbeitsmappe enthält die Security-Tabellen des Word-Berichts je Stufe.', 'reports, security-reports, xlsx-security'],
 ];
 
 // Tool failure modes (voluntary hazard consideration)
@@ -74,7 +74,7 @@ const TUC = [
 // verification matrix from markdown
 const vm = fs.readFileSync(path.join(ROOT, 'docs/verification-matrix.md'), 'utf8').split('\n').filter((l) => l.startsWith('| ') && !l.startsWith('| ---') && !l.startsWith('| Reference')).map((l) => l.split('|').slice(1, -1).map((x) => x.trim()));
 
-const suiteNames = { 'model.test.js': 'Normativer Kern (model.js)', 'reference-project.test.js': 'Referenzprojekt (Demo-Verhalten)', 'reports.test.js': 'Berichte (Golden-Dateien)', 'engine.test.js': 'KI-Orchestrierung', 'profile.test.js': 'Projektprofil', 'calibration.test.js': 'Kalibrierung', 'domains.test.js': 'Domänenpakete und Demo', 'security.test.js': 'Security Stufe 1', 'threatlog.test.js': 'Security Stufe 2', 'zones.test.js': 'Security Stufe 3', 'build.test.js': 'Build', 'local-providers.test.js': 'Lokale KI-Anbieter und Vertraulichkeit', 'import-ids.test.js': 'Import und Kennungen', 'db-ids.test.js': 'Kennungsvergabe', 'xlsx-security.test.js': 'Excel: Security-Blätter' };
+const suiteNames = { 'model.test.js': 'Normativer Kern (model.js)', 'reference-project.test.js': 'Referenzprojekt (Demo-Verhalten)', 'reports.test.js': 'Berichte (Golden-Dateien)', 'engine.test.js': 'KI-Orchestrierung', 'profile.test.js': 'Projektprofil', 'calibration.test.js': 'Kalibrierung', 'domains.test.js': 'Domänenpakete und Demo', 'security.test.js': 'Security Stufe 1', 'threatlog.test.js': 'Security Stufe 2', 'zones.test.js': 'Security Stufe 3', 'build.test.js': 'Build', 'local-providers.test.js': 'Lokale KI-Anbieter und Vertraulichkeit', 'import-ids.test.js': 'Import und Kennungen', 'db-ids.test.js': 'Kennungsvergabe', 'xlsx-security.test.js': 'Excel: Security-Blätter', 'security-reports.test.js': 'Berichte Security-Stufen 1–3 (Golden-Dateien)' };
 
 const children = [
   new Paragraph({ spacing: { after: 60 }, children: [new TextRun({ text: 'Werkzeugnachweis Railway Hazard Analysis Suite (RHAS)', bold: true, size: 40, color: '1F3864' })] }),

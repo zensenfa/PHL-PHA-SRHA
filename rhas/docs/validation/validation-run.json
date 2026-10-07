@@ -1,7 +1,7 @@
 {
- "date": "2026-10-07 08:30 UTC",
+ "date": "2026-10-07 09:05 UTC",
  "version": "2026-10-07-wp10",
- "commit": "3b3edc6",
+ "commit": "7b5a601",
  "build_sha256": "aef2ec147b77db306ff2c1ce6ca43432adca325e749bd763af2ee1955c385245",
  "build_ok": true,
  "node": "v22.22.0",
@@ -381,6 +381,40 @@
     "status": "passed"
    }
   ],
+  "security-reports.test.js": [
+   {
+    "name": "level 1: DOCX full is deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "level 1: XLSX workbook matches golden content",
+    "status": "passed"
+   },
+   {
+    "name": "level 2: DOCX full is deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "level 2: XLSX workbook matches golden content",
+    "status": "passed"
+   },
+   {
+    "name": "level 3: DOCX full is deterministic and matches golden text",
+    "status": "passed"
+   },
+   {
+    "name": "level 3: XLSX workbook matches golden content",
+    "status": "passed"
+   },
+   {
+    "name": "level 3: print view matches golden HTML and contains no unescaped markup from data",
+    "status": "passed"
+   },
+   {
+    "name": "hostile text in security records is escaped in print and DOCX output",
+    "status": "passed"
+   }
+  ],
   "security.test.js": [
    {
     "name": "level 1 is selectable and needs no level-0 justification",
@@ -536,7 +570,7 @@
     "confirm disabled: True",
     "confirm disabled after fill: False",
     "toast1: Projektprofil bestätigt ['console:Failed to load resource: net::ERR_CONNECTION_REFUSED']",
-    "status: bestätigt 07.10.2026, 08:29 | rail: ✓",
+    "status: bestätigt 07.10.2026, 09:04 | rail: ✓",
     "apply btn: Änderungen übernehmen (1)",
     "log rows: 2",
     "banner hidden: True",

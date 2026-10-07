@@ -156,7 +156,7 @@ function promptLine(p) {
 /** Host on this machine or in a private network (on-premise server). */
 function isLocalUrl(url) {
   let h; try { h = new URL(url).hostname.replace(/^\[|\]$/g, ''); } catch { return false; }
-  return h === 'localhost' || h === '::1' || /^127\./.test(h) || /^10\./.test(h) || /^192\.168\./.test(h) || /^172\.(1[6-9]|2\d|3[01])\./.test(h) || /\.local$/.test(h) || /^0\.0\.0\.0$/.test(h);
+  return h === 'localhost' || h === '::1' || /^127(\.\d{1,3}){3}$/.test(h) || /^10(\.\d{1,3}){3}$/.test(h) || /^192\.168(\.\d{1,3}){2}$/.test(h) || /^172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}$/.test(h) || /\.local$/.test(h) || /^0\.0\.0\.0$/.test(h);
 }
 /** Confidential projects may only use a local or on-premise model. */
 function aiProviderAllowed(p, provider, settings = {}) {

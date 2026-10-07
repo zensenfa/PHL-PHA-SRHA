@@ -78,7 +78,8 @@ function xlsxText(bytes) {
 /** Compare against tests/golden/<name>; UPDATE_GOLDEN=1 rewrites the file. */
 function matchGolden(t, name, actual) {
   const file = path.join(GOLDEN, name);
-  if (process.env.UPDATE_GOLDEN === '1' || !fs.existsSync(file)) {
+  if (process.env.UPDATE_GOLDEN !== '1' && !fs.existsSync(file)) throw new Error(`golden file missing: ${name} (run UPDATE_GOLDEN=1 npm test to create it, then review it)`);
+  if (process.env.UPDATE_GOLDEN === '1') {
     fs.writeFileSync(file, actual);
     t.diagnostic(`golden written: ${name}`);
     return;

@@ -195,8 +195,21 @@ async function snapshot(pdb, project) {
 }
 
 /** Always creates a NEW project (never merges into an existing one). */
+// Record ids and id references are rendered into HTML by the UI; accept only plain identifier characters.
+const SAFE_ID = /^[A-Za-z0-9_.:/ -]{1,64}$/;
+const REF_KEYS = new Set(['hazards', 'functions', 'interfaces', 'modes', 'measures', 'requirements', 'threats', 'zones', 'conduits', 'srs', 'causes', 'subsystems']);
+function assertSafeIds(node, trail = 'snapshot') {
+  if (Array.isArray(node)) { node.forEach((v, i) => assertSafeIds(v, `${trail}[${i}]`)); return; }
+  if (!node || typeof node !== 'object') return;
+  for (const [k, v] of Object.entries(node)) {
+    if (k === 'id' && v != null && !(typeof v === 'string' && SAFE_ID.test(v))) throw new Error(`Ungültige Kennung in ${trail}.id`);
+    if (REF_KEYS.has(k) && Array.isArray(v) && v.some((x) => typeof x === 'string' && !SAFE_ID.test(x))) throw new Error(`Ungültige Kennung in ${trail}.${k}`);
+    assertSafeIds(v, `${trail}.${k}`);
+  }
+}
 async function importSnapshot(snap, nameOverride) {
   if (!snap || snap.schemaVersion !== SCHEMA) throw new Error(`Nicht unterstütztes Format: ${snap && snap.schemaVersion}`);
+  assertSafeIds(snap);
   const project = await createProject({ name: nameOverride || snap.project.name, description: snap.project.description || '' });
   const pdb = await openProject(project.projectId);
   for (const store of ['functions', 'hazards', 'requirements', 'ccas']) {
@@ -231,7 +244,7 @@ async function deleteCheckpoint(checkpointId) {
   db.close();
 }
 
-const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
+const api = { SCHEMA, STORES, openProject, listProjects, createProject, touchProject, deleteProject, listAll, get, create, createBatch, update, put, putBatch, remove, clearStore, getMeta, setMeta, snapshot, importSnapshot, assertSafeIds, createCheckpoint, listCheckpoints, deleteCheckpoint, nextSequential };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else window.RHAS_DB = api;
 })();
 

@@ -42,19 +42,41 @@ def export(name, out):
         data = ('\n'.join(sums) + '\n').encode(); ti = tarfile.TarInfo('SHA256SUMS'); ti.size = len(data); tar.addfile(ti, io.BytesIO(data))
     print(f'{name}: {len(digests)} Dateien -> {out}')
 
+def _bad_name(n):
+    return n.startswith(('/', '\\')) or '\\' in n or ':' in n.split('/')[0] or '..' in n.split('/')
+
+def _hash_member(tar, m):
+    h = hashlib.sha256()
+    with tar.extractfile(m) as f:
+        for chunk in iter(lambda: f.read(1 << 20), b''): h.update(chunk)
+    return h.hexdigest()
+
 def verify(tar_path, extract_to=None):
     with tarfile.open(tar_path) as tar:
-        sums = dict((p, h) for h, p in (l.split('  ', 1) for l in tar.extractfile('SHA256SUMS').read().decode().split('\n') if l))
+        try: sums_raw = tar.extractfile('SHA256SUMS').read().decode()
+        except KeyError: sys.exit('SHA256SUMS fehlt im Archiv')
+        sums = {}
+        for l in sums_raw.split('\n'):
+            if not l: continue
+            if '  ' not in l: sys.exit(f'Ungueltige Zeile in SHA256SUMS: {l}')
+            h, p = l.split('  ', 1); sums[p] = h
+        names = set()
         for m in tar.getmembers():
             if m.name == 'SHA256SUMS': continue
-            if m.name.startswith('/') or '..' in m.name.split('/'): sys.exit(f'Unzulaessiger Pfad im Archiv: {m.name}')
-            if m.name in sums:
-                h = hashlib.sha256(tar.extractfile(m).read()).hexdigest()
-                if h != sums[m.name]: sys.exit(f'Pruefsumme falsch: {m.name}')
+            if _bad_name(m.name): sys.exit(f'Unzulaessiger Pfad im Archiv: {m.name}')
+            if not m.isfile(): sys.exit(f'Unzulaessiger Eintrag (kein regulaeres File): {m.name}')
+            if m.name not in sums: sys.exit(f'Datei nicht in SHA256SUMS: {m.name}')
+            if _hash_member(tar, m) != sums[m.name]: sys.exit(f'Pruefsumme falsch: {m.name}')
+            names.add(m.name)
+        missing = set(sums) - names
+        if missing: sys.exit(f'In SHA256SUMS gelistet, aber nicht im Archiv: {sorted(missing)[0]}')
         if extract_to:
+            root = os.path.realpath(extract_to)
             for m in tar.getmembers():
-                if m.name == 'SHA256SUMS' or not m.isfile(): continue
-                dest = os.path.join(extract_to, m.name); os.makedirs(os.path.dirname(dest), exist_ok=True)
+                if m.name == 'SHA256SUMS': continue
+                dest = os.path.realpath(os.path.join(extract_to, m.name))
+                if not dest.startswith(root + os.sep): sys.exit(f'Unzulaessiger Pfad im Archiv: {m.name}')
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
                 with tar.extractfile(m) as src, open(dest, 'wb') as dst: shutil.copyfileobj(src, dst)
     print('Pruefsummen in Ordnung' + (f', importiert nach {extract_to}' if extract_to else ''))
 

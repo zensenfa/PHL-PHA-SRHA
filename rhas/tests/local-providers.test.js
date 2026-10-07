@@ -94,6 +94,16 @@ test('confidential projects: local or private-network servers allowed, cloud or 
   assert.equal(PROFILE.aiProviderAllowed(p, 'mistral-api', {}).ok, false);
 });
 
+test('confidential projects: hostnames that merely start like a private IP are not local', () => {
+  const p = { dataClassification: 'confidential' };
+  for (const u of ['http://10.attacker.com:11434', 'http://127.evil.net', 'http://192.168.evil.com', 'http://172.16.evil.org']) {
+    assert.equal(PROFILE.aiProviderAllowed(p, 'ollama', { ollamaUrl: u }).ok, false, u);
+  }
+  for (const u of ['http://10.1.2.3:11434', 'http://172.31.0.5', 'http://127.0.0.1:11434']) {
+    assert.equal(PROFILE.aiProviderAllowed(p, 'ollama', { ollamaUrl: u }).ok, true, u);
+  }
+});
+
 test('guideword split plans two function passes per function', () => {
   const E = require('../src/engine.js');
   const fns = [{ id: 'F-0001', name: 'A' }, { id: 'F-0002', name: 'B' }];
